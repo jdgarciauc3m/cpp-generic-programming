@@ -10,6 +10,7 @@ CONFIG_SLIDES= \
 	config/config-tc-one.tex  \
 	config/footline.tex  \
 	config/packages.tex\
+	common/license-cc.tex \
 
 LOGOS=logos/*
 
