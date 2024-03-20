@@ -4,10 +4,9 @@
 
 template<typename T, typename U>
 requires std::totally_ordered_with<T, U>
-    //and (not std::is_pointer_v<T>)
-    //and (not std::is_pointer_v<U>)
+    and (not std::is_pointer_v<T>)
+    and (not std::is_pointer_v<U>)
 std::common_type_t<T, U> maximum(T x, U y) {
-  static_assert(not std::is_pointer_v<T>, "T must not be a pointer type");
   return (x > y) ? x : y;
 }
 
@@ -23,7 +22,7 @@ void print(std::tuple<T, U> t) {
 }
 
 int main() {
-  auto r3 = maximum("carlos", "daniel");
+  //auto r3 = maximum("carlos", "daniel");
   //print(r3);
 
   using namespace std::literals;
