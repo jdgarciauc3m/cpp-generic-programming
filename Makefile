@@ -17,7 +17,7 @@ LOGOS=logos/*
 include m1/Makefile.def
 include guide/Makefile.def
 
-.PHONY: all clean updatevers slides ejer guide
+.PHONY: all clean slides guide
 
 all:	slides guide
 
@@ -26,10 +26,6 @@ clean:
 
 $(FINAL_DIR):
 	mkdir -p $(FINAL_DIR)
-
-$(FINAL_DIR)/version.tex:	| $(FINAL_DIR)
-	git log -1 --format=%ad --date=format:'\newcommand{\versiondate}{%B de %Y}' > $(FINAL_DIR)/version.tex
-	git log -1 --format='\newcommand{\versionid}{%h}' >> $(FINAL_DIR)/version.tex
 
 slides: $(ALL_SLIDES_FINAL_PDF)
 
