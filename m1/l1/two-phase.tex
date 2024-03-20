@@ -1,0 +1,91 @@
+\subsection{Two phase translation model}
+
+\begin{frame}[t,fragile]{Translation model}
+\begin{itemize}
+  \item A generic function is translated in two stages or phases.
+
+  \begin{enumerate}
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{Definition time}:
+          The code is checked without considering generic types porperties.
+      \begin{itemize}
+        \item Check syntax errors.
+        \item Check unknown names that do not depend on generic types.
+        \item Evaluate static assertions that do not depend on generic types.
+      \end{itemize}
+    
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{Instantiation time}.
+      \begin{itemize}
+        \item Check all parts that depende on generic types.
+      \end{itemize}
+
+  \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Checking at definition time}
+\begin{block}{Errors checked at definition time}
+\begin{lstlisting}
+void print_square(std::integral auto x) {
+  std::integral auto r = x * x  // Syntax error missing semicolon
+
+  print("Hello"); // Unknown function print(char*)
+               
+  static_assert(sizeof(int) >= sizeof(long)); // Static assert evaluated
+}
+\end{lstlisting}
+\end{block}
+
+  \begin{itemize}
+    \item Syntax errors can be found without knowing the exact type of \cppid{x}.
+
+    \item Unknown functions can be diagnosed when the do not depend on the type of \cppid{x}.
+
+    \item Static asserts that do not depend on generic properties can be evaluated.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Checking at instantiation time}
+
+\begin{columns}[T]
+
+\column{.6\textwidth}
+
+\begin{block}{Errors checked at instatiation time}
+\begin{lstlisting}
+void print_value(int x) { std::cout << x << '\n'; }
+void print_velue(long) = delete;
+
+void print_square(std::integral auto x) {
+  std::integral auto r = x * x;
+  print(x); // OK if instantiated with x of type int
+  static_assert(sizeof(x) >= sizeof(long)); // Depends on x
+}
+
+int main() {
+  print_square(2);
+  print_square(2L);
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+
+\pause
+\begin{itemize}
+  \item Instantiation time errors depend on properties unknown until a specific instantiation occurs.
+
+  \item When istantiation happens the defintion must be visible.
+
+  \item \textbad{Consequence}: Generic functions need to be defined before they are used.
+    \begin{itemize}
+      \item Place generic functions in header files.
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\end{frame}

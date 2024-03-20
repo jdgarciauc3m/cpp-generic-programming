@@ -1,0 +1,209 @@
+\subsection{Generic functions with multiple parameters}
+
+\begin{frame}[t,fragile]{A generic maximum function}
+\begin{itemize}
+  \item A function may take \textmark{multiple} generic parameters.
+
+\begin{block}{A generic maximum function}
+\begin{lstlisting}
+arithmetic auto maximum(arithmetic auto x, arithmetic auto y) {
+  return (x>y) ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item Each generic parameter can be of a \textmark{different} type.
+
+\begin{block}{Invoking maximum()}
+\begin{lstlisting}
+void f() {
+  arithmetic auto r1 = maximum(3, 2L); // returns 2 as long
+  arithmetic auto r2 = maximum(1.0, 4); // returns 4.0 as double
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Repeating the same type}
+\begin{itemize}
+  \item What if we want both parameters to be from \textmark{exactly} the same type?
+    \begin{itemize}
+      \item Use the \textemph{template notation}.
+    \end{itemize}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.4\textwidth}
+
+\begin{block}{A generic maximum function}
+\begin{lstlisting}
+template <arithmetic T>
+T maximum(T x, T y) {
+  return (x>y) ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.6\textwidth}
+
+\pause
+\begin{block}{A generic maximum function}
+\begin{lstlisting}
+void f() {
+  auto r1 = maximum(2,3); // OK, r1 == 3
+  auto r2 = maximum(2, 3L); // Conflict T=int or long?
+  auto r3 = maximum(2.0, 3); // Conflict T=double, int?
+}
+\end{lstlisting}
+
+\end{block}
+
+\end{columns}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{T} is a type that satisfies the \cppid{arithmetic} concept.
+    \begin{itemize}
+      \item Parameters \cppid{x} and \cppid{y} must be of the same type \cppid{T}.
+      \item Return type is of the same type \cppid{T}.
+    \end{itemize} 
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Extending maximum() for more types}
+\begin{itemize}
+  \item Currently \cppid{maximum()} only works for arithmetic types.
+    \begin{itemize}
+      \item What about other comparable types?
+        \begin{itemize}
+          \item \cppid{std::string}, \cppid{std::tuple}, \ldots
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Idea}: Use \cppid{std::totally\_ordered\_with<T,U>} concept.
+    \begin{itemize}
+      \item Types \cppid{T} and \cppid{U} satisfy the \cppid{std::totally\_ordered\_with} concept
+            if:
+        \begin{itemize}
+          \item All comparison operators for a value \cppid{x} of type \cppid{T} and
+                a value \cppid{y} of type \cppid{U} results are consistent 
+                with a \textmark{strict total order}.
+          \item Comparison operators are:
+                \cppkey{==}, \cppkey{!=}, \cppkey{<}, \cppkey{<=}, \cppkey{>}, and \cppkey{>=}.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item What about the result type?
+    \begin{itemize}
+      \item Use \cppid{common\_type\_t<T,U>}.
+        \begin{itemize}
+          \item A type \cppid{R} that types \cppid{T} and \cppid{U} can be implicitly converted to.
+        \end{itemize}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Extended template notation}
+\begin{block}{An extended generic function}
+\begin{lstlisting}
+template <typename T, typename U>
+  requires totally_ordered_with<T,U>
+std::common_type_t<T,U> maximum(T x, U y) {
+  return (x>y) ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Keyword \cppkey{typename} means that the \textmark{template parameter} can be
+        \textgood{any type}.
+
+  \mode<presentation>{\vfill}
+  \item The \cppkey{requires} clause is useful for expressing requirements on multiple
+        generic parameters.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Adding constraints}
+
+\begin{block}{Maximum on strings versus pointers}
+\begin{lstlisting}
+void f() {
+  using namespace std::literals;
+  auto r1 = maximum("carlos"s,"daniel"s); // r1 = "daniel"
+
+  auto r2 = maximum("carlos","daniel"); // r2 = "carlos"
+}  
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item When \cppid{maximum} is invoked with two \cppid{std::string} objects,
+        operator \cppkey{<} is invoked and lexicographical order is applied.
+
+  \mode<presentation>{\vfill}
+  \item When \cppid{maximum} is invoked with two \cppid{char*} objectis,
+        operator \cppkey{<} is invoked and memory addresses order is applied.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Constraining types}
+\begin{block}{Constraining with static assertions}
+\begin{lstlisting}
+template<typename T, typename U>
+    requires std::totally_ordered_with<T, U>
+std::common_type_t<T, U> maximum(T x, U y) {
+  static_assert(not std::is_pointer_v<T>, "T must not be a pointer type");
+  static_assert(not std::is_pointer_v<U>, "T must not be a pointer type");
+  return (x > y) ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item The following constraint must be satisfied:
+    \begin{itemize}
+      \item Types \cppid{T} and \cppid{U} must define a total order.
+    \end{itemize}
+  \item The following additional compile-time checks are performed.
+    \begin{itemize}
+      \item Type \cppid{T} must not be a pointer type.
+      \item Type \cppid{U} must not be a pointer type.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constraining types}
+\begin{block}{A more constrained generic function}
+\begin{lstlisting}
+template<typename T, typename U>
+    requires std::totally_ordered_with<T, U>
+        and (not std::is_pointer_v<T>)
+        and (not std::is_pointer_v<U>)
+std::common_type_t<T, U> maximum(T x, U y) {
+  return (x > y) ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item Now the following constraints must be satisfied:
+    \begin{itemize}
+      \item Types \cppid{T} and \cppid{U} must define a total order.
+      \item Types \cppid{T} must not be a pointer type.
+      \item Types \cppid{U} must not be a pointer type.
+    \end{itemize}
+\end{itemize}
+\end{frame}

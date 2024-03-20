@@ -1,0 +1,56 @@
+\subsection{Invoking a generic function} 
+
+\begin{frame}[t,fragile]{Calling a generic function}
+\begin{itemize}
+  \item A concept based generic function can be invoked with any value from
+        a type that satisfies the corresponding concept.
+\begin{block}{Invoking square}
+\begin{lstlisting}
+int main() {
+  std::cout << square(2) << '\n';   // OK. Invoke square(int)
+  std::cout << square(2L) << '\n';  // OK. Invoke square(long)
+  std::cout << square(2.0) << '\n'; // Error. No matching square(double)
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{square} is not a single function.
+    \begin{itemize}
+      \item For each type used and \textmark{instance} of the function is generated.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item An instantiation needs to use a type that satisfies the requirements.
+    \begin{itemize}
+      \item \textbad{Note}: Type \cppkey{double} does not satisfy \cppid{std::integral}.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Result from a generic function}
+\begin{itemize}
+  \item The result of a generic function must also satisfy its contraints.
+\begin{block}{Result type constraint satisfaction}
+\begin{lstlisting}
+std::integral auto reciprocal(std::integral auto x) {
+  return 1.0 / x;
+}
+
+int main() {
+  std::cout << reciprocal(2) << '\n'; // Error. Return type constraint not satisfied
+}  
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Note}: The constraint insatisfaction happens only if the function is
+        instantiated.
+    \begin{itemize}
+      \item Due to \textmark{two-phase translation} model.
+    \end{itemize}
+
+\end{itemize}
+
+\end{frame}

@@ -1,0 +1,75 @@
+\subsection{Defining a generic function}
+
+\begin{frame}[t,fragile]{Generalizing a function}
+\begin{itemize}
+  \item A function is defined with parameters and return
+        values of specific types.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{maximum for integers}
+\begin{lstlisting}
+int square(int x) {
+  return x*x;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{maximum for long integers}
+\begin{lstlisting}
+long max(long x) {
+  return x*x;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item But wait...
+    \begin{itemize}
+      \item What about \cppkey{short} or \cppkey{long long}.
+      \item What about \cppkey{unsigned} versions.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Idea}: Avoid many overloads.
+    \begin{itemize}
+      \item Define a generic function for any integer type.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Generalizing a function}
+\begin{itemize}
+  \item We would like to generalize for any type that satisfies the
+        \textmark{concept} of an \textemph{integral type}.
+    \begin{itemize}
+      \item There is such a concept in header \cppid{<concepts>}: \cppid{std::integral}.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Generalized square function}
+\begin{lstlisting}
+std::integral auto square(std::integral auto x) {
+  return x*x;
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Parameter type is specified with \textmark{concept} \cppid{std::integral}
+        followed by keyword \cppkey{auto}.
+
+
+\end{itemize}
+
+\end{frame}
+
