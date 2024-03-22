@@ -1,0 +1,60 @@
+\subsection{Unconstrained generic functions}
+
+\begin{frame}[t,fragile]{A generic function with no constraints}
+\begin{itemize}
+  \item A generic function may be defined without constraints on
+        a type.
+\end{itemize}
+
+\begin{block}{Unconstrained generic \textbf{square} function}
+\begin{lstlisting}
+void print_square(auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item The keyword \cppkey{auto} without a preceding concept name
+        stands for the universal concept (any type).
+    \begin{itemize}
+      \item Function can be called with a value from any type.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Template notation}
+\begin{itemize}
+  \item A classic \textemph{template notation} is equivalent.
+\end{itemize}
+
+\begin{block}{Unconstrained generic \textbf{square} function with template notation}
+\begin{lstlisting}
+template <typename T>
+void print_square(T x) {
+  std::cout << x << "^2 = " << x*x << '\n';
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Template notation and constraints}
+
+\begin{itemize}
+  \item A template parameter may be constrained to satisfy a \emph{concept}:
+    \begin{itemize}
+      \item The requirement is expressed in the \cppkey{requires} clause.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Constrained generic \textbf{square} function with template notation}
+\begin{lstlisting}
+template <typename T>
+  requires integral<T>
+void print_square(T x) {
+  std::cout << x << "^2 = " << x*x << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
