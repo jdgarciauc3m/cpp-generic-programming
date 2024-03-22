@@ -11,8 +11,8 @@
 \column{.5\textwidth}
 \begin{block}{maximum for integers}
 \begin{lstlisting}
-int square(int x) {
-  return x*x;
+void print_square(int x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 \end{lstlisting}
 \end{block}
@@ -20,8 +20,8 @@ int square(int x) {
 \column{.5\textwidth}
 \begin{block}{maximum for long integers}
 \begin{lstlisting}
-long max(long x) {
-  return x*x;
+void print_square(long x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 \end{lstlisting}
 \end{block}
@@ -57,8 +57,8 @@ long max(long x) {
 \mode<presentation>{\vfill\pause}
 \begin{block}{Generalized square function}
 \begin{lstlisting}
-std::integral auto square(std::integral auto x) {
-  return x*x;
+void print_square(std::integral auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 \end{lstlisting}
 \end{block}

@@ -10,8 +10,8 @@
     \item \textmark{Definition time}:
           The code is checked without considering generic types porperties.
       \begin{itemize}
-        \item Check syntax errors.
         \item Check unknown names that do not depend on generic types.
+        \item Check syntax errors.
         \item Evaluate static assertions that do not depend on generic types.
       \end{itemize}
     
@@ -30,21 +30,21 @@
 \begin{block}{Errors checked at definition time}
 \begin{lstlisting}
 void print_square(std::integral auto x) {
-  std::integral auto r = x * x  // Syntax error missing semicolon
+  print("hello"); // Undeclared identifier print
 
-  print("Hello"); // Unknown function print(char*)
-               
-  static_assert(sizeof(int) >= sizeof(long)); // Static assert evaluated
+  std::integral auto r = x * x // Syntax error: mssing semicolon
+
+  static_assert(sizeof(int) >= sizeof(long)); // static_assert failed
 }
 \end{lstlisting}
 \end{block}
 
   \begin{itemize}
+    \item Unknown functions can be diagnosed when they do not depend on the type of \cppid{x}.
+
     \item Syntax errors can be found without knowing the exact type of \cppid{x}.
 
-    \item Unknown functions can be diagnosed when the do not depend on the type of \cppid{x}.
-
-    \item Static asserts that do not depend on generic properties can be evaluated.
+    \item Static assertions that do not depend on generic properties can be evaluated.
   \end{itemize}
 \end{frame}
 
@@ -57,17 +57,17 @@ void print_square(std::integral auto x) {
 \begin{block}{Errors checked at instatiation time}
 \begin{lstlisting}
 void print_value(int x) { std::cout << x << '\n'; }
-void print_velue(long) = delete;
+void print_value(long) = delete;
 
-void print_square(std::integral auto x) {
+void print_square2(std::integral auto x) {
+  print_value(x); // OK if instantiated with x of type int
   std::integral auto r = x * x;
-  print(x); // OK if instantiated with x of type int
-  static_assert(sizeof(x) >= sizeof(long)); // Depends on x
+  static_assert(sizeof(x) == sizeof(int));
 }
 
 int main() {
-  print_square(2);
-  print_square(2L);
+  print_square1(2); // OK
+  print_square2(2L); // Error: cannot instantiate for long
 }
 \end{lstlisting}
 \end{block}

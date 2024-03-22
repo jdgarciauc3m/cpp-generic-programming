@@ -1,22 +1,14 @@
 #include <iostream>
 #include <concepts>
 
-std::integral auto square(std::integral auto x) {
-  return x*x;
-}
-
-std::floating_point auto square(std::floating_point auto x) {
-  return x*x;
-}
-
-std::integral auto reciprocal(std::integral auto x) {
-  return 1.0/x;
+void print_square(std::integral auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 
 int main() {
-  std::cout << square(2) << '\n';
-  std::cout << square(2L) << '\n';
-  std::cout << square(2.0) << '\n';
-
-  //std::cout << reciprocal(2) << '\n';
+  print_square(2); // OK. Invoke print_square(int)
+  print_square(2L); // OK. Invoke print_square(long)
+#if 0
+  print_square(2.0); // Error. No matching print_square(double)
+#endif
 }

@@ -16,12 +16,12 @@
 
 \begin{block}{Square function duplication}
 \begin{lstlisting}
-std::integral auto square(std::integral auto x) {
-  return x*x;
+void print_square(std::integral auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 
-std::floating_point auto square(std::floating_point auto x) {
-  return x*x;
+void print_square(std::floating_point auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 \end{lstlisting}
 \end{block}
@@ -54,8 +54,8 @@ concept arithmetic = std::is_arithmetic_v<T>;
 \column{.5\textwidth}
 \begin{block}{Square function}
 \begin{lstlisting}
-arithmetic auto square(arithmetic auto x) {
-  return x*x;
+void print_square(arithmetic auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
 }
 \end{lstlisting}
 \end{block}
