@@ -6,8 +6,8 @@ This repo contains the materials for a workshop on move semantics
 
 1. Function templates.
     1. Function templates.
-    2. Template argument deduction.
-    3. Multiple template parameters.
+    2. Multiple template parameters.
+    3. Template argument deduction.
     4. Overloading and templates.
     5. Function arguments.
     6. Non-type template parameters.
