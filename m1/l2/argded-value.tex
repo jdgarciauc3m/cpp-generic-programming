@@ -1,0 +1,222 @@
+\subsection{Argument deduction and by-value parameters}
+
+\begin{frame}[t,fragile]{Argument deduction rules}
+\begin{itemize}
+  \item When a generic function is invoked template parameters are
+        \textmark{deduced} from the invocation arguments.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A generic maximum}
+\begin{lstlisting}
+template <typename T>
+T maximum(T x, T y) {
+  return x>y ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Type deduction}
+\begin{lstlisting}
+void f() {
+  int a = 2, b = 5;
+  auto r1 = maximum(a,b); // T = int
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Decay conversions} are supported.
+    \begin{itemize}
+      \item Conversions applied in function argument passing.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile,allowframebreaks]{Deducing template parameters}
+
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item References to \cppid{T} \textmark{decay} to \cppid{T}
+    \begin{itemize}
+      \item Applies to l-value and r-value references.
+    \end{itemize}
+\end{itemize}
+
+\column{.5\textwidth}
+\begin{block}{Deducing references}
+\begin{lstlisting}
+void f() {
+  int x = 3, y = 5;
+  int & rx = x;
+  int && rrz = x + y;
+
+  auto r1 = maximum(x, rx); // T = int
+  auto r2 = maximum(rrz, y); // T = int
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\framebreak
+
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item A type \cppid{T} which is \cppkey{const} and/or \cppkey{volatile}
+        \textmark{decays} in the corresponding type without such qualification.
+\end{itemize}
+
+\column{.5\textwidth}
+\begin{block}{Deducing with \textbf{const}/\textbf{volatile}}
+\begin{lstlisting}
+void f() {
+  int x = 3, y = 5;
+  int const cx = x;
+  int const & crx = x;
+  int const && rrz = x + y;
+
+  auto r1 = maximum(cx, y); // T = int
+  auto r2 = maximum(crx, y); // T = int
+  auto r3 = maximum(rrz, y); // T = int
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\framebreak
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item An array of \cppid{T} \textmark{decays} to \cppid{T*}.
+    \begin{itemize}
+      \item You can pass arrays of different sizes.
+      \item Array size is \textbad{lost}.
+    \end{itemize}
+\end{itemize}
+
+\column{.5\textwidth}
+\begin{block}{Deducing an array}
+\begin{lstlisting}
+void f() {
+  int v[10];
+  int w[5];
+  auto r1 = maximum(v,w); // T = int*
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+\column{.5\textwidth}
+\begin{itemize}
+  \item A reference to array of \cppid{T} \textmark{decays} to \cppid{T*}.
+\end{itemize}
+
+\column{.5\textwidth}
+\begin{block}{Deducing a reference to an array of \textbf{T}}
+\begin{lstlisting}
+void f() {
+  int v[10];
+  auto & s = v; // int (&s)[10]
+  auto r1 = maximum(v,s); // T = int*
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\framebreak
+
+\mode<presentation>{\vspace{-1em}}
+
+\begin{columns}
+\column{.4\textwidth}
+\begin{itemize}
+  \item But an array of \cppid{T const} \textmark{decays} to \cppid{T const *}.
+    \begin{itemize}
+      \item \cppid{T *} and \cppid{T const *} are different types.
+    \end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+\begin{block}{Deducing an array of \textbf{T const}}
+\begin{lstlisting}
+void f() {
+  int v[10];
+  int const w[10];
+  auto r1 = maximum(v,s); // Error: T=int* or int const *
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+\column{.4\textwidth}
+\begin{itemize}
+  \item However, a \cppid{T * const} \textmark{decays} to \cppid{T *}.
+    \begin{itemize}
+      \item Top level \cppkey{const} and \cppkey{volatile} are removed during \textmark{decay}.
+    \end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+\begin{block}{Deducing a \textbf{const} pointer to \textbf{T}}
+\begin{lstlisting}
+void f() {
+  int v[10];
+  int * const p = v;
+  auto r1 = maximum(v,p); // T=int*
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\framebreak
+
+\begin{columns}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item A \textemph{function} \textmark{decays} into a \textemph{function pointer}.
+
+  \mode<presentation>{\vspace{2em}}
+
+  \item A \textemph{function reference} \textmark{decays} into a \textemph{function pointer}. 
+\end{itemize}
+
+\column{.6\textwidth}
+\begin{block}{Deducing functions and reference to functions}
+\begin{lstlisting}
+long add(long x, long y) { return x+y; }
+
+long sub(long x, long y) { return x-y; }
+
+void f() {
+  auto r = maximum(add, sub); // T=long (*)(long,long)
+
+  auto * fun1 = add; // long (*)(long long)
+  auto & fun2 = sub; // long (&)(long long)
+  auto s = maximum(add,sub); // T = long (*)(long,long)
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{frame}

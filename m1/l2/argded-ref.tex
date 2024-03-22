@@ -1,0 +1,149 @@
+\subsection{Argument deduction for by reference values}
+
+\begin{frame}[t,fragile]{Argument deduction rules}
+\begin{itemize}
+  \item Decay conversions are not applied for type deduction of reference parameters.
+    \begin{itemize}
+      \item The referenced type is used for deduction.
+      \item Top level \cppkey{const}/\cppkey{volatile} are ignored in function parameters.
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A generic maximum}
+\begin{lstlisting}
+template <typename T>
+T maximum(T const & x, T const & y) {
+  return x>y ? x : y;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Type deduction}
+\begin{lstlisting}
+void f() {
+  int a = 2, b = 5;
+  auto r1 = maximum(a,b); // T = int
+
+  int & ra = a;
+  auto r2 = maximum(ra,b); // T = int
+
+  int && rrz = a + b;
+  auto r3 = maximum(rra,b); // T = int
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile,allowframebreaks]{Deducing template parameters}
+
+\begin{itemize}
+  \item \cppkey{const}/\cppkey{volatile} arguments do not \textmark{decay}
+        by removing such qualification.
+\end{itemize}
+
+\begin{block}{Deducing for \textbf{const}/\textbf{volatile}}
+\begin{lstlisting}
+void f() {
+  int a = 2, b = 5;
+  int const cb = b;
+
+  auto r = maximum(a,cb); // T = int / T = int const
+}
+\end{lstlisting}
+\end{block}
+
+\framebreak
+
+\begin{itemize}
+  \item Reference arguments do not \textmark{decay}.
+    \begin{itemize}
+      \item Applies both to l-value and r-value references.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Deducing for references}
+\begin{lstlisting}
+void f() {
+  int a = 2, b = 5;
+
+  int const & ra = a;
+  auto r1 = maximum(ra,b); // Error. T = const int or int
+
+
+  int const && rrz = a + b;
+  auto r3 = maximum(rra,b); // T = const int or int
+}
+
+\end{lstlisting}
+\end{block}
+
+\framebreak
+
+\begin{itemize}
+  \item An array of \cppid{T} does not \textmark{decay} to a pointer.
+    \begin{itemize}
+      \item A reference to the array is deduced.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Deducing for arrays}
+\begin{lstlisting}
+void f() {
+  int u[10];
+  int v[10]
+  int w[5];
+  auto & s = u;
+
+  auto r1 = maximum(u,v); // OK. T = int[10]
+  auto r2 = maximum(u,w); // Error. T = int[10] / T = int[5]
+  auto r2 = maximum(u,s); // OK. T = int[10]
+}
+\end{lstlisting}
+\end{block}
+
+\framebreak
+
+\begin{itemize}
+  \item Array of \cppkey{const}/\cppkey{volatile} elements do not \textmark{decay}
+        by removing such qualification from the element type.
+\end{itemize}
+
+\begin{block}{Deducing for arrays}
+\begin{lstlisting}
+void f() {
+  int u[10];
+  int const t[10]; 
+
+  auto r0 = maximum(u,t); // Error. T = int [10] / T = int const [10]
+}
+\end{lstlisting}
+\end{block}
+
+\framebreak
+
+\begin{itemize}
+  \item A \textemph{function} does not \textmark{decay} into a \textemph{function pointer}.
+\end{itemize}
+
+\begin{block}{Deducing for functions}
+\begin{lstlisting}
+long add(long x, long y) { return x+y; }
+long sub(long x, long y) { return x-y; }
+
+void f() {
+  auto r1 = maximum(add, sub); // OK. T=long(long,long)
+
+  auto & fun1 = add; // long (&)(long,long)
+  auto * fun2 = sub; // long (*)(long,long)
+  auto r2 = maximum(fun1, fun2); // Error. T = reference / T = pointer
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
