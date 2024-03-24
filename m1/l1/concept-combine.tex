@@ -27,7 +27,41 @@ void print_square(std::floating_point auto x) {
 \end{block}
 \end{frame}
 
-\begin{frame}[t,fragile]{A new concept}
+\begin{frame}[t,fragile]{Concept combination}
+\begin{itemize}
+  \item A \cppkey{concept} can be defined as a logical combination of other concepts.
+    \begin{itemize}
+      \item Logical connectives \cppkey{and}, \cppkey{or}, and \cppkey{not} can be used.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Concept definition}
+\begin{lstlisting}
+template <typename T>
+concept arithmetic = 
+    std::integral<T> or 
+    std::floating_point<T>;
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Square function}
+\begin{lstlisting}
+void print_square(arithmetic auto x) {
+  std::cout << x << "^2 = " << x*x << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{A concept from a type trait}
 \begin{itemize}
   \item A \cppkey{concept} can be defined as a predicate on a type.
     \begin{itemize}
@@ -37,6 +71,9 @@ void print_square(std::floating_point auto x) {
 
   \mode<presentation>{\vfill\pause}
   \item We can take advantage of the \cppid{std::is\_arithmetic\_v<T>} type trait.
+    \begin{itemize}
+      \item Defined in \cppid{<type\_traits>} header.
+    \end{itemize}
 \end{itemize}
 
 \mode<presentation>{\vfill\pause}
