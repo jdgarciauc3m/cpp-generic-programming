@@ -19,7 +19,7 @@
     \mode<presentation>{\vfill\pause}
     \item \textmark{Instantiation time}.
       \begin{itemize}
-        \item Check all parts that depende on generic types.
+        \item Check all parts that depend on generic types.
       \end{itemize}
 
   \end{enumerate}
@@ -32,7 +32,7 @@
 void print_square(std::integral auto x) {
   print("hello"); // Undeclared identifier print
 
-  std::integral auto r = x * x // Syntax error: mssing semicolon
+  std::integral auto r = x * x // Syntax error: missing semicolon
 
   static_assert(sizeof(int) >= sizeof(long)); // static_assert failed
 }
@@ -78,8 +78,10 @@ int main() {
 \begin{itemize}
   \item Instantiation time errors depend on properties unknown until a specific instantiation occurs.
 
-  \item When istantiation happens the defintion must be visible.
+  \mode<presentation>{\vfill\pause}
+  \item When instantiation happens the defintion must be visible.
 
+  \mode<presentation>{\vfill\pause}
   \item \textbad{Consequence}: Generic functions need to be defined before they are used.
     \begin{itemize}
       \item Place generic functions in header files.
