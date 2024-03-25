@@ -39,9 +39,6 @@ void f() {
 
 \begin{frame}[t,fragile,allowframebreaks]{Deducing template parameters}
 
-\begin{columns}
-
-\column{.5\textwidth}
 \begin{itemize}
   \item References to \cppid{T} \textmark{decay} to \cppid{T}
     \begin{itemize}
@@ -49,7 +46,6 @@ void f() {
     \end{itemize}
 \end{itemize}
 
-\column{.5\textwidth}
 \begin{block}{Deducing references}
 \begin{lstlisting}
 void f() {
@@ -63,19 +59,13 @@ void f() {
 \end{lstlisting}
 \end{block}
 
-\end{columns}
-
 \framebreak
 
-\begin{columns}
-
-\column{.5\textwidth}
 \begin{itemize}
   \item A type \cppid{T} which is \cppkey{const} and/or \cppkey{volatile}
         \textmark{decays} in the corresponding type without such qualification.
 \end{itemize}
 
-\column{.5\textwidth}
 \begin{block}{Deducing with \textbf{const}/\textbf{volatile}}
 \begin{lstlisting}
 void f() {
@@ -83,21 +73,15 @@ void f() {
   int const cx = x;
   int const & crx = x;
   int const && rrz = x + y;
-
   auto r1 = maximum(cx, y); // T = int
   auto r2 = maximum(crx, y); // T = int
   auto r3 = maximum(rrz, y); // T = int
 }
 \end{lstlisting}
 \end{block}
-\end{columns}
 
 \framebreak
 
-\mode<presentation>{\vspace{-1em}}
-\begin{columns}
-
-\column{.5\textwidth}
 \begin{itemize}
   \item An array of \cppid{T} \textmark{decays} to \cppid{T*}.
     \begin{itemize}
@@ -106,7 +90,6 @@ void f() {
     \end{itemize}
 \end{itemize}
 
-\column{.5\textwidth}
 \begin{block}{Deducing an array}
 \begin{lstlisting}
 void f() {
@@ -117,17 +100,12 @@ void f() {
 \end{lstlisting}
 \end{block}
 
-\end{columns}
+\framebreak
 
-\mode<presentation>{\vfill\pause}
-
-\begin{columns}
-\column{.5\textwidth}
 \begin{itemize}
   \item A reference to array of \cppid{T} \textmark{decays} to \cppid{T*}.
 \end{itemize}
 
-\column{.5\textwidth}
 \begin{block}{Deducing a reference to an array of \textbf{T}}
 \begin{lstlisting}
 void f() {
@@ -138,14 +116,8 @@ void f() {
 \end{lstlisting}
 \end{block}
 
-\end{columns}
-
 \framebreak
 
-\mode<presentation>{\vspace{-1em}}
-
-\begin{columns}
-\column{.4\textwidth}
 \begin{itemize}
   \item But an array of \cppid{T const} \textmark{decays} to \cppid{T const *}.
     \begin{itemize}
@@ -153,7 +125,6 @@ void f() {
     \end{itemize}
 \end{itemize}
 
-\column{.6\textwidth}
 \begin{block}{Deducing an array of \textbf{T const}}
 \begin{lstlisting}
 void f() {
@@ -163,12 +134,9 @@ void f() {
 }
 \end{lstlisting}
 \end{block}
-\end{columns}
 
-\mode<presentation>{\vfill\pause}
+\framebreak
 
-\begin{columns}
-\column{.4\textwidth}
 \begin{itemize}
   \item However, a \cppid{T * const} \textmark{decays} to \cppid{T *}.
     \begin{itemize}
@@ -176,7 +144,6 @@ void f() {
     \end{itemize}
 \end{itemize}
 
-\column{.6\textwidth}
 \begin{block}{Deducing a \textbf{const} pointer to \textbf{T}}
 \begin{lstlisting}
 void f() {
@@ -186,26 +153,18 @@ void f() {
 }
 \end{lstlisting}
 \end{block}
-\end{columns}
 
 \framebreak
 
-\begin{columns}
-
-\column{.4\textwidth}
 \begin{itemize}
   \item A \textemph{function} \textmark{decays} into a \textemph{function pointer}.
-
-  \mode<presentation>{\vspace{2em}}
 
   \item A \textemph{function reference} \textmark{decays} into a \textemph{function pointer}. 
 \end{itemize}
 
-\column{.6\textwidth}
 \begin{block}{Deducing functions and reference to functions}
 \begin{lstlisting}
 long add(long x, long y) { return x+y; }
-
 long sub(long x, long y) { return x-y; }
 
 void f() {
@@ -217,6 +176,5 @@ void f() {
 }
 \end{lstlisting}
 \end{block}
-\end{columns}
 
 \end{frame}
