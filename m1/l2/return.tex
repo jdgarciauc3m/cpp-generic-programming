@@ -1,0 +1,92 @@
+\subsection{Return type of a generic function}
+
+\begin{frame}[t,fragile]{Returning a value}
+
+\mode<presentation>{\vspace{-1em}}
+
+\begin{itemize}
+  \item With single function template parameters there is a single choice.
+
+\begin{block}{Return type with on template parameter}
+\begin{lstlisting}
+template<arithmetic T>
+T modulo(T x, T y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item Return type will be the same as template function 
+
+\begin{block}{Invocation and return type}
+\begin{lstlisting}
+void f() {
+  auto a = modulo(2,3); // a is int. Value is 13
+  auto b = modulo(2.1, 3.2); // b is double. Value is 14.65
+  auto c = modulo(2.1, 3); // Error T = double / T = int
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Choices for return type with 2 template parameters}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item If a function has more than one template parameter, a choice is needed.
+
+\begin{block}{A choice for the return type}
+\begin{lstlisting}
+template<arithmetic T, arithmetic U>
+T modulo(T x, U y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Danger}: Be careful with the result type.
+
+\begin{block}{Invocation and result type}
+\begin{lstlisting}
+void f() {
+  auto a = modulo(2,3); // a is int. Value is 13
+  auto b = modulo(2.1, 3); // b is double. Value 13.41
+  auto c = modulo(2, 3.1); // c is double. Value is 13. Ouch!!!
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Alternatives for return type}
+\begin{itemize}
+  \item Solutions to deal with return type:
+    \begin{itemize}
+      \item An additional function template parameter.
+\begin{lstlisting}
+template <typename R, typename T, typename U>
+R func(T x, U y);
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item Find a common type with \cppid{std::common\_type}.
+\begin{lstlisting}
+template <typename T, typename U>
+std::common_type<T,U> func(T x, U y);
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item Use return type deduction.
+\begin{lstlisting}
+template <typename T, typename U>
+auto func(T x, U y);
+\end{lstlisting}
+
+    \end{itemize}
+\end{itemize}
+\end{frame}

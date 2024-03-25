@@ -1,0 +1,43 @@
+\subsection{Determining a common type}
+
+\begin{frame}[t,fragile]{Determining a common type}
+\begin{itemize}
+  \item The library provides a \textmark{type trait} to determine
+        the common type among several types (\cppid{std::common\_type}).
+    \begin{itemize}
+      \item Available from header \cppid{<type\_traits>}.
+      \item Type \cppid{std::common\_type<T1, T2, \ldots>::type}.
+      \item Alias \cppid{std::common\_type\_t<T1, T2, \ldots>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Resulting type}
+    \begin{itemize}
+      \item A type to which all types \cppid{T1}, \cppid{T2}, \cppid{\ldots} are 
+            \textmark{implicitly convertible}.
+         \begin{itemize}
+           \item It may not exist.
+           \item Users may specialize the \cppid{std::common\_type} for their own types.
+         \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using a common return type}
+\begin{itemize}
+  \item A return type may be the common type of template parameters.
+    \begin{itemize}
+      \item Template notation is needed to name template parameters.
+    \end{itemize}
+
+\begin{block}{Return type with a common type}
+\begin{lstlisting}
+template <arithmetic T, arithmetic U>
+std::common_type_t<T,U> modulo(T x, U y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}

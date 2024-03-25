@@ -1,0 +1,50 @@
+\subsection{Introduction}
+
+\begin{frame}[t,fragile]{Parameters in a template}
+\begin{itemize}
+  \item A function template may have mutiple parameters.
+
+\begin{block}{Function with several parameters}
+\begin{lstlisting}
+template <arithmetic T>
+void print_modulo(T x, T y) {
+  std::cout << "| <" << x << "," << y << "> | = " << x*x + y*y <<'\n';
+}
+\end{lstlisting}
+\end{block}
+
+  \item Parameters:
+    \begin{itemize}
+      \item \textmark{Function template parameter}: \cppid{T}.
+      \item \textmark{Function invocation parameters}: \cppid{x} and \cppid{y}.
+    \end{itemize}
+
+  \item \textbad{Note}:
+    \begin{itemize}
+      \item \cppid{x} and \cppid{y} must be of the same type \cppid{T}.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Function template parameters and invocation}
+\begin{itemize}
+  \item When a function template is instantiated all function invocation parameters
+        for the same type must match that type.
+
+\begin{block}{Function invocation}
+\begin{lstlisting}
+void f() {
+  print_modulo(2,3); // OK. T = int
+  print_modulo(2,3.0); // Error T = int / T = double
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}:
+    \begin{itemize}
+      \item Use different function template parameters.
+    \end{itemize}
+\end{itemize}
+\end{frame}

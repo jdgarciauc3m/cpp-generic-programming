@@ -1,0 +1,106 @@
+\subsection{Additional template parameter for return type}
+
+\begin{frame}[t,fragile]{Explicitly specifying template arguments}
+\begin{itemize}
+  \item When a generic function is invoked its template arguments are deduce.
+    \begin{itemize}
+      \item However they can be explicitly specified.
+    \end{itemize}
+
+\begin{block}{Explict function call}
+\begin{lstlisting}
+template <arithmetic T>
+void print_modulo(T x, T y) {
+  std::cout << "| <" << x << "," << y << "> | = " << x*x + y*y <<'\n';
+}
+
+void f() {
+  print_modulo(2,3); // T = int
+  print_modulo(2.0,3);  // Error. T = double / T = int
+  print_modulo<double>(2.0,3); // OK. T = double. 3 -> double
+  print_modulo<int>(2.0,3); // OK. T = int. 2.0 -> int
+}
+
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Explicitly specifying multiple parameters}
+\begin{itemize}
+  \item Multiple template arguments can be explicitly specified.
+
+\begin{block}{Explicit function call and multiple parameters}
+\begin{lstlisting}
+template <arithmetic T, arithmetic U>
+void print_modulo(T x, U y) {
+  std::cout << "| <" << x << "," << y << "> | = " << x*x + y*y <<'\n';
+}
+
+void f() {
+  print_modulo(2,3.1); // T = int, U = double
+  print_module<int>(2, 3.1); // T = int, U = double
+  print_module<int,double>(2, 3.1); // T = int, U = double
+  print_module<int,int>(2, 3.1); // T = int, U = int
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Providing a function template parameter for return type}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item An extra function template parameter may be used for the return type.
+
+\begin{block}{A return type template parameter}
+\begin{lstlisting}
+template<arithmetic T, arithmetic U, arithmetic R>
+R modulo(T x, U y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item Function template argument deduction does not apply to return type.
+
+\begin{block}{Invocation}
+\begin{lstlisting}
+void f() {
+  auto a = modulo<double, int, double>(2.0, 3); // OK. R = double
+  auto b = modulo<double, int>(2.0, 3); // Error: Cannot deduce R
+  auto c = modulo(2.0, 3); // Cannot deduce T, U, R
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Making argument deduction simpler}
+\begin{itemize}
+  \item \textgood{Idea}: Make the return type the first parameter.
+    \begin{itemize}
+      \item We can still deduce other arguments.
+    \end{itemize}
+\begin{block}{A return type template parameter}
+\begin{lstlisting}
+template<arithmetic R, arithmetic T, arithmetic U>
+R modulo(T x, U y) {
+  return x * x + y * y;
+}
+
+void f() {
+  auto a = modulo<double, int, double>(2.0, 3); // OK. R = double
+  auto b = modulo<double>(2.0, 3); // OK. R= double, T = double, U = int
+  auto c = modulo(2.0, 3); // Cannot deduce R, T, U
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}

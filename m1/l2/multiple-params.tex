@@ -1,8 +1,8 @@
-\subsection{Generic functions with multiple generic parameters}
+\subsection{Constraining multiple generic parameters}
 
 \begin{frame}[t,fragile]{A generic maximum function}
 \begin{itemize}
-  \item A function may take \textmark{multiple} generic parameters.
+  \item Let's consider a \cppid{maximum} function:
 
 \begin{block}{A generic maximum function}
 \begin{lstlisting}
@@ -13,69 +13,15 @@ arithmetic auto maximum(arithmetic auto x, arithmetic auto y) {
 \end{block}
 
   \mode<presentation>{\vfill\pause}
-  \item Each generic parameter can be of a \textmark{different} type.
-
-\begin{block}{Invoking maximum()}
-\begin{lstlisting}
-void f() {
-  arithmetic auto r1 = maximum(3, 2L); // returns 2 as long
-  arithmetic auto r2 = maximum(1.0, 4); // returns 4.0 as double
-}
-\end{lstlisting}
-\end{block}
-
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t,fragile]{Repeating the same type}
-\begin{itemize}
-  \item What if we want both parameters to be from \textmark{exactly} the same type?
+  \item \textmark{Requirements}:
     \begin{itemize}
-      \item Use the \textemph{template notation}.
+      \item \cppid{x} and \cppid{y} must be of arithmetic types.
+      \item \cppid{x>y} must be a boolean expression.
+      \item The result must be of an arithmetic type.
     \end{itemize}
 
-\mode<presentation>{\vfill\pause}
-
-\begin{columns}[T]
-
-\column{.4\textwidth}
-
-\begin{block}{A generic maximum function}
-\begin{lstlisting}
-template <arithmetic T>
-T maximum(T x, T y) {
-  return (x>y) ? x : y;
-}
-\end{lstlisting}
-\end{block}
-
-\column{.6\textwidth}
-
-\pause
-\begin{block}{A generic maximum function}
-\begin{lstlisting}
-void f() {
-  auto r1 = maximum(2,3); // OK, r1 == 3
-  auto r2 = maximum(2, 3L); // Conflict T=int or long?
-  auto r3 = maximum(2.0, 3); // Conflict T=double, int?
-}
-\end{lstlisting}
-
-\end{block}
-
-\end{columns}
-
-  \mode<presentation>{\vfill\pause}
-  \item \cppid{T} is a type that satisfies the \cppid{arithmetic} concept.
-    \begin{itemize}
-      \item Parameters \cppid{x} and \cppid{y} must be of the same type \cppid{T}.
-      \item Return type is of the same type \cppid{T}.
-    \end{itemize} 
-
 \end{itemize}
 \end{frame}
-
-\subsection{Constraining multiple generic parameters}
 
 \begin{frame}[t,fragile]{Extending maximum() for more types}
 \begin{itemize}
@@ -101,15 +47,6 @@ void f() {
         \end{itemize}
     \end{itemize}
 
-  \mode<presentation>{\vfill\pause}
-  \item What about the result type?
-    \begin{itemize}
-      \item Use \cppid{common\_type\_t<T,U>}.
-        \begin{itemize}
-          \item A type \cppid{R} that types \cppid{T} and \cppid{U} can be implicitly converted to.
-        \end{itemize}
-    \end{itemize}
-
 \end{itemize}
 \end{frame}
 
@@ -118,20 +55,20 @@ void f() {
 \begin{lstlisting}
 template <typename T, typename U>
   requires totally_ordered_with<T,U>
-std::common_type_t<T,U> maximum(T x, U y) {
+auto maximum(T x, U y) {
   return (x>y) ? x : y;
 }
 \end{lstlisting}
 \end{block}
 
 \begin{itemize}
-  \mode<presentation>{\vfill\pause}
-  \item Keyword \cppkey{typename} means that the \textmark{template parameter} can be
-        \textgood{any type}.
+  \mode<presentation>{\vfill}
+  \item The \cppkey{requires} clause here is useful for expressing requirements on multiple
+        generic parameters.
 
   \mode<presentation>{\vfill}
-  \item The \cppkey{requires} clause is useful for expressing requirements on multiple
-        generic parameters.
+  \item Function \cppid{maximum} is defined for any pair of types \cppid{T} and \cppid{U}
+        that are totally ordered.
 \end{itemize}
 
 \end{frame}
@@ -144,7 +81,7 @@ void f() {
   using namespace std::literals;
   auto r1 = maximum("carlos"s,"daniel"s); // r1 = "daniel"
 
-  auto r2 = maximum("carlos","daniel"); // r2 = "carlos"
+  auto r2 = maximum("carlos","daniel"); // r2 = "carlos". Ouch!
 }  
 \end{lstlisting}
 \end{block}
@@ -166,7 +103,7 @@ void f() {
 \begin{lstlisting}
 template<typename T, typename U>
     requires std::totally_ordered_with<T, U>
-std::common_type_t<T, U> maximum(T x, U y) {
+auto maximum(T x, U y) {
   static_assert(not std::is_pointer_v<T>, "T must not be a pointer type");
   static_assert(not std::is_pointer_v<U>, "T must not be a pointer type");
   return (x > y) ? x : y;
@@ -194,7 +131,7 @@ template<typename T, typename U>
     requires std::totally_ordered_with<T, U>
         and (not std::is_pointer_v<T>)
         and (not std::is_pointer_v<U>)
-std::common_type_t<T, U> maximum(T x, U y) {
+auto maximum(T x, U y) {
   return (x > y) ? x : y;
 }
 \end{lstlisting}

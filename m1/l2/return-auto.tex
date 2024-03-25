@@ -1,0 +1,65 @@
+\subsection{Return type deduction} 
+
+\begin{frame}[t,fragile]{Deducing the return type}
+\begin{itemize}
+  \item The return type of a function can be deduced from its body.
+    \begin{itemize}
+      \item The function definition must be available before is use.
+    \end{itemize}
+
+\begin{block}{Return type deduction}
+\begin{lstlisting}
+template <arithmetic T, arithmetic U>
+auto modulo(T x, U y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Return type deduction and implicit templates}
+\begin{itemize}
+  \item It can be used also with implicit generic paramters.
+
+\begin{block}{Return type deduction}
+\begin{lstlisting}
+auto modulo(arithmetic auto x, arithmetic auto y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constraining deduced return type}
+\begin{itemize}
+  \item A return type deduced with \cppkey{auto} may be constrained.
+
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{block}{Constrained return type deduction}
+\begin{lstlisting}
+template <arithmetic T, arithmetic U>
+arithmetic auto modulo(T x, U y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+
+\column{.6\textwidth}
+\begin{block}{Return type deduction}
+\begin{lstlisting}
+arithmetic auto modulo(arithmetic auto x, arithmetic auto y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
