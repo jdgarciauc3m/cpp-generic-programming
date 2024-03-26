@@ -15,9 +15,9 @@ void print(arithmetic auto x) {
 }
 
 int main() {
-  arithmetic auto r1 = maximum(5,3L);
-  print(r1);
+  //arithmetic auto r1 = maximum(5,3L);
+  //print(r1);
 
-  arithmetic auto r2 = maximum(2.0f, 3);
-  print(r2);
+  //arithmetic auto r2 = maximum(2.0f, 3);
+  //print(r2);
 }

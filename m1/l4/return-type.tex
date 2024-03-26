@@ -7,12 +7,12 @@
 \begin{block}{Deduced versus specified return type}
 \begin{lstlisting}
 template <arithmetic T>
-T add_squares(T x, T y) {
+T squares_sum(T x, T y) {
   return x * x + y * y;
 }
 
 template <arithmetic R, arithmetic T>
-R add_squares(T x, T y) {
+R squares_sum(T x, T y) {
   return x * x + y * y;
 }
 \end{lstlisting}
@@ -30,13 +30,13 @@ R add_squares(T x, T y) {
 \begin{block}{Invoking with explicit return type}
 \begin{lstlisting}
 void f() {
-  auto r1 = add_squares(2,3); // add_squares<int>(int,int)
+  auto r1 = squares_sum(2,3); // squares_sum<int>(int,int)
 
-  auto r2 = add_squares<double>(2,3); // add_squares<double,int>(int, int)
+  auto r2 = squares_sum<double>(2,3); // squares_sum<double,int>(int, int)
 
-  auto r3 = add_squares<int>(2,3); // Ambiguous
-    // add_squares<int>(int,int)
-    // add_squares<int,int>(int,int)
+  auto r3 = squares_sum<int>(2,3); // Ambiguous
+    // squares_sum<int>(int,int)
+    // squares_sum<int,int>(int,int)
 }
 \end{lstlisting}
 \end{block}

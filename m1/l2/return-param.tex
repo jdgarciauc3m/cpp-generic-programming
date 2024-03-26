@@ -2,7 +2,7 @@
 
 \begin{frame}[t,fragile]{Explicitly specifying template arguments}
 \begin{itemize}
-  \item When a generic function is invoked its template arguments are deduce.
+  \item When a generic function is invoked its template arguments are deduced.
     \begin{itemize}
       \item However they can be explicitly specified.
     \end{itemize}
@@ -10,15 +10,15 @@
 \begin{block}{Explict function call}
 \begin{lstlisting}
 template <arithmetic T>
-void print_modulo(T x, T y) {
-  std::cout << "| <" << x << "," << y << "> | = " << x*x + y*y <<'\n';
+void print_squares_sum(T x, T y) {
+  std::cout << "|<" << x << "," << y << ">|^2 = " << x*x + y*y <<'\n';
 }
 
 void f() {
-  print_modulo(2,3); // T = int
-  print_modulo(2.0,3);  // Error. T = double / T = int
-  print_modulo<double>(2.0,3); // OK. T = double. 3 -> double
-  print_modulo<int>(2.0,3); // OK. T = int. 2.0 -> int
+  print_squares_sum(2,3); // T = int
+  print_squares_sum(2.0,3);  // Error. T = double / T = int
+  print_squares_sum<double>(2.0,3); // OK. T = double. 3 -> double
+  print_squares_sum<int>(2.0,3); // OK. T = int. 2.0 -> int
 }
 
 \end{lstlisting}
@@ -34,12 +34,12 @@ void f() {
 \begin{block}{Explicit function call and multiple parameters}
 \begin{lstlisting}
 template <arithmetic T, arithmetic U>
-void print_modulo(T x, U y) {
+void print_squares_sum(T x, U y) {
   std::cout << "| <" << x << "," << y << "> | = " << x*x + y*y <<'\n';
 }
 
 void f() {
-  print_modulo(2,3.1); // T = int, U = double
+  print_squares_sum(2,3.1); // T = int, U = double
   print_module<int>(2, 3.1); // T = int, U = double
   print_module<int,double>(2, 3.1); // T = int, U = double
   print_module<int,int>(2, 3.1); // T = int, U = int
@@ -59,7 +59,7 @@ void f() {
 \begin{block}{A return type template parameter}
 \begin{lstlisting}
 template<arithmetic T, arithmetic U, arithmetic R>
-R modulo(T x, U y) {
+R squares_sum(T x, U y) {
   return x * x + y * y;
 }
 \end{lstlisting}
@@ -71,9 +71,9 @@ R modulo(T x, U y) {
 \begin{block}{Invocation}
 \begin{lstlisting}
 void f() {
-  auto a = modulo<double, int, double>(2.0, 3); // OK. R = double
-  auto b = modulo<double, int>(2.0, 3); // Error: Cannot deduce R
-  auto c = modulo(2.0, 3); // Cannot deduce T, U, R
+  auto a = squares_sum<double, int, double>(2.0, 3); // OK. R = double
+  auto b = squares_sum<double, int>(2.0, 3); // Error: Cannot deduce R
+  auto c = squares_sum(2.0, 3); // Cannot deduce T, U, R
 }
 \end{lstlisting}
 \end{block}
@@ -90,14 +90,14 @@ void f() {
 \begin{block}{A return type template parameter}
 \begin{lstlisting}
 template<arithmetic R, arithmetic T, arithmetic U>
-R modulo(T x, U y) {
+R squares_sum(T x, U y) {
   return x * x + y * y;
 }
 
 void f() {
-  auto a = modulo<double, int, double>(2.0, 3); // OK. R = double
-  auto b = modulo<double>(2.0, 3); // OK. R= double, T = double, U = int
-  auto c = modulo(2.0, 3); // Cannot deduce R, T, U
+  auto a = squares_sum<double, int, double>(2.0, 3); // OK. R = double
+  auto b = squares_sum<double>(2.0, 3); // OK. R= double, T = double, U = int
+  auto c = squares_sum(2.0, 3); // Cannot deduce R, T, U
 }
 \end{lstlisting}
 \end{block}

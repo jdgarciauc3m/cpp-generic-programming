@@ -10,7 +10,7 @@
 \begin{block}{Return type deduction}
 \begin{lstlisting}
 template <arithmetic T, arithmetic U>
-auto modulo(T x, U y) {
+auto squares_sum(T x, U y) {
   return x * x + y * y;
 }
 \end{lstlisting}
@@ -25,7 +25,7 @@ auto modulo(T x, U y) {
 
 \begin{block}{Return type deduction}
 \begin{lstlisting}
-auto modulo(arithmetic auto x, arithmetic auto y) {
+auto squares_sum(arithmetic auto x, arithmetic auto y) {
   return x * x + y * y;
 }
 \end{lstlisting}
@@ -44,17 +44,17 @@ auto modulo(arithmetic auto x, arithmetic auto y) {
 \begin{block}{Constrained return type deduction}
 \begin{lstlisting}
 template <arithmetic T, arithmetic U>
-arithmetic auto modulo(T x, U y) {
+arithmetic auto squares_sum(T x, U y) {
   return x * x + y * y;
 }
 \end{lstlisting}
 \end{block}
 
 
-\column{.6\textwidth}
+\column{.62\textwidth}
 \begin{block}{Return type deduction}
 \begin{lstlisting}
-arithmetic auto modulo(arithmetic auto x, arithmetic auto y) {
+arithmetic auto squares_sum(arithmetic auto x, arithmetic auto y) {
   return x * x + y * y;
 }
 \end{lstlisting}
