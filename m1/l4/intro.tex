@@ -1,0 +1,77 @@
+\subsection{Introduction}
+
+\begin{frame}[t,fragile]{Overload resolution and generic programming}
+\begin{itemize}
+  \item A generic function may have a non-generic overload.
+
+\begin{block}{Overloading a generic function}
+\begin{lstlisting}
+double add_squares(double x, double y) {
+  return x * x + y * y;
+}
+
+template <arithmetic T>
+T add_squares(T x, T y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{But}:
+    \begin{itemize}
+      \item How does selection work?
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Better match}
+\begin{itemize}
+  \item A non-generic version is always preferred to a generic version.
+    \begin{itemize}
+      \item But if the generic leads to a better match, it is preferred.
+    \end{itemize}
+
+\begin{block}{Non-generic better match}
+\begin{lstlisting}
+void f() {
+  auto r1 = add_squares(2.0, 3.5); // add_squares(double,double)
+
+  auto r2 = add_squares(2, 3); // add_squares<int>(int,int)
+  auto r3 = add_squares(2.5f, 3.5f); // add_squares<float>(float,float)
+
+  auto r4 = add_squares(2, 3.5); // add_squares(double,double)
+}
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Only generic better match}
+\begin{itemize}
+  \item If an empty angle-bracket is used, only generic versions are considered:
+
+\begin{block}{Generic better match}
+\begin{lstlisting}
+void f() {
+  auto r1 = add_squares<>(2.0, 3.5); // add_squares<double>(double,double)
+
+  auto r2 = add_squares<>(2, 3); // add_squares<int>(int,int)
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item However, type conversions are not considered in templates.
+
+\begin{block}{Generic better match}
+\begin{lstlisting}
+void f() {
+  auto r1 = add_squares<>(2, 3.5); // Error: T=int / T=double
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}

@@ -1,0 +1,140 @@
+\subsection{Generic overloads and pointers}
+
+\begin{frame}[t,fragile]{Printing values}
+\begin{itemize}
+  \item A generic overload can be used to print values and pointers.
+
+\begin{block}{Printing values and pointers}
+\begin{lstlisting}
+void print(auto x) {
+  std::cout << "value = " << x << '\n';
+}
+
+void print(auto * p) {
+  std::cout << "address: " << static_cast<void*>(p);
+  std::cout << ". value = " << *p << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using a generic printer}
+\begin{block}{Invocations for a generic printer}
+\begin{lstlisting}
+void f() {
+  int x = 42:
+  print(x); // print<int>(int)
+
+  int * px = &x;
+  print(px); // print<int>(int*)
+
+  using namespace std::literals
+  print("Daniel"s); // print<std::string>(std::string)
+
+  print("Daniel"); // Error. Cannot cast char const * to void *
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Overload for C-strings}
+\begin{itemize}
+  \item A non-generic overload added for C-strings.
+
+\begin{block}{Printing values and pointers}
+\begin{lstlisting}
+void print(auto x) {
+  std::cout << "value = " << x << '\n';
+}
+
+void print(auto * p) {
+  std::cout << "address: " << static_cast<void*>(p);
+  std::cout << ". value = " << *p << '\n';
+}
+
+void print(char const * s) {
+  std::cout << "string = \"" << s << "\"\n";
+}
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using a generic printer}
+\begin{block}{Invocations for a generic printer}
+\begin{lstlisting}
+void f() {
+  int x = 42:
+  print(x); // print<int>(int)
+
+  int * px = &x;
+  print(px); // print<int>(int*)
+
+  using namespace std::literals
+  print("Daniel"s); // print<std::string>(std::string)
+
+  print("Daniel"); // print(char const *)
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=15]{Print composition}
+\begin{itemize}
+  \item A multi-value print can be defined in terms of simpler functions.
+
+\begin{block}{A multi-value print}
+\begin{lstlisting}
+void print(auto x) {
+  std::cout << "value = " << x << '\n';
+}
+
+void print(auto * p) {
+  std::cout << "address: " << static_cast<void*>(p);
+  std::cout << ". value = " << *p << '\n';
+}
+
+void print(auto x, auto y) {
+  print(x);
+  print(y);
+}
+
+void f() {
+  print(42, "Daniel"); // prints 42 and "Daniel"
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=15]{A multi-value print and order}
+\begin{itemize}
+
+  \item Order of definition is important.
+
+\begin{block}{A multi-value print}
+\begin{lstlisting}
+void print(auto x) {
+  std::cout << "value = " << x << '\n';
+}
+
+void print(auto x, auto y) {
+  print(x);
+  print(y);
+}
+
+void print(auto * p) {
+  std::cout << "value = " << *p << '\n';
+}
+
+void f() {
+  print(42, "Daniel"); // prints 42 and 'D'
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}

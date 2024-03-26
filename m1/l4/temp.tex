@@ -1,0 +1,146 @@
+\subsection{Overlading templates and temporaries}
+
+\begin{frame}[t,fragile]{Overloading by value}
+
+\begin{columns}[T]
+
+\column{.55\textwidth}
+\begin{block}{Overloads of \textbf{maximum}}
+\begin{lstlisting}
+template <std::totally_ordered T>
+T maximum(T x, T y) {
+  return x > y ? x : y;
+}
+
+template <typename T>
+T * maximum(T * px, T * py) {
+  return (*px > * py) ? px : py;
+}
+
+char const * maximum(char const * s1, char const * s2) {
+  return std::strcmp(s1,s2)>0 ? s1 : s2;
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.45\textwidth}
+\begin{block}{Invoking maximum}
+\begin{lstlisting}
+void f() {
+  auto r1 = maximum(2,4); // max of ints
+
+  double a = 2.5, b = 3.2;
+  double *pa = &a, *pb = &b;
+  auto r2 = maximum(pa,pb); // max of pointers
+
+  // Max of C-strings
+  auto r3 = maximum("Daniel", "Carlos");
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{A multi-value maximum}
+\begin{itemize}
+  \item A multi-value \cppid{maximum} defined in terms of simpler versions.
+
+\begin{block}{A maximum of three values}
+\begin{lstlisting}
+template <typename T>
+T maximum(T x, T y, T z) {
+  return maximum(maximum(x,y),z);
+}
+\end{lstlisting}
+\end{block}
+
+  \item No problem for C-strings.
+
+\begin{block}{Invoking maximum}
+\begin{lstlisting}
+void f() {
+  auto r = maximum("Daniel", "Carlos", "Maria"); // OK
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Overloading by reference}
+
+\begin{columns}[T]
+
+\column{.55\textwidth}
+\begin{block}{Overloads of \textbf{maximum}}
+\begin{lstlisting}
+template <std::totally_ordered T>
+T const & maximum(T const & x, T const & y) {
+  return x > y ? x : y;
+}
+
+template <typename T>
+T const * maximum(T const * px, T const * py) {
+  return (*px > * py) ? px : py;
+}
+
+char const * maximum(char const * s1, char const * s2) {
+  return (std::strcmp(s1,s2)>0 ? s1 : s2;
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.45\textwidth}
+\begin{block}{Invoking maximum}
+\begin{lstlisting}
+void f() {
+  auto r1 = maximum(2,4); // max of ints
+
+  double a = 2.5, b = 3.2;
+  double *pa = &a, *pb = &b;
+  auto r2 = maximum(pa,pb); // max of pointers
+
+  // Max of C-strings
+  auto r3 = maximum("Daniel", "Carlos");
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{A multi-reference maximum}
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item A multi-reference \cppid{maximum} defined in terms of simpler versions.
+
+\begin{block}{A maximum of three values}
+\begin{lstlisting}
+template <typename T>
+T const & maximum(T const & x, T const & y, T const & z) {
+  return maximum(maximum(x,y),z);
+}
+\end{lstlisting}
+\end{block}
+
+  \item A \textbad{problem} for C-strings.
+    \begin{itemize}
+      \item Passes a a reference to a temporary.
+    \end{itemize}
+
+\begin{block}{Invoking maximum}
+\begin{lstlisting}
+void f() {
+  char const * s1 = "Daniel", * s2 = "Carlos", * s3 = "Maria";
+  auto r = maximum(s1, s2, s3); // Undefined behavior
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+

@@ -1,0 +1,45 @@
+\subsection{Overloading and return type}
+
+\begin{frame}[t,fragile]{Specifying return type}
+\begin{itemize}
+  \item An overload can be used to allow specifying the return type.
+
+\begin{block}{Deduced versus specified return type}
+\begin{lstlisting}
+template <arithmetic T>
+T add_squares(T x, T y) {
+  return x * x + y * y;
+}
+
+template <arithmetic R, arithmetic T>
+R add_squares(T x, T y) {
+  return x * x + y * y;
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Implicit versus explicit return type}
+\begin{itemize}
+
+  \item Only one overload must be a better match.
+
+\begin{block}{Invoking with explicit return type}
+\begin{lstlisting}
+void f() {
+  auto r1 = add_squares(2,3); // add_squares<int>(int,int)
+
+  auto r2 = add_squares<double>(2,3); // add_squares<double,int>(int, int)
+
+  auto r3 = add_squares<int>(2,3); // Ambiguous
+    // add_squares<int>(int,int)
+    // add_squares<int,int>(int,int)
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
