@@ -13,17 +13,47 @@ void print_vector(fixed_vector<T> const & v) {
   }
 }
 
-int main() {
-  std::set_terminate([]() {
-    std::cerr << "Terminate called\n";
-  });
-
-  fixed_vector<double> v{10};
-  print_vector(v);
+void f1() {
+// NOLINTBEGIN
+  fixed_vector<double> vec{10};
+  print_vector(vec);
 
   std::cout << "\npush_back(1)\npush_back(2)\n";
-  v.push_back(1);
-  v.push_back(2);
-  print_vector(v);
+  vec.push_back(1);
+  vec.push_back(2);
+  print_vector(vec);
+  auto vec2 = vec;
 
+  fixed_vector<std::string> names{5};
+  names.push_back("Daniel");
+  names.push_back("Maria");
+  print_vector(names);
+// NOLINTEND
+}
+
+void f2() {
+// NOLINTBEGIN
+  //fixed_vector<std::unique_ptr<std::string>> vec{10};
+// NOLINTEND
+}
+
+void f3() {
+  // NOLINTBEGIN
+  fixed_vector<double> marks{10};
+  marks.push_back(1.5);
+  marks.push_back(2.5);
+  marks.push_back(3.5);
+  marks.serialize(std::cout);
+
+  using entry = std::tuple<std::string, double>;
+  fixed_vector<entry> students{4};
+  students.push_back({"John", 5});
+  //students.serialize(std::cout);
+  // NOLINTEND
+}
+
+int main() {
+  f1();
+  f2();
+  f3();
 }

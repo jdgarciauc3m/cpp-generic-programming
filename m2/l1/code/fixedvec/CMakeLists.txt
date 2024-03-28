@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.27)
 project(fixedvec)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors -Wsign-conversion)
 add_compile_options(-lstdc++_libbacktrace -llibstdc++exp)
@@ -14,6 +16,8 @@ FetchContent_Declare(GSL
         GIT_SHALLOW ON
 )
 FetchContent_MakeAvailable(GSL)
+
+set(CMAKE_CXX_CLANG_TIDY clang-tidy -header-filter=.*)
 
 add_executable(fixedvec main.cpp)
 target_link_libraries(fixedvec PRIVATE Microsoft.GSL::GSL)

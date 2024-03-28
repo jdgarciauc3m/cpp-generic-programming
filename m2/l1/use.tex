@@ -1,0 +1,155 @@
+\subsection{Using a generic class}
+
+\begin{frame}[t,fragile]{Using a class template}
+\begin{itemize}
+  \item Using a class template requires providing explicitly concrete template arguments.
+    \begin{itemize}
+      \item An exception is using CTAD (class template argument deduction).
+    \end{itemize}
+
+\begin{block}{Defining objects from generic classes}
+\begin{lstlisting}
+void f() {
+  fixed_vector<double> marks{5};
+  marks.push_back(1.5);
+  auto new_marks = marks;
+
+  fixed_vector<std::string> names{4};
+  names.push_back("Daniel");
+  names.push_back("Maria");
+  std::cout << names.size() << '\n';
+}
+\end{lstlisting} 
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using class templates and requirements}
+\begin{itemize}
+  \item The \textmark{concrete template arguments} must satisfy the \textemph{requirements}
+        from \textmark{class template parameters}.
+
+\begin{block}{Requirements satisfaction}
+\begin{lstlisting}
+void f() {
+  fixed_vector<std::string> names{5}; // OK
+  fixed_vector<std::optional<std::string>> op_names{5}; // OK
+  fixed_vector<std::unique_ptr<std::string>> ptr_names{5}; // Error
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Reason}: \cppid{std::unique\_ptr} is not \cppid{std::semiregular}.
+    \begin{itemize}
+      \item It is \textbad{not} \cppid{std::copyable}.
+      \item It is \textbad{not} \cppid{std::copy\_constructible}.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Generic classes and instantiation}
+\begin{itemize}
+  \item Instantitation really happens at member function level.
+    \begin{itemize}
+      \item Only member functions that are invoked are instantiated.
+    \end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Defining objects from generic classes}
+\begin{lstlisting}
+void f() {
+  fixed_vector<double> marks{5};
+  marks.push_back(1.5);
+  auto new_marks = marks;
+
+  fixed_vector<std::string> names{4};
+  names.push_back("Daniel");
+  names.push_back("Maria");
+  std::cout << names.size() << '\n';
+}
+\end{lstlisting} 
+\end{block}
+
+\pause
+\column{.5\textwidth}
+
+  \item \cppid{fixed\_vector<double>}:
+    \begin{itemize}
+      \item Constructor from size.
+      \item \cppid{push\_back()}.
+      \item Copy constructor.
+    \end{itemize}
+
+  \pause
+  \item \cppid{fixed\_vector<std::string>}:
+    \begin{itemize}
+      \item Constructor from size.
+      \item \cppid{push\_back()}.
+      \item \cppid{size()}.
+    \end{itemize}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Instantiation requirements}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Instantiation time checks are performed per member function.
+    \begin{itemize}
+      \item A given member function might be correct only for some instantiations.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.55\textwidth}
+
+\begin{block}{A serializable \textbf{fixed\_vector}}
+\begin{lstlisting}
+template <std::semiregular T>
+class fixed_vector {
+public:
+  //...
+  void serialize(std::ostream & os) {
+    if (size_ <= 0) { return; }
+    os << buffer_[0];
+    for (int i = 1; i < size_; ++i) {
+      os << " , " << buffer_[gsl::narrow<std::size_t>(i)];
+    }
+  }
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.45\textwidth}
+\begin{block}{Using \textbf{serialize()}}
+\begin{lstlisting}
+void f() {
+  fixed_vector<double> marks{10};
+  marks.push_back(1.5);
+  marks.push_back(2.5);
+  marks.push_back(3.5);
+  marks.serialize(std::cout); // OK
+
+  using entry = std::tuple<std::string, double>;
+  fixed_vector<entry> students{4};
+  students.push_back({"John", 5});
+  students.serialize(std::cout); // Error
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}

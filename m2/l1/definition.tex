@@ -1,0 +1,209 @@
+\subsection{Generic class definition}
+
+\begin{frame}[t,fragile]{Generic classes}
+\begin{itemize}
+  \item A \textemph{generic class} is a class that has one or more
+        \textmark{generic parameters}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Every \textmark{type parameter} of a generic class may be:
+
+\begin{columns}[T]
+
+\pause
+\column{.5\textwidth}
+    \begin{itemize}
+      \item An \textmark{unconstrained} type marked with keywords \cppkey{typename} or \cppkey{class}.
+    \end{itemize}
+
+\begin{block}{Unconstrained generic class}
+\begin{lstlisting}
+template <typename T>
+class numeric_vector {
+ // Members...
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+    \begin{itemize}
+      \item A \textmark{constrained} type marked with a \textemph{concept name}.
+    \end{itemize}
+\begin{block}{Constrained generic class}
+\begin{lstlisting}
+template <std::floating_point T>
+class numeric_vector {
+ // Members...
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Some useful concepts}
+\begin{itemize}
+  \item When defining class templates there are some useful concepts to be used:
+
+  \begin{itemize}
+
+    \mode<presentation>{\vfill}
+    \item \cppid{std::copyable}: Types that are movable and can be copied.
+
+    \mode<presentation>{\vfill}
+    \item \cppid{std::default\_initializable}: Types that can be default constructed.
+
+    \mode<presentation>{\vfill}
+    \item \cppid{std::semiregular}: Types that are both copyable and default constructible.
+
+    \mode<presentation>{\vfill}
+    \item \cppid{std::equality\_comparable}: Types that support equality comparison.
+    \begin{itemize}
+      \item If two objects are equal the equality comparison operator returns \cppkey{true}.
+      \item Equality comparison is reflexive, symmetric and transitive.
+    \end{itemize}
+
+    \mode<presentation>{\vfill}
+    \item \cppid{std::regular}: Types that are both \cppid{std::semiregular} and \cppid{equality\_comparable}.
+
+  \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Defining a generic class}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{block}{A generic fixed vector}
+\begin{lstlisting}[escapechar=@]
+template <std::semiregular @\color{red}T@>
+class fixed_vector {
+public:
+  fixed_vector() = default;
+  fixed_vector(int sz);
+
+  ~fixed_vector() noexcept = default;
+
+  fixed_vector(fixed_vector const & other);
+  fixed_vector & operator=(fixed_vector const & other);
+  fixed_vector(fixed_vector && other) noexcept = default;
+  fixed_vector & 
+  operator=(fixed_vector && other) noexcept = default;
+  //...
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+\begin{block}{A generic fixed vector}
+\begin{lstlisting}[escapechar=@]
+  int size() const { return size_; }
+  int capacity() const { return capacity_; }
+
+  [[nodiscard]] @\color{red}T@ & operator[](int i);
+  [[nodiscard]] @\color{red}T@ operator[](int i) const;
+
+  void push_back(@\color{red}T@ const & x);
+
+private:
+  int capacity_ = 0;
+  int size_ = 0;
+  std::unique_ptr<@\color{red}T[]@> buffer_{};
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Naming the class template}
+\begin{itemize}
+  \item Naming the class template inside the definition does not need to include its parameters.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Naming the class template}
+\begin{lstlisting}[escapechar=@]
+template <std::semiregular @\color{red}T@>
+class fixed_vector {
+public:
+  //...
+  fixed_vector(@\color{red}fixed\_vector@ const & other)
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Equivalent}
+\begin{lstlisting}[escapechar=@]
+template <std::semiregular T>
+class fixed_vector {
+public:
+  //...
+  fixed_vector(@\color{red}fixed\_vector<T>@ const & other)
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Defining memeber functions in class}
+\begin{block}{Constructors}
+\begin{lstlisting}[escapechar=@]
+template <std::semiregular @\color{red}T@>
+class fixed_vector {
+public:
+  //...
+  fixed_vector(int n) :
+      capacity_{n},
+      buffer_{std::make_unique<@\color{red}T[]@>(gsl::narrow<std::size_t>(n))} {
+    Expects(n > 0);
+    Ensures(capacity_ == n);
+    Ensures(size_ == 0);
+    Ensures(buffer_ != nullptr);
+  }
+  //...
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Naming the class template}
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item However, naming the class outside the class definition needs to include
+        its parameters.
+
+\begin{block}{Naming the class template}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular @\color{red}T@>
+@\color{red}fixed\_vector<T>@ & @\color{red}fixed\_vector<T>@::operator=(const @\color{red}fixed\_vector@ & other) {
+  if (this == &other) { return *this; }
+  auto aux = std::make_unique<@\color{red}T[]@>(other.capacity_);
+  std::copy(other.get().other.size(), aux.get());
+  capacity_ = other.capacity_;
+  size_ = other.size_;
+  buffer_ = std::move(other.buffer_);
+
+  Ensures(capacity_ == other.capacity_);
+  Ensures(size_ == other.size_);
+  Ensures(buffer_ != nullptr);
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
