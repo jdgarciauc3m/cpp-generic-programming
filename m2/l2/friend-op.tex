@@ -1,0 +1,80 @@
+\subsection{Friend operators}
+
+\begin{frame}[t,fragile]{Friend operator and forward declaration}
+
+\begin{block}{Forward declarations}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T>
+class fixed_vector;
+
+template <std::semiregular T>
+std::ostream & operator<<(std::ostream & os, fixed_vector<T> const & v);
+
+template<std::semiregular T>
+class fixed_vector {
+  //...
+  std::ostream & @\color{red}<T>@(std::ostream & os, fixed_vector<T> const & v);
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Friend operator definition}
+\begin{block}{Defining the insertion operator}
+\begin{lstlisting}
+template<std::semiregular T>
+std::ostream & operator<<(std::ostream &os, fixed_vector<T> const & v) {
+  if (v.size_ <= 0) { return os; }
+  os << v.buffer_[0];
+  for (int i = 1; i < v.size_; ++i) {
+    os << " , " << v.buffer_[gsl::narrow<std::size_t>(i)];
+  }
+  return os;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Implicit friend operator template}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{An implicit friend insertion operator}
+\begin{lstlisting}
+template<std::semiregular T>
+class fixed_vector {
+public:
+  //...
+  template <std::semiregular U>
+  friend std::ostream & operator<<(
+      std::ostream &os, 
+      fixed_vector<U> const &v);
+  //...
+};  
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{An implicit friend insertion operator}
+\begin{lstlisting}
+template<std::semiregular U>
+std::ostream & operator<<(std::ostream &os, 
+      fixed_vector<U> const & v) 
+{
+  if (v.size_ <= 0) { return os; }
+  os << v.buffer_[0];
+  for (int i = 1; i < v.size_; ++i) {
+    os << " , " << v.buffer_[gsl::narrow<std::size_t>(i)];
+  }
+  return os;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+

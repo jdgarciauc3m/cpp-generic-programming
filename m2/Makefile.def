@@ -2,6 +2,7 @@ M2_DIR=m2
 M2_PARTS=$(M2_DIR)/content.tex
 
 include $(M2_DIR)/l1/Makefile.def
+include $(M2_DIR)/l2/Makefile.def
 
 M2_BASE=m2
 M2_PDF=$(M2_DIR).pdf

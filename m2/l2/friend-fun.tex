@@ -1,0 +1,171 @@
+\subsection{Friend functions}
+
+\begin{frame}[t,fragile,shrink=18]{Defining a friend function}
+\begin{itemize}
+  \item A friend function may be defined inside a generic class.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{A friend serialize}
+\begin{lstlisting}
+template <typename std::semiregular T>
+class fixed_vector {
+public:
+  //...
+  friend void serialize(std::ostream & os, fixed_vector const & v) {
+    if (v.size_ <= 0) { return; }
+    os << v.buffer_[0];
+    for (int i = 1; i < v.size_; ++i) {
+      os << " , " << v.buffer_[gsl::narrow<std::size_t>(i)];
+    }
+  }
+  //...  
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{A friend serialize equivalent}
+\begin{lstlisting}[escapechar=@]
+template <typename std::semiregular T>
+class fixed_vector {
+public:
+  //...
+  friend void serialize(std::ostream & os, 
+                        fixed_vector@\color{red}<T>@ const & v) 
+  {
+    if (v.size_ <= 0) { return; }
+    os << v.buffer_[0];
+    for (int i = 1; i < v.size_; ++i) {
+      os << " , " << v.buffer_[gsl::narrow<std::size_t>(i)];
+    }
+  }
+  //...  
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Friend functions and templates}
+\begin{itemize}
+  \item A \cppkey{friend} function inside a class template is \textbad{not}
+        a function template.
+    \begin{itemize}
+      \item It is a free function specialized for class \cppid{fixed\_vector<T>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item If the function is \textgood{only declared} but \textbad{not defined}
+        inside the class definition:
+    \begin{itemize}
+      \item It is \textbad{not possible} to define it later.
+      \item You might get a \textbad{warning} from your compiler.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Alternatives}:
+    \begin{itemize}
+      \item Forward declare a function template and make a specialization \cppkey{friend}.
+      \item Declare an implicit \cppkey{friend} function template.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=15]{Forward declaring a function template}
+\begin{itemize}
+  \item To forward declare a function template we need to forwarde declare the class.
+
+\begin{block}{Forward declarations}
+\begin{lstlisting}
+template<std::semiregular T>
+class fixed_vector;
+
+template <std::semiregular T>
+void serialize(std::ostream & os, fixed_vector<T> const & v);
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item Declaration inside the class needs to specialize.
+\begin{block}{Declaration}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T>
+class fixed_vector {
+  //...
+  void serialize@\color{red}<T>@(std::ostream & os, fixed_vector<T> const & v);
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Friend function definition}
+\begin{block}{Defining the serialize function}
+\begin{lstlisting}
+template<std::semiregular T>
+void serialize(std::ostream &os, fixed_vector<T> const & v) {
+  if (v.size_ <= 0) { return; }
+  os << v.buffer_[0];
+  for (int i = 1; i < v.size_; ++i) {
+    os << " , " << v.buffer_[gsl::narrow<std::size_t>(i)];
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Implicit friend function template}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{An implicit friend serialize template}
+\begin{lstlisting}
+template<std::semiregular T>
+class fixed_vector {
+public:
+  //...
+  template <std::semiregular U>
+  friend void serialize(std::ostream &os, 
+                        fixed_vector<U> const &v);
+  //...
+};  
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{An implicit friend serialize template}
+\begin{lstlisting}
+template<std::semiregular U>
+void serialize(std::ostream &os, 
+               fixed_vector<U> const & v) 
+{
+  if (v.size_ <= 0) { return; }
+  os << v.buffer_[0];
+  for (int i = 1; i < v.size_; ++i) {
+    os << " , " 
+       << v.buffer_[gsl::narrow<std::size_t>(i)];
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textbad{Note}: Name \cppid{U} different from \cppid{T} to \textbad{avoid hiding}.
+\end{itemize}
+
+\end{frame}
+
