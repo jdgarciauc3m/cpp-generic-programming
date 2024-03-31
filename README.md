@@ -14,12 +14,11 @@ This repo contains the materials for a workshop on move semantics
     1. Class template definition and use.
     2. Friend functions and templates.
     3. Class templates specializations.
-    4. Partial specializations.
-    5. Default template arguments.
-    6. Type aliases.
-    7. CTAD: Class Template Argument Deduction.
-    8. Aggregates.
-    9. Non-type template paramters.
+    4. Default template arguments.
+    5. Type aliases.
+    6. CTAD: Class Template Argument Deduction.
+    7. Aggregates.
+    8. Non-type template paramters.
 3. Concepts
     1. Constraining templates with concepts.
     2. Concepts and contraints in practice.
