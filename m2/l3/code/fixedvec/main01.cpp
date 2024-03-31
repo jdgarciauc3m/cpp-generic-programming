@@ -8,14 +8,23 @@ void f1() {
   fixed_vector<std::string> names{10};
   names.push_back("Carlos");
   names.push_back("Daniel");
-  serialize(std::cout, names);
-  std::cout << '\n';
-  std::cout << names;
+  std::cout << names << '\n';
   // NOLINTEND
+}
+
+void f2() {
+  std::string person1 = "Daniel";
+  std::string person2 = "Carlos";
+  fixed_vector<std::string*> names{8};
+  names.push_back(&person1);
+  names.push_back(nullptr);
+  names.push_back(&person2);
+  std::cout << names << '\n';
 }
 
 int main() {
   f1();
+  f2();
 }
 
 

@@ -1,0 +1,123 @@
+\subsection{Partial specialization}
+
+\begin{frame}[t,fragile]{Partially specializing a class}
+\begin{itemize}
+  \item A class can be partially specialized:
+    \begin{itemize}
+      \item The class is specialized.
+      \item But it still depends on some generic parameter.
+    \end{itemize}
+
+\begin{block}{A partial specialization for pointers}
+\begin{lstlisting}
+template <std::semiregular T>
+class fixed_vector<T*> {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=20]{Partially specializing for pointers}
+\mode<presentation>{\vspace{-1em}}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A \textbf{fixed\_vector} of pointers}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T>
+class fixed_vector<@\color{red}T *@> {
+public:
+  fixed_vector() = default;
+  explicit fixed_vector(int n);
+
+  ~fixed_vector() noexcept = default;
+
+  fixed_vector(fixed_vector const &other);
+  fixed_vector<T *> &operator=(fixed_vector const &other);
+  fixed_vector(fixed_vector &&) noexcept = default;
+  fixed_vector &operator=(fixed_vector &&) noexcept = default;
+
+  @\color{red}T *@ &operator[](int i) {
+    Expects(i >= 0 and i < size_);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{A \textbf{fixed\_vector} of pointers}
+\begin{lstlisting}[escapechar=@]
+  @\color{red}T *@ operator[](int i) const {
+    Expects(i >= 0 and i < size_);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+  [[nodiscard]] int size() const { return size_; }
+  [[nodiscard]] int capacity() const { return capacity_; }
+
+  void push_back(@\color{red}T *@ x);
+
+  void serialize(std::ostream &os) const;
+  friend std::ostream &operator <<<T*>(
+      std::ostream &os, 
+      fixed_vector<@\color{red}T *@> const &v);
+
+private:
+  int capacity_ = 0;
+  int size_ = 0;
+  std::unique_ptr<@\color{red}T *@[]> buffer_{};
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Why partially specializing?}
+\begin{itemize}
+  \item Partial specialization allows for different behavior.
+    \begin{itemize}
+      \item Different printing for \cppid{fixed\_vector} of pointers.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Problem}:
+    \begin{itemize}
+      \item \cppkey{operator<{}<} is a friend function.
+      \item Non-member functions are \textmark{free functions}.
+      \item A non-member function cannot be partially specialized.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Solution}:
+    \begin{itemize}
+      \item Write a member function (\cppid{serialize()}) that can be partially specialized.
+      \item Invoke \cppid{serialize()} from \cppkey{operator<{}<}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Serialization for pointers}
+\begin{block}{Serialization}
+\begin{lstlisting}
+template<std::semiregular T>
+void fixed_vector<T *>::serialize(std::ostream &os) const {
+  auto print_elem = [&os](T *ptr) {
+    os << static_cast<void *>(ptr) << " -> ";
+    if (ptr) { os << *ptr; }
+    else { os << "<null>"; }
+  };
+  if (size_ <= 0) { return; }
+  print_elem(buffer_[0]);
+  for (int i = 1; i < size_; ++i) {
+    os << " , ";
+    print_elem(buffer_[gsl::narrow<std::size_t>(i)]);
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
