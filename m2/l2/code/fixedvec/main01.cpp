@@ -8,7 +8,7 @@ void f1() {
   fixed_vector<std::string> names{10};
   names.push_back("Carlos");
   names.push_back("Daniel");
-  serialize(std::cout, names);
+  //serialize(std::cout, names);
   // NOLINTEND
 }
 

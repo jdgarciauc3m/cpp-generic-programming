@@ -45,7 +45,7 @@ public:
     return buffer_[gsl::narrow<std::size_t>(i)];
   }
 
-  T const &operator[](int i) const {
+  T operator[](int i) const {
     Expects(i >= 0 and i < size_);
     return buffer_[gsl::narrow<std::size_t>(i)];
   }
@@ -58,7 +58,7 @@ public:
 
   friend std::ostream & operator<<<T>(std::ostream &os, fixed_vector<T> const &v);
 
-  void push_back(T const &x);
+  void push_back(T x);
 
 private:
   int capacity_ = 0;
@@ -93,7 +93,7 @@ fixed_vector<T> &fixed_vector<T>::operator=(const fixed_vector &other) {
 }
 
 template<std::semiregular T>
-void fixed_vector<T>::push_back(const T &x) {
+void fixed_vector<T>::push_back(T x) {
   Expects(size_ >= 0 and size_ < capacity_);
   buffer_[gsl::narrow<std::size_t>(size_++)] = x;
   Ensures(size_ <= capacity_);

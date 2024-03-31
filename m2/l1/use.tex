@@ -119,7 +119,7 @@ template <std::semiregular T>
 class fixed_vector {
 public:
   //...
-  void serialize(std::ostream & os) {
+  void serialize(std::ostream & os) const {
     if (size_ <= 0) { return; }
     os << buffer_[0];
     for (int i = 1; i < size_; ++i) {

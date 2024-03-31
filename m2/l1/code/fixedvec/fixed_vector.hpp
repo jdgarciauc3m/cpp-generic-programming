@@ -31,12 +31,12 @@ public:
 
   fixed_vector &operator=(fixed_vector &&) noexcept = default;
 
-  T &operator[](int i) {
+  T & operator[](int i) {
     Expects(i >= 0 and i < size_);
     return buffer_[gsl::narrow<std::size_t>(i)];
   }
 
-  T const &operator[](int i) const {
+  T operator[](int i) const {
     Expects(i >= 0 and i < size_);
     return buffer_[gsl::narrow<std::size_t>(i)];
   }
@@ -45,9 +45,9 @@ public:
 
   [[nodiscard]] int capacity() const { return capacity_; }
 
-  void serialize(std::ostream &os);
+  void serialize(std::ostream &os) const;
 
-  void push_back(T const &x);
+  void push_back(T x);
 
 private:
   int capacity_ = 0;
@@ -82,14 +82,14 @@ fixed_vector<T> &fixed_vector<T>::operator=(const fixed_vector &other) {
 }
 
 template<std::semiregular T>
-void fixed_vector<T>::push_back(const T &x) {
+void fixed_vector<T>::push_back(const T x) {
   Expects(size_ >= 0 and size_ < capacity_);
   buffer_[gsl::narrow<std::size_t>(size_++)] = x;
   Ensures(size_ <= capacity_);
 }
 
 template<std::semiregular T>
-void fixed_vector<T>::serialize(std::ostream &os) {
+void fixed_vector<T>::serialize(std::ostream &os) const {
   if (size_ <= 0) { return; }
   os << buffer_[0];
   for (int i = 1; i < size_; ++i) {
