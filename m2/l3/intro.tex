@@ -1,1 +1,122 @@
 \subsection{Specializing a generic class}
+
+\begin{frame}[t,fragile]{Class template specialization}
+\begin{itemize}
+  \item A class template can be \textemph{specialized} for a \textmark{concrete type}.
+    \begin{itemize}
+      \item A different implementation for a given argument.
+      \item Usually for optimization.
+    \end{itemize}
+
+\begin{block}{Specializing a class template}
+\begin{lstlisting}
+template <std::semiregular T>
+class fixed_vector {
+  //...
+};
+
+template <>
+class fixed_vector<std::string> {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Specializing for optimization}
+\begin{itemize}
+  \item Ideas for optimizing \cppid{fixed\_vector<std::string>}:
+    \begin{itemize}
+      \item \cppkey{const} version of \cppkey{operator[]} might return a \textemph{const reference}.
+\begin{lstlisting}
+std::string operator[](int i);
+\end{lstlisting}
+      \item \cppid{push\_back()} might take a \textemph{const reference}.
+\begin{lstlisting}
+void push_back(std::string const & x);
+\end{lstlisting}
+    \end{itemize}
+
+  \item \textbad{Notes}:
+    \begin{itemize}
+      \item A class specialization may have different data members.
+      \item A class specialization may have different member functions.
+      \item Member functions may have different signature in an specialization.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=20]{Class specialization}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Specializing \textbf{fixed\_vector}}
+\begin{lstlisting}[escapechar=@]
+template<>
+class fixed_vector<@\color{red}std::string@> {
+public:
+  fixed_vector() = default;
+  explicit fixed_vector(int n);
+
+  ~fixed_vector() noexcept = default;
+
+  fixed_vector(fixed_vector<std::string> const &other);
+  fixed_vector &operator=(fixed_vector const &other);
+  fixed_vector(fixed_vector &&) noexcept = default;
+  fixed_vector &operator=(fixed_vector &&) noexcept = default;
+
+  @\color{red}std::string@ & operator[](int i) {
+    Expects(i >= 0 and i < size_);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Specializing \textbf{fixed\_vector}}
+\begin{lstlisting}[escapechar=@]
+  @\color{red}std::string@ const & operator[](int i) const {
+    Expects(i >= 0 and i < size_);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+  [[nodiscard]] int size() const { return size_; }
+  [[nodiscard]] int capacity() const { return capacity_; }
+
+  void push_back(std::string const & x);
+
+  friend std::ostream & operator<<(std::ostream &os, fixed_vector<@\color{red}std::string@> const &v);
+
+private:
+  int capacity_ = 0;
+  int size_ = 0;
+  std::unique_ptr<@\color{red}std::string@[]> buffer_{};
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Specialized member functions}
+\begin{itemize}
+  \item A member function from a class specialization does not use any
+        \cppkey{template<>} prefix.
+
+\mode<presentation>{\vfill}
+\begin{block}{Specializing \textbf{std::fixed\_vector::push\_back()}}
+\begin{lstlisting}[escapechar=@]
+void fixed_vector<@\color{red}std::string@>::push_back(@\color{red}std::string const \&@ x) {
+  Expects(size_ >= 0 and size_ < capacity_);
+  buffer_[gsl::narrow<std::size_t>(size_++)] = x;
+  Ensures(size_ <= capacity_);
+}
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
