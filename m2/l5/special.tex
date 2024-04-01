@@ -1,0 +1,69 @@
+\subsection{Alias template and specialization}
+
+\begin{frame}[t,fragile]{Specialization}
+\begin{itemize}
+  \item An \textemph{alias template} cannot be specialized.
+
+\begin{block}{Trying to specialize an alias template}
+\begin{lstlisting}
+template <std::semiregular T>
+using flexible_vector = fixed_vector<T, allocated_storage<T>>;
+
+template <std::semiregular T>
+using flexible_vector = fixed_vector<T*, local_storage<T*>>; // Error  
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Idea}: Use a \cppkey{class/struct} for partial specialization.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{A trait for storage}
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A type trait for storage}
+\begin{lstlisting}
+template <std::semiregular T>
+struct storage_trait {
+  using type = allocated_storage<T>;
+};
+
+template <std::semiregular T>
+struct storage_trait<T*> {
+  using type = local_storage<T*>;
+};
+
+template <std::semiregular T>
+using storage_trait_t = storage_trait<T>::type;
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using the type trait}
+\begin{lstlisting}
+template <std::semiregular T>
+using flexible_vector = 
+    fixed_vector<T, storage_trait_t<T>>;
+
+template <std::semiregular T>
+void print(flexible_vector<T> const & v) {
+  std::cout << v << '\n';
+}
+
+void f1() {
+  flexible_vector<int> v1{5};
+  flexible_vector<int*> v2{5};
+  print(v1);
+  print(v2);
+}
+\end{lstlisting}	
+\end{block}
+
+\end{columns}
+
+\end{frame}

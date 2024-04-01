@@ -1,0 +1,27 @@
+\subsection{Type aliases in the standard library}
+
+\begin{frame}[t,fragile]{Type traits}
+\begin{itemize}
+  \item The standard library provides several \textmark{transformation traits}.
+    \begin{itemize}
+      \item They contain a nested \cppid{type} alias.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item All transformation traits have a corresponding \cppid{\_t} alias.
+
+\begin{block}{Type traits alias}
+\begin{lstlisting}
+template <std::integral T>
+void f() {
+  typename std::make_unsigned<T>::type x{};
+
+  std::make_unsigned_t<T> y{};
+
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
