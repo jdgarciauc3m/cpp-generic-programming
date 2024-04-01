@@ -1,0 +1,205 @@
+\subsection{Partial specialization and multiple parameters}
+
+\begin{frame}[t,fragile]{Generalizing a strategy}
+\begin{itemize}
+  \item A \cppid{fixed\_vector} may be implemented with different 
+        storage strategies:
+    \begin{itemize}
+      \item \cppid{allocated\_storage}: The storage buffer is dynamically allocated
+            on the free store.
+        \begin{itemize}
+          \item Size determined at run time.
+          \item Small overhead in allocation and access.
+        \end{itemize}
+
+      \item \cppid{local\_storage}: The storage is a local buffer of a fixed size.
+        \begin{itemize}
+          \item Size predefined at compile time.
+          \item No overhead in allocation or access.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{block}{Strategy based \textbf{fixed\_vector}}
+\begin{lstlisting}
+template <std::semiregular T, typename S>
+class fixed_vector {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item \cppid{T}: Element type.
+  \item \cppid{S}: Storage type.
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=20]{Implementing the storage strategies}
+\begin{block}{A dynamic memory storage}
+\begin{lstlisting}
+template<std::semiregular T>
+class allocated_storage {
+public:
+  explicit allocated_storage(int n) : capacity_{n}, buffer_{std::make_unique<T[]>(gsl::narrow<std::size_t>(n))} {
+    Expects(n > 0);
+  }
+
+  [[nodiscard]] int capacity() const { return capacity_; }
+
+  T operator[](int i) const {
+    Expects(i >= 0 and i < capacity_);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+  T &operator[](int i) {
+    Expects(i >= 0 and i < capacity_);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+private:
+  int capacity_;
+  std::unique_ptr<T[]> buffer_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=20]{Implementing the storage strategies}
+\begin{block}{A local memory storage}
+\begin{lstlisting}
+template<std::semiregular T>
+class local_storage {
+public:
+  local_storage() = default;
+
+  [[nodiscard]] int capacity() const { return max_size; }
+
+  T operator[](int i) const {
+    Expects(i >= 0 and i < max_size);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+  T &operator[](int i) {
+    Expects(i >= 0 and i < max_size);
+    return buffer_[gsl::narrow<std::size_t>(i)];
+  }
+
+private:
+  static constexpr int max_size = 32;
+  std::array<T, max_size> buffer_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Differences in strategies}
+\begin{itemize}
+  \item Both \textmark{storage strategies} are quite similar:
+    \begin{itemize}
+      \item They have some storage where data can be stored.
+      \item They offer a \cppid{capacity()} member.
+      \item They offer \cppkey{operator[]} to access elements.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item However, there are small differences:
+    \begin{itemize}
+      \item Constructor for \cppid{allocated\_storage} takes a size.
+      \item Constructor for \cppid{local\_storage} takes no parameter.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Idea}:
+    \begin{itemize}
+      \item Write a \cppid{fixed\_vector} for general case (\cppid{allocated\_storage}).
+      \item Partially specialize for \cppid{local\_storage}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=10]{Generalizing for strategies}
+\begin{block}{A generalized \textbf{fixed\_vector}}
+\begin{lstlisting}
+template<std::semiregular T, typename S>
+class fixed_vector {
+public:
+  explicit fixed_vector(int n) : storage_{n} {}
+
+  T operator[](int i) const { return storage_[i]; }
+  T &operator[](int i) { return storage_[i]; }
+
+  [[nodiscard]] int capacity() const { return storage_.capacity(); }
+  [[nodiscard]] int size() const { return size_; }
+
+  void push_back(T x);
+
+  template <std::semiregular T2, typename S2>
+  friend std::ostream &operator<<(std::ostream &os, fixed_vector<T2,S2> const &v);
+
+private:
+  int size_ = 0;
+  S storage_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Generalizing for strategies}
+\begin{block}{Implementing members}
+\begin{lstlisting}
+template <std::semiregular T, typename S>
+void fixed_vector<T,S>::push_back(T x) {
+  Expects(size() < capacity());
+  storage_[size_++] = x;
+}
+
+template <std::semiregular T, typename S>
+std::ostream &operator<<(std::ostream &os, fixed_vector<T,S> const &v) {
+  if (v.size_ <= 0) { return os; }
+  os << v.storage_[0];
+  for (int i = 1; i < v.size_; ++i) {
+    os << " , " << v.storage_[i];
+  }
+  return os;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=10]{Specializing for local storage}
+\begin{block}{A specialized \textbf{fixed\_vector}}
+\begin{lstlisting}
+template<std::semiregular T>
+class fixed_vector<T, local_storage<T>> {
+public:
+  explicit fixed_vector(int n) {
+    Expects(n>=0 and n<storage_.capacity());
+  }
+
+  T operator[](int i) const { return storage_[i]; }
+  T &operator[](int i) { return storage_[i]; }
+
+  [[nodiscard]] int capacity() const { return storage_.capacity(); }
+  [[nodiscard]] int size() const { return size_; }
+
+  void push_back(T x);
+
+  template <std::semiregular T2, typename S2>
+  friend std::ostream &operator<<(std::ostream &os, fixed_vector<T2,S2> const &v);
+
+private:
+  int size_ = 0;
+  local_storage<T> storage_;
+};
+
+\end{lstlisting}
+\end{block}
+\end{frame}
