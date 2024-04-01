@@ -1,0 +1,78 @@
+\begin{frame}[t,fragile]{Default arguments in templates}
+\begin{itemize}
+  \item A class template may have default arguments for its template arguments.
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{block}{Default storage strategy}
+\begin{lstlisting}
+template <std::semiregular T, 
+          typename S = local_storage<T>>
+class fixed_storage {
+  //...
+  // T and S used in definitions
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.55\textwidth}
+\begin{block}{Using the class}
+\begin{lstlisting}
+void f() {
+  // local_storage<std::string>
+  fixed_storage<std::string> names;
+
+  fixed_storage<double> marks; // local_storage<double>
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Multiple default arguments}
+\begin{itemize}
+  \item A class may have all its parameters with default arguments.
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{block}{Default storage strategy}
+\begin{lstlisting}
+template <std::semiregular T = double, 
+          typename S = local_storage<T>>
+class fixed_storage {
+  //...
+  // T and S used in definitions
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.55\textwidth}
+\begin{block}{Using the class}
+\begin{lstlisting}
+void f() {
+  fixed_storage<long, allocated_storage> v1;
+
+  fixed_storage<int> v2; // local_storage<int>
+
+  fixed_storage<> v3; // double, local_storage<double>
+
+  fixed_storage v4;   // double, local_storage<double>
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
