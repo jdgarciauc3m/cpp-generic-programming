@@ -1,0 +1,88 @@
+\subsection{Using CTAD}
+
+\begin{frame}[t,fragile]{Deducing arguments for function templates}
+\begin{itemize}
+  \item In C++ template arguments are \textmark{implicitly}
+        deduced for function calls.
+\begin{block}{Function template implicit deduction}
+\begin{lstlisting}[escapechar=@]
+template <typename T>
+void print_size(T x) { std::cout << "size = " << sizeof(x) << "\n"; }
+
+void g() {
+  print_size(42); // print_size<int>(2);
+  print_size(1.2); // print_size<double>(1.2)
+@\pause@   
+  std::complex<double> z{1.0, 2.5};
+  print_size(z); // print_size<complex<double>>(z)
+@\pause@   
+  std::vector<std::map<std::string, int>> v;
+  print_size(v); f<std::vector<std::map<std::string, int>>>(v)
+}
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Class template argument deduction}
+\begin{itemize}
+  \item \textbad{However}, for classes \ldots
+\begin{block}{Deducing class template arguments}
+\begin{lstlisting}
+void g() {
+  std::pair<int,std::string> p{1969, "Daniel"};
+
+  auto q = std::make_pair(1950, "Bjarne");
+
+  std::pair r{1955, "James"}; // Error. Missing template arguments 
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill}
+  \item In C++14 it was not possible to deduce class template arguments.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Argument deduction}
+\begin{itemize}
+  \item Since C++17 class template arguments can be deduced.
+
+\begin{block}{Using argument deduction}
+\begin{lstlisting}
+std::pair p{1969, "Daniel"}; // std::pair<int, char const *>
+
+std::pair q{1950, "Bjarne"s}; // std::pair<int,std::string>
+
+std::map<int,double> create_dic();
+// std::tuple<int, double, std::map<int,double>>
+std::tuple t{1, 2.5, create_dic()};
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Code simplification}
+
+\begin{block}{Without deduction}
+\begin{lstlisting}
+std::mutex m1;
+std::recursive_mutex m2;
+std::shared_lock<std::recursive_mutex> sl{m2};
+std::lock_guard<std::mutex, std::shared_lock<std::recursive_mutex>> l{m1,s1};
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+\begin{block}{With deduction}
+\begin{lstlisting}
+std::mutex m1;
+std::recursive_mutex m2;
+std::shared_lock sl{m2};
+std::lock_guard l{m1,s1};
+\end{lstlisting}
+\end{block}
+
+\end{frame}

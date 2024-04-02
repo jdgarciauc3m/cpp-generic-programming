@@ -6,6 +6,7 @@ include $(M2_DIR)/l2/Makefile.def
 include $(M2_DIR)/l3/Makefile.def
 include $(M2_DIR)/l4/Makefile.def
 include $(M2_DIR)/l5/Makefile.def
+include $(M2_DIR)/l6/Makefile.def
 
 M2_BASE=m2
 M2_PDF=$(M2_DIR).pdf

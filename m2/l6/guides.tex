@@ -1,0 +1,46 @@
+\subsection{Deduction guides}
+
+\begin{frame}[t,fragile]{Defining a deduction guide}
+\begin{itemize}
+  \item A \textmark{deduction guide} is a rule for \textemph{deducing} 
+        \textgood{template arguments}
+        for a given \textgood{constructor invocation}.
+    \begin{itemize}
+      \item It is a mapping between a \textgood{template name} with given 
+            \textgood{parameter declarations} and a corresponding \textemph{template deduction}.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Deduction to avoid value decay}
+\begin{lstlisting}
+template <typename T>
+counted_value_ref(T) -> counted_value_ref<T>;
+
+void f() {
+  counted_value_ref x{"World"}; // Deduce counted_value_ref<char const *>
+  //...
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Deduction guides without templates}
+\begin{itemize}
+  \item A \textmark{deduction guide} does not to be a \textgood{template}.
+    \begin{itemize}
+      \item It may involve only \textmark{concrete types}.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Deduction to avoid value decay for char const *}
+\begin{lstlisting}
+counted_value_ref(char const *) -> counted_value_ref<std::string>;
+
+void f() {
+  counted_value_ref x{"World"}; // Deduce counted_value_ref<std::string>
+  //...
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

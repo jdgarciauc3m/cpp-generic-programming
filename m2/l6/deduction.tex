@@ -1,0 +1,110 @@
+\subsection{Deducing the type}
+
+\begin{frame}[t,fragile]{A generic counted value}
+\begin{itemize}
+  \item Designing a type for generic counted values.
+    \begin{itemize}
+      \item A \cppid{counted\_value<T>} contains:
+        \begin{itemize}
+          \item A value of type \cppid{T}.
+          \item A counter of type \cppkey{int}.
+        \end{itemize}
+\begin{lstlisting}
+counted_value<double> x = 2.5;
+\end{lstlisting}
+
+      \item A copy of the value can be obtained with \cppkey{operator*}.
+\begin{lstlisting}
+std::cout << *x;
+\end{lstlisting}
+
+      \item A new value can be assigned.
+\begin{lstlisting}
+x = 7.5;
+\end{lstlisting}
+
+      \item The number of uses is given by \cppid{count()}.
+\begin{lstlisting}
+std::cout << x.count()
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Implementing counted values}
+\begin{lstlisting}
+template <std::semiregular T>
+class counted_value {
+public:
+  explicit counted_value(T x) : value_{x} {}
+
+  T operator*() { count_++; return value_; }
+
+  counted_value<T> & operator=(T x) {
+    value_ = x;
+    return *this;
+  }
+
+  [[nodiscard]] int count() { return count_; }
+
+private:
+  T value_;
+  int count_ = 0;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using counted values}
+
+\begin{block}{Deduction in practice}
+\begin{lstlisting}
+int main() {
+  counted_value x{2.5}; // counted_value<double> x{2.5}
+  std::cout << *x << " (count = " << x.count() << ")\n";
+
+  x = 12;
+  std::cout << *x << " (count = " << x.count() << ")\n";
+
+  x = 20;
+  std::cout << *x << " (count = " << x.count() << ")\n";
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item \cppid{counted\_value(double)} $\rightarrow$ \cppid{counted\_value<double>(double)}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=10]{Template deduction and copy}
+\begin{itemize}
+  \item When deducing template arguments a viable copy es preferred.
+\begin{lstlisting}
+counted_value x{5}; // counted_value<int>
+counted_value y{x}; // counted_value<int>	
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item If copy is not viable others are considered.
+\begin{lstlisting}
+template <typename T>
+class counted_list {
+public:
+  counted_list(std::initializer_list<T> l) : counter_{0}, value_{l} {}
+  //...
+private:
+  int counter_;
+  std::vector<T> value_;
+};
+
+counted_list a{2,3,4}; // counted_list<int>(int)
+counted_list b{a};     // counted_list<int>(counted_list<int>)
+counted_list c{a,b};   // counted_list<counted_list<int>>(counted_list<int>, counted_list<int>)
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}

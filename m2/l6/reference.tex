@@ -1,0 +1,76 @@
+\subsection{CTAD and references}
+
+\begin{frame}[t,fragile]{Counted value and references}
+
+\begin{columns}[T]
+
+\mode<presentation>{\vspace{-1em}}
+\column{.5\textwidth}
+\begin{block}{}
+\begin{lstlisting}
+std::string name = "Hello";
+counted_value x{name};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{itemize}
+  \item Need to avoid extra copy.
+    \begin{itemize}
+      \item Pass to constructor by \textmark{constant reference}.
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{A constant reference counted value}
+\begin{lstlisting}
+template <typename T>
+class counted_value_ref {
+public:
+  explicit counted_value_ref(const T & x) : value_{x} {}
+  //...
+private:
+  int counter_ = 0;
+  T value_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Helper \emph{make} functions}
+\mode<presentation>{\vspace{-.5em}}
+\begin{itemize}
+  \item \textbad{Problem}: Reference parameters do not decay.
+\end{itemize}
+
+\begin{block}{Counted values by reference}
+\begin{lstlisting}
+std::string name = "Hello";
+counted_value_ref x{name};
+counted_value_ref y{"World"}; // Error char[6] does not decay to const char *
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Helper function \textgood{to the rescue}.
+\end{itemize}
+
+\begin{block}{Helper make function}
+\begin{lstlisting}
+template <typename T>
+counted_value_ref<T> make_counted_value_ref(T x) {
+  return counted_value_ref<T>(x);
+}
+
+auto y = make_counted_value_ref("World"); // counted_value_ref<const char *>
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+

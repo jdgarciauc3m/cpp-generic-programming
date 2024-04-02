@@ -1,0 +1,52 @@
+\subsection{Standard deduction guides}
+
+\begin{frame}[t,fragile]{Deduction guides for \texttt{std::pair}}
+\begin{block}{Standard guide}
+\begin{lstlisting}
+template <typename T, typename U>
+struct pair {
+  //...
+  constexpr pair(const T & x, const U & y);
+  //...
+};
+
+template <typename T, typename U>
+pair(T,U) -> pair<T,U>;
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Arguments to \cppid{std::pair} constructor decay.
+\begin{lstlisting}
+std::pair p{"Daniel", "Garcia"}; // std::pair<char const  *, char const  *>
+\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Deduction guides for \texttt{std::tuple}}
+\begin{block}{Standard guide}
+\begin{lstlisting}
+template <typename ... T>
+class tuple {
+public:
+  //...
+  constexpr pair(const T & ... x);
+  //...
+};
+
+template <typename ... T>
+pair(T...) -> pair<T...>;
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Arguments to \cppid{std::tuple} constructor decay.
+\end{itemize}
+\begin{lstlisting}
+std::tuple t{"Daniel", 1965, 2.0}; // std::tuple<char const  *, int, double>
+\end{lstlisting}
+\end{frame}
+
