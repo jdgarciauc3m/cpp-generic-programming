@@ -44,3 +44,62 @@ void f() {
 \end{lstlisting}
 \end{block}
 \end{frame}
+
+\begin{frame}[t,fragile]{Generic aggregates}
+\begin{itemize}
+  \item An aggregate (generic or not) may be constructed from values.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Defining generic aggregate}
+\begin{lstlisting}
+template <std::semiregular T>
+struct variable {
+  int id;
+  T value;
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using generic aggregate}
+\begin{lstlisting}
+void f() {
+  variable v1<std::string> v{42, "Daniel"};
+  variable v2 {42, "Daniel"}; // Error
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=10]{Guides for generic aggregates}
+\begin{itemize}
+  \item A deduction guide can be defined for a generic aggregate.
+
+\begin{block}{A guide for a generic aggregate}
+\begin{lstlisting}
+template <std::semiregular T>
+struct variable {
+  int id;
+  T value;
+};
+
+variable(int, char const *) -> variable<std::string>;
+
+void f() {
+  variable v{42, "Daniel"}; // OK
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+
+  \item \textbad{Note}: Without the guide there is no constructor for deduction.
+
+\end{itemize}
+\end{frame}

@@ -17,8 +17,7 @@ This repo contains the materials for a workshop on move semantics
     4. Default template arguments.
     5. Type aliases.
     6. CTAD: Class Template Argument Deduction.
-    7. Aggregates.
-    8. Non-type template paramters.
+    7. Non-type template paramters.
 3. Concepts
     1. Constraining templates with concepts.
     2. Concepts and contraints in practice.
