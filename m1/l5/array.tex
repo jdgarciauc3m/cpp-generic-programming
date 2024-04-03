@@ -1,0 +1,81 @@
+\subsection{Generic array parameters in functions}
+
+\begin{frame}[t,fragile]{Array parameters}
+\begin{itemize}
+  \item Classic way of passing arrays to functions:
+    \begin{itemize}
+      \item Arrays \textmark{decay} to pointers.
+      \item Size information is lost.
+      \item Need to pass a separate size parameter.
+    \end{itemize}
+
+\begin{block}{Classic array parameters}
+\begin{lstlisting}
+template <typename T>
+void classic_print_array(T * vec, std::size_t size) {
+  for (std::size_t i=0; i<size; ++i) {
+    std::cout << vec[i] << ", ";
+  }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using pointers as array parameters}
+\begin{itemize}
+  \item \textbad{Drawback}: Error prone interface.
+
+\begin{block}{Using array parameters as pointers}
+\begin{lstlisting}
+void f() {
+  int values[] { 1, 2, 3, 4 };
+  print_array(values, 4); // OK
+  print_array(values, 2); // OK?
+  print_array(values, 6); // UB
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Array parameters passed by reference}
+\begin{itemize}
+  \item Passing an array by reference requires knowing the size
+        at compile time.
+
+\begin{block}{Classic array parameters}
+\begin{lstlisting}
+template <typename T, std::size_t size>
+void print_array(T (&vec)[size]) {
+  for (auto x : vec) {
+    std::cout << x << ", ";
+  }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Using reference array parameters}
+\begin{itemize}
+  \item \textgood{Advantage}: Size is deduced from call site.
+\end{itemize}
+
+\begin{block}{Using array parameters as references}
+\begin{lstlisting}
+void f() {
+  int values[] { 1, 2, 3, 4 };
+  print_array(values); // OK
+  //...
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

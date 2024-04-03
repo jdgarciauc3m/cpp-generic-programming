@@ -1,0 +1,55 @@
+\subsection{Deducing values in templates}
+
+\begin{frame}[t,fragile]{Simplifying generic values}
+\begin{itemize}
+  \item Providing the type only for specifying a value is a common pattern.
+
+\begin{block}{Generalized value}
+\begin{lstlisting}
+template <std::regular T, T, value>
+bool is_less_than(T x) {
+  return x < value;
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Deduced values}
+
+\begin{itemize}
+  \item It can be simplified with \cppkey{auto} syntax.
+    \begin{itemize}
+      \item \textmark{Reminder}: \cppkey{decltype()} can be used to obtain
+            the type of NTTP.
+      \item \textbad{Note}: Default template parameter to name the type.
+    \end{itemize}
+
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{block}{Generalized value}
+\begin{lstlisting}
+template <auto value>
+bool is_less_than(decltype(value) x) {
+  return x < value;
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.6\textwidth}
+\begin{block}{Generalized value with named type}
+\begin{lstlisting}
+template <auto value, typename T = decltype(value)>
+bool is_less_than(T x) {
+  return x < value;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
