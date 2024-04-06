@@ -1,0 +1,169 @@
+\begin{frame}[t,fragile]{Generic classes with NTTP}
+\begin{itemize}
+  \item A generic class may have a non-type template paramter.
+    \begin{itemize}
+      \item It represents a value that is known at compile time.
+    \end{itemize}
+
+\begin{block}{A generic \textbf{local\_storage}}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T, @\color{red}std::size\_t max\_size@>
+class local_storage {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+  \item The NTTP may be used:
+    \begin{itemize}
+      \item In any declarartion inside the class.
+      \item In any definition for a class member.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile,shrink=30]{Defining a generic class with NTTP}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A local storage with generic size}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T, @\color{red}std::size\_t max\_size@>
+class local_storage {
+public:
+  local_storage() : buffer_{} {}
+
+  [[nodiscard]] int capacity() const { return @\color{red}max\_size@; }
+
+  T operator[](int i) const {
+    auto idx = gsl::narrow<std::size_t>(i);
+    Expects(idx < @\color{red}max\_size@);
+    return buffer_[idx];
+  }
+
+  T &operator[](int i) {
+    auto idx = gsl::narrow<std::size_t>(i);
+    Expects(idx < @\color{red}max\_size@);
+    return buffer_[idx];
+  }
+
+private:
+  T buffer_[@\color{red}max\_size@];
+};
+
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using the local storage}
+\begin{lstlisting}[escapechar=@]
+void f1() {
+  local_storage<double,@\color{red}30@> space;
+  space[1] = 3.5;
+  std::cout << "space[1] = " << space[1] << '\n';
+  double x = space[3];
+  std::cout << "space[3] = " << x << '\n';
+}
+@\pause@
+void f2() {
+  local_storage<std::string,@\color{red}10@> names;
+  local_storage<std::string,@\color{red}4@> seasons;
+
+  if (std::is_same_v<decltype(names), decltype(seasons)>) {
+    std::cout << "Same type\n";
+  }
+  else {
+    std::cout << "Different types";
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Default template parameters}
+\begin{itemize}
+  \item A template parameter may have a default value also for NNTP.
+\end{itemize}
+
+\begin{block}{Storage with default parameters}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T, std::size_t max_size @\color{red}= 32@>
+class local_storage {
+  //...
+};
+
+template<std::semiregular T = double, typename S @\color{red}= local\_storage<T,32>@>
+class fixed_vector {
+  //...
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Default template parameters and composition}
+\mode<presentation>{\vspace{-1em}}
+\begin{block}{A generic defaulted fixed vector}
+\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+template<std::semiregular T = double, typename S = local_storage<T,32>>
+class fixed_vector {
+public:
+  explicit fixed_vector(int n) : storage_{n} {} // Will not work with local_storage
+
+  T operator[](int i) const { return storage_[i]; }
+  T &operator[](int i) { return storage_[i]; }
+
+  [[nodiscard]] int capacity() const { return storage_.capacity(); }
+  [[nodiscard]] int size() const { return size_; }
+
+  void push_back(T x) {
+    Expects(size() < capacity());
+    storage_[size_++] = x;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, fixed_vector const &v);
+
+private:
+  int size_ = 0;
+  @\color{red}S storage\_@;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\mode<presentation>{\vspace{-1em}}
+\begin{block}{A specialized generic defaulted fixed vector}
+\begin{lstlisting}[basicstyle=\tiny, escapechar=@]
+template<std::semiregular T, std::size_t max_size> // No defaults
+class fixed_vector<T, local_storage<T,max_size>> {
+public:
+  explicit fixed_vector(int n) {
+    Expects(n>=0 and n<storage_.capacity());
+  }
+
+  T operator[](int i) const { return storage_[i]; }
+  T &operator[](int i) { return storage_[i]; }
+
+  [[nodiscard]] int capacity() const { return storage_.capacity(); }
+  [[nodiscard]] int size() const { return size_; }
+
+  void push_back(T x) {
+    Expects(size() < capacity());
+    storage_[size_++] = x;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, fixed_vector const &v);
+
+private:
+  int size_ = 0;
+  @\color{red}local\_storage<T,max\_size> storage\_@;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
