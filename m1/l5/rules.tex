@@ -1,0 +1,340 @@
+\subsection{Rules on NTTP}
+
+\begin{frame}[t,fragile]{Limits on NTTP}
+\begin{itemize}
+  \item The type for a value of a \textmark{non-type template parameter} can be:
+    \begin{itemize}
+      \item An integral type.
+      \item A floating-point type.
+      \item An enumeration type.
+      \item A pointer type or pointer to member type.
+      \item The \cppid{nullptr\_t} type.
+      \item An l-value reference type.
+      \item A literal class type.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{NTTP of integral types}
+\begin{itemize}
+  \item An NTTP can be of any integral type.
+    \begin{itemize}
+      \item \textbad{Note}: Integral types also include \cppkey{bool}.
+    \end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Controlling output}
+\begin{lstlisting}
+template <bool formatted, std::integral T>
+void print_value(T x) {
+  if constexpr (formatted) {
+    std::cout << std::format("{:10}\n", x);
+  }
+  else {
+    std::cout << x << '\n';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Printing values}
+\begin{lstlisting}
+void f() {
+  print<true>(42);  // uses format
+  print<false>(42); // does not use format
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Taking advantage of default values}
+
+\begin{columns}[T]
+
+\column{.55\textwidth}
+\begin{block}{Controlling output}
+\begin{lstlisting}
+template <std::integral T, 
+          bool formatted = (sizeof(T) > sizeof(int)) >
+void print_integral(T x) {
+  std::cout << std::format("size = {}\n", sizeof(T));
+  if constexpr (formatted) {
+    std::cout << std::format("{:10}\n", x);
+  }
+  else {
+    std::cout << x << '\n';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Printing values}
+\begin{lstlisting}
+void f() {
+  print_integral(42); // does not use format
+  print_integral(42L); // uses format
+  print_integral(42LL); // uses format
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{NNTP of floating point values}
+\begin{itemize}
+  \item A NNTP can be of any floating point type.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Generic function}
+\begin{lstlisting}
+template <double value, std::floating_point T>
+bool is_greater_fp(T x) {
+  return x > value;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using a generic function}
+\begin{lstlisting}
+void f() {
+  double x = 5.0; // NOLINT
+  std::cout << is_greater_fp<2.0>(x) << '\n';
+  //...
+
+  std::vector<double> values{1, 3, 5, 7, 9, 2, 4, 6, 8};
+  std::vector<double> results{};
+  std::ranges::copy_if(values, std::back_inserter(results), 
+      is_greater_fp<4.0, double>);
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{A logging library with NTTP enums}
+\begin{itemize}
+  \item Enums can be used at compile time.
+\end{itemize}
+
+\mode<presentation>{\vspace{-.5em}}
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{block}{Converting enum to strings}
+\begin{lstlisting}
+enum class log_level : std::uint8_t {
+  info, warn, error
+};
+
+template <log_level level>
+std::string to_string() {
+  switch (level) {
+    case log_level::info: return "info";
+    case log_level::warn: return "warning!";
+    case log_level::error: return "ERROR!!!";
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.55\textwidth}
+\begin{block}{Printing log messages}
+\begin{lstlisting}[escapechar=@]
+template <log_level level>
+void log(std::string_view message) {
+  std::cout << std::format("{}: {}\n", to_string<level>(), message);
+}
+@\pause@
+void f() {
+  using enum log_level;
+  log<info>("Starting function");
+  log<warn>("Function is deprecated");
+  log<error>("Stop using this function");
+  log<info>("Finishing function");
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{NTTP of pointer types}
+\begin{itemize}
+  \item A NTTP may be of any pointer or pointer to member type.
+    \begin{itemize}
+      \item The pointed object must have external, internal linkage or no linkage.
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Generic function}
+\begin{lstlisting}
+struct value_limits {
+    double low;
+    double high;
+};
+
+template <value_limits * limits>
+double limit_value(double x) {
+  static_assert(limits !=nullptr);
+  if (x < limits->low) { return limits->low; }
+  if (x > limits->high) { return limits->high; }
+  return x;
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using a generic function}
+\begin{lstlisting}[basicstyle=\tiny]
+value_limits lim1{1.0, 5.0};
+
+void f1() {
+  std::cout << limit_value<&lim1>(0.0) << '\n';
+
+  static value_limits lim2{3.0, 7.0};
+  std::cout << limit_value<&lim2>(10.0) << '\n';
+
+  value_limits lim3{-3.0, 3.0};
+  std::cout << limit_value<&lim3>(10.0) << '\n'; // Error
+
+  constexpr value_limits * pnull = nullptr;
+  std::cout << limit_value<pnull>(10.0) << '\n'; // Assert
+}
+
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{NTTP and string literals}
+\begin{itemize}
+  \item String literals are pointers.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Generic function}
+\begin{lstlisting}
+template <char const * prefix>
+void print_message(std::string_view message) {
+  std::cout << 
+      std::format("{}: {}\n", prefix, message);
+}
+
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using string literals}
+\begin{lstlisting}
+char const info[] = "INFO"; // NOLINT
+
+void f1() {
+  print_message<info>("Start");
+
+  static char const warn[] = "WARN";
+  print_message<warn>("No linkage");
+
+  char const error[] = "ERROR";
+  print_message<error>("local"); // Error
+
+  print_message<"ERROR">("\Literal"); // Error
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{NTTP of class types}
+\begin{itemize}
+  \item A NTTP parameter may be of \textemph{literal class type} where all \textmark{members are public}.
+  
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{literal class type}:
+    \begin{itemize}
+      \item Has a \cppkey{constexpr} destructor.
+      \item Is one of the following:
+        \begin{itemize}
+          \item A lambda type.
+          \item An aggregate union type with 
+                no variant members or one variant member of non-volatile literal type.
+          \item A non-union aggregate type where anonymous union members have
+                no variant members or one variant member of non-volatile literal type.
+          \item A type with at least one \cppkey{constexpr} constructor that is not copy/move.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{NTTP and literal class types}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Generic function}
+\begin{lstlisting}
+struct value_limits {
+    constexpr value_limits(double vlow, double vhigh)
+      : low{vlow}, high{vhigh} 
+    {
+      Expects(vlow <= vhigh);
+    }
+    double low;
+    double high;
+};
+
+template <value_limits limits>
+double limit_value(double x) {
+  if (x < limits.low) { return limits.low; }
+  if (x > limits.high) { return limits.high; }
+  return x;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using a generic function}
+\begin{lstlisting}[basicstyle=\tiny]
+void f2() {
+  constexpr value_limits lim1{1.0, 3.0};
+  
+  std::cout << lim1 << limit_value<lim1>(5.0) << '\n';
+
+  std::cout << limit_value<value_limits{3.0, 8.0}>(5.0) << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

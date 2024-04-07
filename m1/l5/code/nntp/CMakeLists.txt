@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27)
 project(nntp LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -22,3 +22,9 @@ add_executable(main01 main01.cpp)
 add_executable(main02 main02.cpp)
 target_link_libraries(main01 PRIVATE Microsoft.GSL::GSL)
 target_link_libraries(main02 PRIVATE Microsoft.GSL::GSL)
+add_executable(main03 main03.cpp)
+add_executable(main04 main04.cpp)
+add_executable(main05 main05.cpp)
+add_executable(main06 main06.cpp)
+add_executable(main07 main07.cpp)
+target_link_libraries(main07 PRIVATE Microsoft.GSL::GSL)
