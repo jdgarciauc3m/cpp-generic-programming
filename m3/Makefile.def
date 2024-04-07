@@ -1,0 +1,15 @@
+M3_DIR=m3
+M3_PARTS=$(M3_DIR)/content.tex
+
+include $(M3_DIR)/l1/Makefile.def
+
+M3_BASE=m3
+M3_PDF=$(M3_DIR).pdf
+FINAL_M3_PDF=$(FINAL_DIR)/$(M3_PDF)
+
+ALL_PARTS += \
+$(M3_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M3_PDF) \
+
