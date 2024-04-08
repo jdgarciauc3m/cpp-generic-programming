@@ -1,0 +1,155 @@
+\subsection{Constraing templates with concepts}
+
+\begin{frame}[t,fragile]{Implicit requirements}
+\begin{itemize}
+  \item A generic function has a set of implied requirements.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A generic square}
+\begin{lstlisting}
+template <typename T>
+T square(T x) {
+  return x*x;
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Binary operator \cppkey{*} must be define on \cppid{T}.
+  \item Values of type \cppid{T} must be returnable.
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item \textgood{Solution}: Define only for integral types.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Requiring a subset of types}
+\begin{itemize}
+  \item A concept from the standard library can be used.
+    \begin{itemize}
+      \item \cppid{std::integral} is a concept for integral types.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{A generic square for integral types}
+\begin{lstlisting}
+std::integral auto square(std::integral auto x) {
+  return x*x;
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Constraints in parameter}
+\begin{lstlisting}
+template <std::integral T>
+T square(T x) { 
+  return x*x; 
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Constraints as requirements}
+\begin{lstlisting}
+template <typename T>
+requires std::integral<T>
+T square(T x) { 
+  return x*x; 
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Defining a concept}
+\begin{itemize}
+  \item A \textemph{concept} on a type can be defined as a boolean expression.
+    \begin{itemize}
+      \item We may use any boolean expression whose value is known at compile time.
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{An arithmetic concept}
+\begin{lstlisting}
+template <typename T>
+concept arithmetic = 
+  std::is_arithmetic_v<T>;
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using the arithmetic concept}
+\begin{lstlisting}
+arithmetic auto square(arithmetic auto x) {
+  return x * x;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Overloading with concepts}
+\begin{itemize}
+  \item A generic function can be overloaded for sets of types.
+    \begin{itemize}
+      \item \textmark{Example}: Pointers versus non-pointers.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Printing values and pointers}
+\begin{lstlisting}
+template <typename T>
+requires (not std::is_pointer_v<T>)
+void print(T value) {
+  std::cout << "Value: " << value << '\n';
+}
+
+template <typename T>
+requires std::is_pointer_v<T>
+void print(T ptr) {
+  std::cout << "Pointer: " << static_cast<void*>(ptr) << ". Value: " << *ptr << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Trailing function requirements}
+\begin{itemize}
+  \item A requirement may be stated between function specification and function body.
+    \begin{itemize}
+      \item Usefule if function parameters are used.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Using trailing requirements}
+\begin{lstlisting}
+void print(auto ptr)
+requires std::is_pointer_v<decltype(ptr)>
+{
+  std::cout << "Pointer: " << static_cast<void*>(ptr) << ". Value: " << *ptr << '\n';
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

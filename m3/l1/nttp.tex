@@ -1,0 +1,45 @@
+\subsection{Constraining a NTTP}
+
+\begin{frame}[t,fragile]{Costraining values}
+\begin{itemize}
+  \item A constrain may include a value known at compile-time.
+    \begin{itemize}
+      \item Avoids instantiations with invalid values.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Requiring a positive size}
+\begin{lstlisting}
+template <std::semiregular T, int N>
+requires (N>0)
+class fixed_size {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Concepts on values}
+\begin{itemize}
+  \item Compile time checks can be expressed as value concepts.
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Value concept and use}
+\begin{lstlisting}
+template <int value>
+concept positive = value > 0;
+
+template <std::semiregular T, int N> requires positive<N>
+class fixed_vector {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Note}: Value concepts only used in requires expressions.
+
+\end{itemize}
+\end{frame}

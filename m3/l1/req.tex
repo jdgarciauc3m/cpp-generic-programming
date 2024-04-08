@@ -1,0 +1,122 @@
+\subsection{Requires expressions}
+
+\begin{frame}[t,fragile]{The need for more complex requirements}
+\begin{itemize}
+  \item \cppid{is\_pointer\_v<T>} only identifies primitive types.
+
+  \mode<presentation>{\vfill\pause}
+  \item What if we want to include othe types that \textmark{behave as pointers}
+    \begin{itemize}
+      \item \textmark{Example}: \cppid{unique\_ptr}, \cppid{shared\_ptr}, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Need to define a concept in terms of a set of valid operations:
+    \begin{itemize}
+      \item Unary operator \cppkey{*} for indirection.
+      \item Equality compare.
+      \item Compare to \cppkey{nullptr}.
+      \item \ldots
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Introducing requires expressions}
+\begin{itemize}
+  \item A concept may be defined in terms of a \textemph{requires expression}.
+    \begin{itemize}
+      \item A list of operations, type members and expressions giving specific types.
+    \end{itemize}
+
+\begin{block}{Requires expression}
+\begin{lstlisting}
+template <typename T>
+concept pointer = requires(T ptr) {
+  *ptr;
+  {ptr == ptr} -> std::same_as<bool>;
+  {ptr != ptr} -> std::same_as<bool>;
+  {ptr == nullptr} -> std::same_as<bool>;
+  {ptr != nullptr} -> std::same_as<bool>;
+};
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Using the concept with requires expression}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A print function for pointer like types}
+\begin{lstlisting}[escapechar=@]
+void print(@\color{red}pointer@ auto const &ptr) {
+  std::cout << "Pointer: " << ptr << ". ";
+  if (@\color{red}ptr == nullptr@) {
+    std::cout << "Value: null\n";
+  }
+  else {
+    std::cout << "Value: " << @\color{red}*ptr@ << '\n';
+  }
+}
+
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using the print function}
+\begin{lstlisting}
+void f1() {
+  int x = 42;
+  print(&x);
+
+  auto ptr = std::make_unique<std::string>("Hello");
+  print(ptr);
+
+  std::unique_ptr<std::string> empty;
+  print(empty);
+}
+
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Requires expressions and member functions}
+\begin{itemize}
+  \item \textemph{Requires expressions} allow to introduce requirements on
+        member functions.
+    \begin{itemize}
+      \item Powerful in combination with \textgood{overloading}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Example}: Overload \cppkey{opertor[]} for 
+        its \textgood{const version}:
+    \begin{itemize}
+      \item If size of data elements is small $\rightarrow$ return by value.
+      \item If size of data elements is large $\rightarrow$ return by const reference.
+    \end{itemize}
+\end{itemize}
+
+\pause
+\begin{block}{Overloading by element size}
+\begin{lstlisting}
+template <std::semiregular T, int N>
+class fixed_vector {
+public:
+  //..
+  T & operator[](int i);
+  T operator[](int i) const requires (sizeof(T) <= 2 * sizeof(void*));
+  T const & operator[](int i) const requires (sizeof(T) > 2 * sizeof(void*));
+  //...
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
