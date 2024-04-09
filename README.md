@@ -21,9 +21,8 @@ This repo contains the materials for a workshop on move semantics
 3. Concepts
     1. Constraining templates with concepts.
     2. Requirements.
-    3. Concepts definitions.
-    4. Subsuming constraints.
-    5. Standard concepts.
+    3. Subsuming constraints.
+    4. Standard concepts.
 3. Variadic templates.
     1. Variadic function templates.
     2. Variadic class templates.
