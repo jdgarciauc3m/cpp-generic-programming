@@ -1,0 +1,66 @@
+\subsection{Requirement clauses}
+
+\begin{frame}[t,fragile]{Requires clauses}
+\begin{itemize}
+  \item A \textemph{requires clause} may be used to constrain a template
+        or to constrain a function.
+
+\begin{columns}[T]
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Constraining templates}
+\begin{lstlisting}
+template <typename T>
+requires std::integral<T>
+T square(T x);
+
+template <typename T>
+requires std::semiregular<T>
+class fixed_vector { /*...*/ };
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Constraining functions}
+\begin{lstlisting}
+auto square(auto x)
+requires (std::integral<decltype(x)>);
+
+template <std::semiregular T>
+class fixed_vector {
+  T operator[](int i) const 
+  requires(sizeof(T) <= 2 * sizeof(void*));
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Anatomy of a requires clause}
+\begin{itemize}
+  \item A \textmark{requires clause} is given by the \cppkey{requires}
+        keyword followed by:
+    \begin{itemize}
+      \item A boolean compile-time expression.
+      \item A \textmark{concept}.
+      \item A \textmark{require expression}.
+      \item A conjunction of the above (with \cppkey{and} or \cppkey{\&\&}).
+      \item A disjunction of the above (with \cppkey{or} or \cppkey{||}).
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{A requires clause}
+\begin{lstlisting}
+template <typename T>
+requires std::integral<T> and
+         std::is_signed_v<T> and
+         requires(T x) { x*x; }
+T f(T value);
+\end{lstlisting}
+\end{block}
+\end{frame}

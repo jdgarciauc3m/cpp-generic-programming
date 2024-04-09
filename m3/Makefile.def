@@ -2,6 +2,7 @@ M3_DIR=m3
 M3_PARTS=$(M3_DIR)/content.tex
 
 include $(M3_DIR)/l1/Makefile.def
+include $(M3_DIR)/l2/Makefile.def
 
 M3_BASE=m3
 M3_PDF=$(M3_DIR).pdf

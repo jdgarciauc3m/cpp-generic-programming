@@ -20,11 +20,10 @@ This repo contains the materials for a workshop on move semantics
     7. Non-type template paramters.
 3. Concepts
     1. Constraining templates with concepts.
-    2. Concepts and contraints in practice.
-    3. Requirements.
-    4. Concepts definitions.
-    5. Subsuming constraints.
-    6. Standard concepts.
+    2. Requirements.
+    3. Concepts definitions.
+    4. Subsuming constraints.
+    5. Standard concepts.
 3. Variadic templates.
     1. Variadic function templates.
     2. Variadic class templates.

@@ -1,0 +1,307 @@
+\subsection{Requires expressions}
+
+\begin{frame}[t,fragile]{A requires expression is not a clause}
+\begin{itemize}
+  \item A \textemph{requires-expression} is different from a 
+       \textemph{requires-clause}.
+    \begin{itemize}
+      \item \textemph{requires-clause}:
+            Expresses requirement on template parameters or function parameters.
+
+      \item \textemph{requires-expression}:
+            Specifies syntactic requirements on template parameters.
+    \end{itemize}
+
+\pause
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Requires expression in concept}
+\begin{lstlisting}[escapechar=@]
+template <typename T>
+concept incrementable = requires(T x) {
+  ++x;
+};
+@\pause@
+template <incrementable T>
+T inc(T x) {
+  return ++x;
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Requires expression in requires clause}
+\begin{lstlisting}
+template <typename T>
+  requires(
+    requires(T x) { 
+      ++x; 
+    })
+T inc(T x) {
+  return ++x;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Requirements in requires expression}
+\begin{itemize}
+  \item A \textemph{requirement expression} contains:
+    \pause
+    \begin{itemize}
+      \item A list of parameters to be used its expressions.
+        \begin{itemize}
+          \item Similar to function declarations.
+        \end{itemize}
+\begin{lstlisting}[escapechar=@]
+template <typename T> 
+concept incrementable = requires(@\color{red}T x@) { /*...*/ };
+\end{lstlisting}
+
+      \pause
+      \item A list of requirements:
+        \begin{itemize}
+          \item Simple requirements.
+          \item Type requirements.
+          \item Compound requirements.
+          \item Nested requirements.
+        \end{itemize}
+\begin{lstlisting}[escapechar=@]
+template <typename T> 
+concept incrementable = requires(T x) { 
+  @\color{red}x++;@ // T supports post-increment
+  //...
+}
+\end{lstlisting}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simple requirements}
+\begin{itemize}
+  \item Every \textmark{simple requirement} is an expression.
+    \begin{itemize}
+      \item The requirement is satisfied if the expression is valid.
+      \item No execution happens at run-time.
+    \end{itemize}
+
+\begin{lstlisting}
+template <typename R>
+concept range = requires(R & rng) {
+  begin(rng);
+  end(rng);
+};
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A simple requirement may use more than one parameter.
+\begin{lstlisting}
+template <typename T>
+concept addable = requires(T x, T y) {
+  x+y;
+  y+x;
+};
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Type requirements}
+\begin{itemize}
+  \item A \textmark{type requirement} is specified by the keyword
+        \cppkey{typename} followed by a type name (it can be qualified).
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{type requirement} is satisfied if the named type is valid.
+    \begin{itemize}
+      \item Verify that a nested type exists.
+      \item Verify that a class template specialization names a type.
+      \item Verify that an alias template specialization names a type.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Nested types requirements}
+\begin{itemize}
+  \item Nested types requirements must exist to be satisfied.
+\begin{lstlisting}
+template <typename C>
+concept container = requires {
+  typename C::value_type;
+  typename C::size_type;
+  typename C::reference;
+  typename C::const_reference;
+  typename C::pointer;
+  typename C::const_pointer;
+  typename C::iterator;
+  typename C::const_iterator;
+  typename C::reverse_iterator;
+  typename C::const_reverse_iterator;
+};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Specialization and type requirements}
+\begin{itemize}
+  \item Verifying if a specialization names a type.
+\end{itemize}
+\begin{lstlisting}
+template <std::integral> class safe_value;
+
+template <> class safe_value<int> { /* ... */ }
+
+template <typename T>
+concept safe = requires {
+  typename safe_value<T>;
+};
+
+template <safe T> compute() { /*...*/ }
+
+void f() {
+  compute<int>(); // OK. safe_value<int> is valid
+  compute<float>(); // Error. safe_value<float> is invalid
+  compute<long>(); // OK. safe_value<int> names incomplete type
+  //...
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Specialization existence} 
+\begin{itemize}
+  \item Checking that an specialization really exists.
+\end{itemize}
+\begin{lstlisting}[escapechar=@]
+template <std::integral> class safe_value;
+
+template <> class safe_value<int> { /* ... */ }
+
+template <typename T>
+concept safe = requires {
+  @\color{red}safe\_value<T>{};@
+};
+
+template <safe T> compute() { /*...*/ }
+
+void f() {
+  compute<int>(); // OK. safe_value<int> is valid.
+  compute<float>(); // Error. safe_value<float> is invalid.
+  @\color{red}compute<long>();@ // Error. Instantiation undefined.
+  //...
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Compound requirements}
+\begin{itemize}
+  \item A \textmark{compound requirement} is formed by:
+    \begin{itemize}
+      \item An \textmark{expression} enclosed in braces.
+      \item An optional \cppkey{noexcept} specifier.
+      \item An optional \textmark{requirement} on the return type.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Constraint checking is performed in three steps:
+    \begin{enumerate}
+      \item Template arguments are substituted.
+      \item If there is a \cppkey{noexcept} specifier and the expression
+            \textmark{might throw}, the requirement is not satisfied.
+      \item If there is a \textmark{return requirement},
+            \cppkey{decltype((expression))} must satisfy such requirement.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using compound requirements}
+\begin{lstlisting}
+template <typename T>
+concept smart_pointer = requires(T ptr) {
+  typename T::pointer;
+  typename T::element_type;
+  typename T::deleter_type;
+  { *ptr } -> std::convertible_to<typename T::element_type>;
+  { ptr.operator->() } noexcept -> std::same_as<typename T::pointer>;
+  { static_cast<bool>(ptr) } noexcept -> std::same_as<bool>;
+};
+\end{lstlisting}
+
+\begin{itemize}
+  \item The result type is passed implicitly as first argument
+        to the return requirement.
+    \begin{itemize}
+      \item We cannot manipulate the resulting type.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Nested requirements}
+\begin{itemize}
+  \item A \textmark{nested requirement} includes the \cppkey{requires}
+        keyword followed by a constraint expression.
+    \begin{itemize}
+      \item It allows to specify additional constraints in terms
+            of local parameters.
+    \end{itemize}
+
+\begin{lstlisting}
+template <typename T>
+concept smart_pointer = requires(T ptr) {
+  typename T::pointer;
+  typename T::element_type;
+  typename T::deleter_type;
+  *ptr;
+  requires std::same_as<std::remove_reference_t<decltype(*ptr)>,
+      typename T::element_type>;
+  { ptr.operator->() } noexcept -> std::same_as<typename T::pointer>;
+  { static_cast<bool>(ptr) } noexcept -> std::same_as<bool>;
+};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Type predicate versus nested requirements evaluation}
+\begin{itemize}
+  \item There is a difference when using type predicates.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Using a type predicate}
+\begin{lstlisting}
+template<typename T>
+concept primitive_pointer = requires(T ptr) {
+  std::is_pointer_v<T>;
+};
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item Check that \cppid{is\_pointer\_v<T>} is valid.
+\end{itemize}
+
+\column{.5\textwidth}
+\begin{block}{Requiring a type predicate}
+\begin{lstlisting}
+template<typename T>
+concept primitive_pointer = requires(T ptr) {
+  requires std::is_pointer_v<T>;
+};
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item Check that \cppid{is\_pointer\_v<T>} is \cppkey{true}.
+\end{itemize}
+
+\end{columns}
+\end{frame}

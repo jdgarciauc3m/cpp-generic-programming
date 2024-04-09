@@ -1,0 +1,120 @@
+\subsection{Boolean compile-time expressions}
+
+\begin{frame}[t,fragile]{Boolean expressions in requirements}
+\begin{itemize}
+  \item A \textmark{requires clause} may include any compile-time
+        expression whose result is \cppkey{bool}:
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item A compile-time expression that may (or not) include a type.
+        \begin{itemize}
+          \item Equivalent to the condition in \cppkey{static\_assert}.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item A compile-time variable 
+            (\cppkey{constexpr} or \cppkey{constinit}).
+        \begin{itemize}
+          \item \cppkey{constexpr}: Initialized at compile-time 
+                and cannot be modified.
+          \item \cppkey{constinit}: Initialized at compile-time 
+                but can be modified.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item A compile-time function invocation 
+            (\cppkey{constexpr} or \cppkey{consteval}).
+        \begin{itemize}
+          \item \cppkey{constexpr}: Evaluated at compile-time if arguments
+                are known at compile-time.
+          \item \cppkey{consteval}: Evaluated at compile-time or
+                compiler error.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Boolean requirements}
+\begin{itemize}
+  \item A requirement may be a non-dependent boolean expression.
+\begin{lstlisting}
+template <typename T>
+requires (sizeof(long) == sizeof(void*))
+void f(T x);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A requirement may be a boolean expression depending on a parameter.
+\begin{lstlisting}
+template <typename T>
+requires (sizeof(T) <= 2 * sizeof(void*))
+void f(T x);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A requirement may depend on a NTTP value.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+requires (sizeof(T[N]) <= 4096)
+class fixed_vector { /*...*/ };
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Boolean requirements and compile-time variables}
+\begin{itemize}
+  \item Compile-time variables may be used in requirement clauses.
+    \begin{itemize}
+      \item All predicates in \cppid{<type\_traits>} are compile time variables.
+    \end{itemize}
+\begin{lstlisting}
+template <typename T>
+requires (std::is_integral<T>::value)
+void f(T x);
+
+template <typename T>
+requires (std::is_integral_v<T>)
+void f(T x);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A combination of expressions can also be used.
+\begin{lstlisting}
+template <typename T>
+requires (std::is_bounded_array_v<T> and 
+          std::is_convertible_v<remove_all_extents_t<T>, std::string>)
+void f(T x);
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Boolean requirements and compile-time functions}
+\begin{itemize}
+  \item A complicated requirement can be isolated in a compile-time
+        function.
+\begin{lstlisting}
+template <typename T>
+consteval bool is_poly_reference() {
+  return std::is_lvalue_reference_v<T> and
+         std::is_polymorphic_v<T>;
+}
+
+template <typename T>
+requires (is_poly_reference<T>())
+void f(T x);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Usually this is better expressed with a concept.
+\begin{lstlisting}
+template <typename T>
+concept poly_reference = std::is_lvalue_reference_v<T> and
+                         std::is_polymorphifc_v<T>;
+
+void f(poly_reference auto x);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
