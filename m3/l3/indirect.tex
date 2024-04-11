@@ -1,0 +1,43 @@
+\subsection{Indirect subsumption}
+
+\begin{frame}[t,fragile]{Subsuming indirectly}
+\begin{itemize}
+  \item Subsumption applies even indirectly.
+
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{block}{A network of concepts}
+\begin{lstlisting}
+template <typename T> concept A1 = /*...*/;
+
+template <typename T> concept A2 = /*...*/;
+
+template <typename T> concept A = A1 and A2;
+
+template <typename T> concept B1 = A1 and /*...*/;
+
+template <typename T> concept B2 = A2 and /*...*/;
+
+template <typename T> concept B = B1 and B2;
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+\begin{block}{Overloading indirectly subsumed}
+\begin{lstlisting}
+void f(A auto a) {
+  //...
+}
+
+// More constrained
+void f(B auto b) { 
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}

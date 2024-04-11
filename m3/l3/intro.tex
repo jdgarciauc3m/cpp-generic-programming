@@ -1,0 +1,146 @@
+\subsection{Subsuming constraints}
+
+\begin{frame}[t,fragile]{Refining requirements}
+\begin{itemize}
+  \item Using inlined requirements may lead to ambiguities.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A logging library}
+\begin{lstlisting}[basicstyle=\tiny]
+class file_logger {
+public:
+  //...
+  void log(std::string_view message);
+  //...
+};
+
+enum class log_level : std::uint8_t { 
+  info, warn, error, fatal };
+
+class level_file_logger {
+public:
+  //...
+  void log(std::string_view message) {
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Printing a warning}
+\begin{lstlisting}[basicstyle=\tiny]
+void print_warning(auto & l, std::string_view message)
+  requires(requires{
+    l.log("");
+  })
+{
+  l.log(message);
+}
+
+void print_warning(auto & l, std::string_view message)
+requires(requires{
+  l.log("");
+  l.log(log_level{}, "");
+})
+{
+  l.log(log_level::warn, "Start of warning");
+  l.log(message);
+  l.log(log_level::warn, "End of warning");
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Trying to overload with concepts}
+\begin{itemize}
+  \item Unrelated concepts also lead to ambiguities.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Concepts for logging}
+\begin{lstlisting}
+template <typename L>
+concept basic_logger = requires(L l){
+  l.log("");
+};
+
+template <typename L>
+concept extended_logger = requires(L l) {
+  l.log("");
+  l.log(log_level{}, "");
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Printing a warning}
+\begin{lstlisting}
+void print_warning(basic_logger auto & l, 
+    std::string_view message)
+{
+  l.log(message);
+}
+
+void print_warning(extended_logger auto & l, 
+    std::string_view message)
+{
+  l.log(log_level::warn, "Start of warning");
+  l.log(message);
+  l.log(log_level::warn, "End of warning");
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Subsumed concepts}
+\begin{itemize}
+  \item A \cppkey{concept} may \textmark{subsume} another \cppkey{concept}.
+    \begin{itemize}
+      \item During \textmark{overload resolution}, the more constrained
+            concept is preferred over the more general one.
+    \end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Logging concepts}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename L>
+concept logger = requires(L l) {
+  l.log(std::string_view{});
+};
+
+template <typename L>
+concept extended_logger = logger<L> and requires(L l) {
+  l.log(log_level{}, std::string_view{});
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Overload resolution}
+\begin{lstlisting}[basicstyle=\tiny]
+void print_warning(logger auto & l, std::string_view message) {
+  l.log(message);
+}
+
+void print_warning(extended_logger auto & l, std::string_view message) {
+  l.log(log_level::warn, message);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
