@@ -1,0 +1,16 @@
+\subsection{Comparison concepts}
+
+\begin{frame}[t,fragile]{Concepts for three-way-comparison}
+\begin{itemize}
+  \item \cppid{std::three\_way\_comparable\_with<T,U=T,C=std::partial\_ordering>}:
+    \begin{itemize}
+      \item Two objects of types \cppid{T} and \cppid{U} are comparable with
+            \cppkey{==}, \cppkey{!=}, \cppkey{<}, \cppkey{<=}, \cppkey{>}, \cppkey{>=}
+            as well as with \cppkey{<=>}.
+      \item Results of
+            \cppkey{==}, \cppkey{!=}, \cppkey{<}, \cppkey{<=}, \cppkey{>}, \cppkey{>=}
+            produce a valuce convertible to \cppkey{bool}.
+      \item Results of \cppkey{<=>} produce a comparison category.
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,14 @@
+\subsection{Random concepts}
+
+\begin{frame}[t,fragile]{Concepts on random generation}
+\begin{itemize}
+  \item \cppid{uniform\_random\_bit\_generator<G>}:
+    \begin{itemize}
+      \item The requirement \cppid{std::invocable<G\&>} is satisfied.
+      \item The result of invocations gives an unsigned integral value.
+      \item \cppid{G::min()} and \cppid{G::max()} give a value of the same type 
+            than invocations to generator.
+      \item \cppid{G::min()} results less than \cppid{G::max()}.
+    \end{itemize}
+\end{itemize}
+\end{frame}

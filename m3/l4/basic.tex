@@ -1,0 +1,103 @@
+\subsection{Basic concepts}
+
+\begin{frame}[t,fragile]{Arithmetic concepts}
+\begin{itemize}
+  \item \cppid{std::integral<T>}: \cppid{T} is an integral type.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::signed\_integral<T>}: \cppid{T} is an integral type that is \cppkey{signed}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::unsigned\_integral<T>}: \cppid{T} is an integral type that is \cppkey{unsigned}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::floating\_point<T>}: \cppid{T} is a \textemph{floating-point type}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Comparison concepts}
+\begin{itemize}
+  \item \cppid{equality\_comparable<T>}
+  Two objects of type \cppid{T} are comparable with operators \cppkey{==} and \cppkey{!=}.
+  Comparison is symmetric and transitive.
+  The result is convertible to \cppkey{bool}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{equality\_comparable\_with<T,U>}
+  An object of type \cppid{T} and another object of type \cppid{U}
+  are comparable with operators \cppkey{==} and \cppkey{!=}.
+  The result is convertible to \cppkey{bool}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{totally\_ordered<T>}
+  Two objects of type \cppid{T} are comparable with operators 
+  \cppkey{<}, \cppkey{<=}, \cppkey{>}, and \cppkey{>=} and  
+  \cppid{equality\_comparable<T>} is satisfied.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{totally\_ordered\_with<T,U>}:
+  One object of type \cppid{T} and anothe object of type \cppid{U}
+  are comparable with operators 
+  \cppkey{<}, \cppkey{<=}, \cppkey{>}, and \cppkey{>=} and  
+  \cppid{equality\_comparable\_with<T,U>} is satisfied.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Object concepts}
+\begin{itemize}
+  \item \cppid{std::movable<T>}:
+  An object of type \cppid{T} can be move constructed and move assigned.
+  An object that is an l-value of type \cppid{T} can be swapped.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::copyable<T>}:
+  An object of type \cppid{T} can be copy constructed and copy assigned.
+  Type \cppid{T} is also movable.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::semiregular<T>}:
+  An object of type \cppid{T} can be default initialized, and it is copyable.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::regular<T>}:
+  An object of type \cppid{T} is semiregular and it is equality comparable.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Callable concepts}
+\begin{itemize}
+  \item \cppid{std::invocable<F, Args\ldots>}:
+  \item \cppid{std::regular\_invocable<F, Args\ldots>}:
+  \cppid{F} can be invoked for arguments of types \cppid{Args\ldots}.
+  In the \textmark{regular}, objects of type \cppid{F} and \cppid{Args\ldots} are
+  not modified (but this is not checked).
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::predicate<P, Args\ldots>}:
+  \cppid{std::regular\_invocable<P,Args\ldots>} is satified and the result
+  of the invocation is convertible to \cppkey{bool}.   
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Relations concepts}
+\begin{itemize}
+  \item \cppid{std::relation<P,T,U>}:
+  \item \cppid{std::equivalence\_relation<P,T,U>}:
+  \item \cppid{std::strict\_weak\_order<P,T,U>}:
+  Two objects of types \cppid{T} and \cppid{U} can be passed to binary predicate \cppid{P}.
+
+    \begin{itemize}
+      \item \cppid{std::relation<P,T,U>} imposes no semantic constraint.
+
+      \mode<presentation>{\vfill}
+      \item \cppid{std::equivalence\_order<P,T,U>} adds as semantic constraint that the
+            relation is reflexive, symmetric and transitive.
+
+      \mode<presentation>{\vfill}
+      \item \cppid{std::strict\_weak\_order<P,T,U>} adds as semantic constraint that the
+            relation is irreflexive and transitive.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

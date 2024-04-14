@@ -1,0 +1,77 @@
+\subsection{Concepts on type properties}
+
+\begin{frame}[t,fragile]{Type relationships: Basic relationships}
+\begin{itemize}
+  \item \cppid{std::same\_as<T,U>}: 
+        Types \cppid{T} and \cppid{U} are the same type.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::common\_with<T,U>}:
+        Types \cppid{T} and \cppid{U} share a common type
+        to which they can be converted to.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::common\_reference\_with<T,U>}:
+        Types \cppid{T} and \cppid{U} share a common reference type
+        to which they can be converted to.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::convertible<T,U>}: 
+        Objects of type \cppid{T} are both implicitly and explicityly
+        convertible to \cppid{U}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Type relationships: construct/assign/swap}
+\begin{itemize}
+  \item \cppid{std::constructible\_from<T, Args\ldots>}:
+        An object of type \cppid{T} can be initialized with 
+        arguments of types \cppid{Args\ldots}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::asignable\_from<T, U>}:
+        An expression of type and value category \cppid{U}
+        can be assigned to an l-value of type \cppid{T}.
+        The assignment result is of type \cppid{T}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::swappable<T>}:
+        Two objects of type \cppid{T} can be swapped.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::swappable\_with<T,U>}:
+        An object of type \cppid{T} and an object of type \cppid{U}
+        can be swapped.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::derived\_from<T,U>}:
+        Either \cppid{T} is publicly derived from \cppid{U} or 
+        \cppid{T} and \cppid{U} are the same type.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Type relationships: construction/swap}
+\begin{itemize}
+  \item \cppid{default\_initializable<T>}:
+        An object of type \cppid{T} can be default constructed.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{move\_constructible<T>}:
+        An object of type \cppid{T} can be move initialized with
+        an r-value of type \cppid{T}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{copy\_constructible<T>}:+
+        An object of type \cppid{T} can be move initialized with
+        an l-value of type \cppid{T}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{destructible<T>}:
+        An object of type \cppid{T} can be destructed and its
+        detructor is \cppkey{noexcept}.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{swappable<T>}:
+        Two objects of type \cppid{T} can be swapped.
+\end{itemize}
+\end{frame}
