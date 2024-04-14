@@ -1,0 +1,14 @@
+M11_DIR=m11
+M11_PARTS=$(M11_DIR)/content.tex
+
+include $(M11_DIR)/l1/Makefile.def
+
+M11_BASE=m11
+M11_PDF=$(M11_DIR).pdf
+FINAL_M11_PDF=$(FINAL_DIR)/$(M11_PDF)
+
+ALL_PARTS += \
+$(M11_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M11_PDF) \

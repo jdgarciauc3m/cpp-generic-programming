@@ -1,0 +1,140 @@
+\subsection{Iterator concepts}
+
+\begin{frame}[t,fragile]{Concepts on indirect access}
+\begin{itemize}
+  \item \cppid{indirectly\_readable<I>}:
+        An object of type \cppid{I} supports reading through \cppkey{operator *}.
+        Such types include pointers, smart pointers and input iterators.
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_writable<O,T>}:
+        An object of type \cppid{O} supports writing a value of type\cppid{O}
+        through \cppkey{operator *} and performing an assignment.
+        
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Concepts on increment}
+\begin{itemize}
+  \item \cppid{weakly\_incrementable<I>}:
+        An object of type \cppid{I} supports (pre/post) increment operators.
+          \begin{itemize}
+            \item \cppid{std::iter\_difference\_t<I>} is a signed integral type.
+            \item \cppid{I} satisfies \cppid{std::default\_initializable}.
+            \item \cppid{I} satisfies \cppid{std::movable}.
+            \item The postfix increment may return any type.
+            \item Increment does not need to be \textmark{equality preserving}.
+          \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \cppid{incrementable<I>}:
+        An object of type \cppid{I} supports (pre/post) increment operators.
+          \begin{itemize}
+            \item \cppid{I} satisfies \cppid{regular} 
+                  (which requires \cppid{equality\_comparable}.
+            \item \cppid{I} satisfies \cppid{weakly\_incrementable}.
+            \item Postfix increment returns a value of type \cppid{I}.
+            \item Increment must be \textmark{equality preserving}.
+          \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Concepts on iterators}
+\begin{itemize}
+  \item \cppid{input\_output\_iterator<I>}:
+        Type \cppid{I} has the minimum requirements for all iterators,
+        supporting \cppid{++} and dereference to a value by \cppid{*}.
+          \begin{itemize}
+            \item \cppid{I} satisfies \cppid{weakly\_incrementable}.
+            \item \cppkey{operator *} produces a reference.
+          \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \cppid{input\_iterator<I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{output\_iterator<I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{forward\_iterator<I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{bidirectional\_iterator<I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{random\_access\_iterator<I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{contiguous\_iterator<I>}:
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Concepts for sentinels}
+\begin{itemize}
+  \item \cppid{sentinel\_for<S,I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{sized\_sentinel\_for<S,I>}:
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Concepts on itertor callables}
+\begin{itemize}
+  \item \cppid{indirectly\_unary\_invocable<F,I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_regular\_unary\_invocable<F,I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirect\_unary\_predicate<P,I>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirect\_binary\_predicate<P,I1,I2>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirect\_equivalence\_relation<P,I1,I2>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirect\_strict\_weak\_order<P,I1,I2>}:
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Concepts on algorithm requirements}
+\begin{itemize}
+  \item \cppid{indirectly\_movable<I,O>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_movable\_storable<I,O>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_copyable<I,O>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_copyable\_storable<I,O>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_swappable<I1,I2=I1>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{indirectly\_comparable<I1,I2,R,P1,P2>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{permutable<I>}
+
+  \mode<presentation>{\vfill}
+  \item \cppid{mergeable<I1,I2,O,R,P1,P2>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{sortable<I,R,P>}
+
+  \mode<presentation>{\vfill}
+  \item \cppid{permutable<I>}
+
+  \mode<presentation>{\vfill}
+  \item \cppid{mergeable<I1,I2,O,R,P1,P2>}:
+
+  \mode<presentation>{\vfill}
+  \item \cppid{sortable<I,R,P>}::
+
+\end{itemize}
+\end{frame}
