@@ -1,0 +1,53 @@
+\subsection{A safe print function}
+
+\begin{frame}[t,fragile]
+
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{block}{Implementing a type-safe print}
+\begin{lstlisting}
+template <typename T, typename... Args>
+void my_print(std::string_view str, T first, Args... args) {
+  auto pos = str.find("{}");
+  std::cout << str.substr(0, pos);
+  if (pos == std::string_view::npos) { 
+    throw std::invalid_argument("Extra argument"); 
+  }
+  std::cout << first;
+  if constexpr (sizeof...(Args) > 0) {
+    my_print(str.substr(pos + 2), args...);
+  } else {
+    if ( str.find("{}", pos+2) != std::string_view::npos) {
+      throw std::invalid_argument("Missing argument");
+    }
+    std::cout << str.substr(pos + 2);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.4\textwidth}
+\begin{block}{Using the safe print}
+\begin{lstlisting}
+void f() try {
+  // OK
+  my_print("Name {}. Birth year = {}. Height ={}.\n", 
+      "Daniel", 1969, 1.82);
+
+  // Exception: Extra argument
+  my_print("Name {}. Birth year = {}. Height ={}.\n", 
+      "Daniel", 1969, 1.82, 4);
+
+  // Exception: Missing argument
+  my_print("Name {}. Birth year = {}. Height ={}.\n", 
+      "Daniel", 1969);
+} catch (std::exception & exc) { 
+  std::cerr << exc.what() << '\n'; 
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

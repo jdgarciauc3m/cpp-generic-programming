@@ -1,0 +1,144 @@
+\subsection{Syntax of variadic functions}
+
+\begin{frame}[t,fragile]{Defining a variadic function template}
+\begin{itemize}
+  \item A \textgood{template parameter} may be \textmark{variadic}.
+    \begin{itemize}
+      \item Use ellipsis before template parameter name.
+      \item The parameter maps to a list of types.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item A \textgood{function parameter} may be \textmark{variadic}.
+    \begin{itemize}
+      \item Use ellipsis between variadic type name and parameter name.
+      \item The parameter maps to a list of values of different types.
+    \end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{A variadic value printer}
+\begin{lstlisting}
+template <typename T, typename ... Args> // Args is variadic template parameter
+void print_values(T x, Args ... args);   // args is variadic function parameter
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Parameter packs and argument packs}
+\begin{itemize}
+  \item A \textemph{template parameter pack} is a template parameter that
+        accepts zero or more template arguments.
+
+  \pause
+  \item A \textemph{function argument pack} is a function argument of
+        template parameter pack type.
+
+\pause
+\begin{block}{Packs in practice}
+\begin{lstlisting}[escapechar=@]
+template <typename T, typename ... Args>
+void print_values(T X, Args ... args);
+
+void f() {
+  print_values(42, "Daniel", "Bjarne"s, 9.5);@\pause@
+  // Parameter pack Args = int, char const *, std::string, double@\pause@
+  // Argument pack args = 42, "Daniel", "Bjarne"s, 9.542, "Daniel", "Bjarne"s, 9.5
+};
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Operations on packs}
+\begin{itemize}
+  \item \textbad{Only} two operations defined on packs.
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{Unpack} or \textmark{expand}: \cppid{\ldots}.
+      \begin{itemize}
+        \item Can be applied to both parameter and argument packs.
+        \item \cppid{Args...} expands a parameter pack.
+        \item \cppid{args...} expands an argument pack.
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item Count the elements in a pack: \cppkey{sizeof...(x)}.
+      \begin{itemize}
+        \item Can be applied to both paramter and argument packs.
+        \item \cppkey{sizeof...(}\cppid{Args}\cppid{)}.
+        \item \cppkey{sizeof...(}\cppid{rgs}\cppid{)}.
+      \end{itemize}
+ 
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Note}: Usally in combination with \textmark{compile-time recursion}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Printing values}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{block}{Printing a list of values}
+\begin{lstlisting}
+void print_values() { }
+
+template <typename T, typename ... Args>
+void print_values(T x, Args ... args) {
+  std::cout << x;
+  if (sizeof...(args) > 0) {
+    std::cout << " , ";
+    print_values(args...);
+  }
+  else {
+    std::cout << "\n";
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.55\textwidth}
+\begin{block}{Invoking value printer}
+\begin{lstlisting}
+void f() {
+  print_values(); // Call non-template
+
+  print_values(42);
+  // print_values<int>(42);
+
+  print_values(42, "Daniel");
+  // print_values<int,char const*>(42, "Daniel");
+
+  print_values(42, 3.5, 2.4f);
+  // print_values<int,double,float>(42, 3.5, 2.4f);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Call chain}
+\begin{itemize}
+  \item \cppid{print\_values(42, 3.5, 2.4f)}
+    \begin{itemize}
+      \item \pause \cppid{std::cout <{}< 42}
+      \item \pause \cppid{std::cout <{}< }\cppstr{" , "}
+      \item \pause \cppid{print\_values(3.5, 2.4f)}
+      \item \pause \cppid{std::cout <{}< 3.5}
+      \item \pause \cppid{std::cout <{}< }\cppstr{" , "}
+      \item \pause \cppid{print\_values(2.4f)}
+      \item \pause \cppid{std::cout <{}< 2.4f}
+      \item \pause \cppid{std::cout <{}< }\cppstr{'\textbackslash{}n'}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Observation}: The non-template version is never invoked,
+        but must be defined.
+    \begin{itemize}
+      \item Both branches of the \cppkey{if} \textmark{must compile}.
+    \end{itemize}
+\end{itemize}
+\end{frame}

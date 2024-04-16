@@ -1,0 +1,15 @@
+M4_DIR=m4
+M4_PARTS=$(M4_DIR)/content.tex
+
+include $(M4_DIR)/l1/Makefile.def
+
+M4_BASE=m4
+M4_PDF=$(M4_DIR).pdf
+FINAL_M4_PDF=$(FINAL_DIR)/$(M4_PDF)
+
+ALL_PARTS += \
+$(M4_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M4_PDF) \
+

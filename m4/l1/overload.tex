@@ -1,0 +1,102 @@
+\subsection{Overload resolution}
+
+\begin{frame}[t,fragile]{Variadic and non-variadic templates}
+  \begin{itemize}
+    \item If two function templates only differ in its trailing
+          parameter pack, the non variadic template is preferred.
+  \end{itemize}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{block}{Printing a list of values}
+\begin{lstlisting}
+template <typename T>
+void print_values(T x) {
+  std::cout << x << '\n';
+}
+
+template <typename T, typename ... Args>
+void print_values(T x, Args ... args) {
+  std::cout << x << " , ";
+  print_values(args...);
+}
+\end{lstlisting}
+\end{block}
+
+\column{.55\textwidth}
+\begin{block}{Invoking a value printer}
+\begin{lstlisting}
+void f() {
+  print_values(); // Error
+
+  print_values(42);
+  // print_values<int>(42);
+
+  print_values(42, "Daniel");
+  // print_values<int,char const*>(42, "Daniel");
+
+  print_values(42, 3.5, 2.4f);
+  // print_values<int,double,float>(42, 3.5, 2.4f);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Call chain}
+\begin{itemize}
+  \item \cppid{print\_values(42, 3.5, 2.4f)}
+    \begin{itemize}
+      \item \pause \cppid{std::cout <{}< 42 <{}< }\cppstr{" , "}
+      \item \pause \cppid{print\_values(3.5, 2.4f)}
+      \item \pause \cppid{std::cout <{}< 3.5 <{}< }\cppstr{" , "}
+      \item \pause \cppid{print\_values(2.4f)}
+      \item \pause \cppid{std::cout <{}< 2.4f <{}< }\cppstr{'\textbackslash{}n'}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Advantage}: Simpler code.
+
+  \mode<presentation>{\vfill}
+  \item \textbad{Drawback}: Does not support 0-arguments version.
+    \begin{itemize}
+      \item It can be solved with a third overload.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Unifying the variadic and non-variadic cases}
+
+\begin{columns}[T]
+
+\pause
+\column{.5\textwidth}
+\begin{block}{First try}
+\begin{lstlisting}
+template <typename T, typename... Args>
+void print_values(T x, Args... args) {
+  std::cout << x << " , ";
+  if  (sizeof...(Args) > 0) { 
+    print_values(args...); // Error
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using compile-time if}
+\begin{lstlisting}[escapechar=@]
+template <typename T, typename... Args>
+void print_values(T x, Args... args) {
+  std::cout << x << " , ";
+  if @\color{red}constexpr@ (sizeof...(Args) > 0) { 
+    print_values(args...); 
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+\end{frame}
