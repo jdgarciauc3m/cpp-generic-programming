@@ -1,0 +1,57 @@
+\subsection{Variadic class templates}
+
+\begin{frame}[t,fragile]{Basic syntax}
+\begin{itemize}
+  \item A class template may have a variadic template parameter.
+\begin{lstlisting}
+template <typename ... Args>
+class variadic;
+//...
+variadic<int, char, std::string> t1; // Args=int, char std::string
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item In the primary template, the parameter pack must be the last parameter.
+\begin{lstlisting}
+template <typename T, typename ... Args>
+class variadic;
+//...
+variadic<int, char, std::string> t1; // T=int, Args=char::std::string
+
+template <typename ... Args, typename T>
+class other_variadic; // Error
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Variadic class templates in te standard library}
+\begin{itemize}
+  \item The C++ standard offers a number of variadic class templates.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Examples}:
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item \cppid{std::tuple<}\cppkey{typename}\cppid{ \dots Types>}:
+            Fixed size container with elements of different types.
+\begin{lstlisting}
+std::tuple<std::string, double, int> x; // A string, a double and an int
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item \cppid{std::variant<}\cppkey{typename}\cppid{ \ldots Types>}:
+            Type-safe discriminated union.
+\begin{lstlisting}
+std::variant<std::string, double, int> x; // A string, or a double or an int
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item \cppid{std::integer\_sequence<}\cppkey{typename}\cppid{ T, T \ldots Ints>}:
+            A compile time sequence of integers.
+\begin{lstlisting}
+std::integer_sequence<int, 1, 2, 3> x; // Compile time list of integer values
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,252 @@
+\subsection{A generic record}
+
+\begin{frame}[t,fragile]{A generic record type}
+\begin{itemize}
+  \item A variadic class template.
+    \begin{itemize}
+      \item One data member for each template parameter.
+    \end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Variadic based code}
+\begin{lstlisting}
+record<int, std::string, double> rec;
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Equivalent code}
+\begin{lstlisting}
+class concrete_record {
+  //...
+private:
+  int member0;
+  std::string member1;
+  double member2;
+};
+concrete_record rec;
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{A minimal variadic record}
+\begin{lstlisting}
+template<typename ... T>
+class record;
+
+template <>
+class record<> {};
+
+template <typename T, typename ... U>
+class record<T,U...> {
+public:
+  record(T const & first, U const & ... rest) :
+      first_{first}, rest_{rest...} {}
+
+  [[nodiscard]] T const & first() const { return first_; }
+  [[nodiscard]] record<U...> const & rest() const { return rest_; }
+
+private:
+  T first_;
+  record<U...> rest_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Adding default construction}
+\begin{block}{A record with default construction}
+\begin{lstlisting}[escapechar=@]
+template <typename T, typename ... U>
+class record<T,U...> {
+public:
+  @\color{red}record() = default;@
+  record(T const & first, U const & ... rest) :
+      first_{first}, rest_{rest...} {}
+
+  [[nodiscard]] T const & first() const { return first_; }
+  [[nodiscard]] record<U...> const & rest() const { return rest_; }
+
+private:
+  T first_@\color{red}\{\}@;
+  record<U...> rest_@\color{red}\{\}@;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Printing record contents}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Adding a print function}
+\begin{lstlisting}[escapechar=@]
+template <typename T, typename ... U>
+class record<T,U...> {
+public:
+  record() = default;
+  record(T const & first, U const & ... rest) :
+      first_{first}, rest_{rest...} {}
+
+  @\color{red}void print() const;@
+
+private:
+  T first_{};
+  record<U...> rest_{};
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Adding a print function}
+\begin{lstlisting}
+template <typename T, typename ... U>
+void record<T,U...>::print() const {
+  std::cout << first_;
+  if constexpr(sizeof...(U) > 0) {
+    std::cout << " , ";
+    rest_.print();
+  } else {
+    std::cout << '\n';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Adding indexed access support}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Adding a free function to get a value in the record.
+
+\begin{block}{Using a indexed value accessor}
+\begin{lstlisting}
+void f() {
+  record<int, std::string, double> value{1969, "Daniel", 1.82};
+  std::cout << std::format("{}: {} ({})\n", get<0>(value), get<1>(value), get<2>(value));
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Problem}: A function cannot be partially specialized.
+
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Defining the accessor}
+\begin{lstlisting}
+template <int I, typename ... T>
+auto get(record<T...> const & rec) {
+  return get<I-1>(rec.rest());
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Trying to partial specialize}
+\begin{lstlisting}[escapechar=@]
+template <typename T, typename ... U>
+auto @\color{red}get<0>@(record<T,U...> const & rec) { // Error
+  return rec.first();
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Achieving function partial specialization}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Use a helper type that can be partially specialized.
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Defining helper type}
+\begin{lstlisting}[escapechar=@]
+template <int I>
+struct get_helper {
+  template <typename ... T>
+  static auto get(record<T...> const & rec) {
+    return get_helper<I-1>::get(rec.rest());
+  }
+};
+@\pause@
+template <>
+struct get_helper<0> {
+  template <typename ... T>
+  static auto get(record<T...> const & rec) {
+    return rec.first();
+  }
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.4\textwidth}
+\begin{block}{Using the helper type}
+\begin{lstlisting}
+template <int I, typename ... T>
+auto get(record<T...> const & rec) {
+  return get_helper<I>::get(rec);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Simplifying accessor}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Using if}
+\begin{lstlisting}[escapechar=@]
+template<int I, typename ... T>
+auto get(record<T...> const &rec) {
+  if  (I > 0) {
+    return get<I - 1>(@\color{red}rec.rest()@); // Error
+  } else {
+    return rec.first();
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using compile-time if}
+\begin{lstlisting}[escapechar=@]
+template<int I, typename ... T>
+auto get(record<T...> const &rec) {
+  if @\color{red}constexpr@ (I > 0) {
+    return get<I - 1>(rec.rest()); // Error
+  } else {
+    return rec.first();
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+\end{frame}
