@@ -1,0 +1,85 @@
+\subsection{Variadic guides}
+
+\begin{frame}[t,fragile]{A list of values}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A variadic contructor for a list}
+\begin{lstlisting}
+template <typename T>
+class list {
+public:
+
+  template <typename T1, typename ... U>
+  explicit list(T1 x, U ... u) : values_{x,u...} {}
+
+  //...
+
+private:
+  std::vector<T> values_;
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Constructing lists}
+\begin{lstlisting}
+void f() {
+  list<long> v1{1, 2L, 3};
+
+  list<double> v2{1.5f, 2.0, 3.5};
+
+  list v3{1,2,3}; // Error
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{A list of values with deduction}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A variadic contructor for a list}
+\begin{lstlisting}[escapechar=@]
+template <typename T>
+class list {
+public:
+
+  template <typename T1, typename ... U>
+  explicit list(T1 x, U ... u) : values_{x,u...} {}
+
+  //...
+
+private:
+  std::vector<T> values_;
+};
+template <typename T, typename ... U>
+list(T,U...) -> 
+    list<std::common_type_t<T,U...>{}>;
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Constructing lists}
+\begin{lstlisting}
+void f() {
+  list v1{1, 2L, 3};
+
+  list v2{1.5f, 2.0, 3.5};
+
+  list v3{1,2,3};
+
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

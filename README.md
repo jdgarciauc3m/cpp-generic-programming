@@ -27,7 +27,7 @@ This repo contains the materials for a workshop on move semantics
     1. Variadic function templates.
     2. Variadic class templates.
     3. Variadic expressions and folding expressions.
-    4. Variadic concepts.
+    4. Other variadic elements.
 4. Advanced uses of templates
     1. Value initialization.
     2. Member functions.

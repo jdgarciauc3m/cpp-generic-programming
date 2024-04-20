@@ -1,0 +1,140 @@
+\subsection{Variadic using declarations}
+
+\begin{frame}[t,fragile]{Using declarations}
+\begin{itemize}
+  \item A \textemph{using declaration} in a derived class 
+        injects an overload set from the base class.
+\end{itemize}
+
+\begin{columns}[T]
+\column{.2\textwidth}
+\column{.2\textwidth}
+\begin{lstlisting}
+class A {
+public:
+  void f();
+};
+\end{lstlisting}
+
+\column{.25\textwidth}
+\begin{lstlisting}
+class B {
+public:
+  void g();
+};
+\end{lstlisting}
+
+\column{.35\textwidth}
+\begin{lstlisting}
+class D : public A, public B {
+public:
+  using A::f;
+  using B::g;
+};
+\end{lstlisting}
+\column{.2\textwidth}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item A using declaration may take a comma separated list.
+\begin{lstlisting}
+class D : public A, public B {
+public:
+  using A::f, B::g;
+};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using and variadic bases}
+\begin{itemize}
+  \item The comma separated list of a \textmark{using declaration}
+        may be variadic pack.
+\begin{lstlisting}
+template <typename ... T>
+class A : public T... {
+public:
+  using T::print ...; // Inherit all overloads
+};
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Having two bases with the same overload would be ambiguous.
+
+\begin{columns}[T]
+
+\column{.1\textwidth}
+\column{.25\textwidth}
+\begin{lstlisting}
+class B1 {
+public:
+  void print();
+  void print(int x);
+};
+\end{lstlisting}
+\column{.3\textwidth}
+\begin{lstlisting}
+class B2 {
+public:
+  void print();
+  void print(double x);
+};
+\end{lstlisting}
+\column{.45\textwidth}
+\begin{lstlisting}
+void f() {
+  A<B1,B2> a;
+  a.print(5); // B1::print(int)
+  a.print(5.0); // B2.print(double)
+  a.print(); // Error: Ambiguous call
+}
+\end{lstlisting}
+\column{.1\textwidth}
+\end{columns}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Overload sets and lambdas}
+\begin{itemize}
+  \item We can generate a function object with overloaded \cppkey{operator()}
+        from a set of lambdas by inheriting from them.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{An overload set}
+\begin{lstlisting}
+template <typename... T>
+struct overload : T... {
+  using T::operator()...;
+};
+
+template <typename ... T>
+overload(T...) -> overload<T...>;
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Usage}
+\begin{lstlisting}
+void f() {
+  overload fun{
+    [](int x) { std::cout << "int:" << x; },
+    [](double x) { std::cout << "double:" << x; },
+    [](std::string s) { std::cout << "string:" << s; }
+  };
+  fun(2);
+  fun("hola");
+  fun(3.5);
+}
+
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
