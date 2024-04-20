@@ -1,0 +1,203 @@
+\subsection{Expression folding}
+
+\begin{frame}[t,fragile]{Variadic addition}
+\begin{itemize}
+  \item A \textmark{variadic template function} for \cppid{add}:
+
+\begin{block}{A variadic addition}
+\begin{lstlisting}
+template <typename T1>
+auto add(T1 v1) { return v1; }
+
+template <typename T1, typename ... Ts>
+auto add(T1 x1, Ts ... xs) {
+  return x1 + add(xs...);
+}
+
+void f() {
+  auto x = add(1, 2.0);
+  auto y = add(1L, 1.5f, 2LL);
+  //...
+}
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Expression folding}
+\begin{itemize}
+  \item With \textmark{expression folding} a binary operator
+        can be applied to a parameter pack.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A folded addition}
+\begin{lstlisting}
+template <typename ... T>
+auto add(T ... x) {
+  return (x + ...);
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Invoking folded addition}
+\begin{lstlisting}
+void f() {
+  auto x1 = add(1L, 1.5f, 2LL); // OK
+  auto x2 = add(3); // OK
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Folding default value}
+\begin{itemize}
+  \item A folding expression with an empty pack is \textbad{ill-formed}.
+    \begin{itemize}
+      \item Solvable with an initial value.
+    \end{itemize}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A folded addition}
+\begin{lstlisting}
+template <typename ... T>
+auto add(T ... x) { return (x + ... + 0); }
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Invoking folded addition}
+\begin{lstlisting}
+void f() {
+  auto x1 = add(); // OK
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+  \mode<presentation>{\vfill\pause}
+  \item Two operators have a default initial value: \cppkey{\&\&} (\cppkey{true}) and \cppkey{||} (\cppkey{false}).
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A folded logical and}
+\begin{lstlisting}
+template <typename ... T>
+auto combine(T ... x) { return (x and ... ); }
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Invoking folded addition}
+\begin{lstlisting}
+void f() {
+  auto x1 = combine(); // OK
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Left and right folding}
+\begin{itemize}
+  \item \textgood{Left fold}:
+    \begin{itemize}
+      \item \cppid{(\ldots $\otimes$ args)} \quad $\rightarrow$ \quad 
+            $(\ldots((a_1 \otimes a_2) \otimes a_3) \otimes \ldots) \otimes a_n$
+      \item \cppid{(x $\otimes$ \ldots $\otimes$ args)} \quad $\rightarrow$ \quad
+            $(\ldots((x \otimes a_1) \otimes a_2) \otimes \ldots) \otimes a_n$
+    \end{itemize}
+  \item \textgood{Right fold}:
+    \begin{itemize}
+      \item \cppid{(args $\otimes$ \ldots)} \quad $\rightarrow$ \quad
+            $a_1 \otimes (\ldots \otimes (a_{n-1} \otimes a_n))$ 
+      \item \cppid{(args $\otimes$ \ldots $\otimes$ x)} \quad $\rightarrow$ \quad
+            $a_1 \otimes (\ldots \otimes (a_{n-1} \otimes (a_n \otimes x)))$ 
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Note}: Some operations might make sens only for one folding.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Using left folding for printing}
+\begin{lstlisting}
+template <typename ... T>
+void print(T ... x) {
+  (std::cout << ... << x) << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Using left folding for printing}
+\begin{lstlisting}
+template <typename ... T>
+void print(T ... x) {
+  (std::cout << x << ...) << '\n'; // Error
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Improving a variadic print}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item \textbad{Problem}: We cannot add extra operands.
+  \item \textgood{Solution}: An intermediate type.
+\end{itemize}
+
+\mode<presentation>{\vspace{-.75em}}
+\pause
+\begin{columns}[T]
+
+\column{.57\textwidth}
+\begin{block}{A formatting type}
+\begin{lstlisting}
+template <typename T>
+class with_extra {
+public:
+  with_extra(T const & value) : value_{value} {}
+
+  friend std::ostream & 
+  operator<<(std::ostream & os, with_extra const & other) {
+    return os << other.value_ << ' ';
+  }
+private:
+  T const & value_;
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.45\textwidth}
+\begin{block}{Using the formatter}
+\begin{lstlisting}
+template <typename ... T>
+void print_with_extra(T ... x) {
+  (std::cout << ... << with_extra{x}) << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}

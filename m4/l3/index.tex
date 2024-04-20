@@ -1,0 +1,83 @@
+\subsection{Indexing}
+
+\begin{frame}[t,fragile]{Integer sequences}
+\begin{itemize}
+  \item The standard library provides types for index sequences.
+\begin{lstlisting}
+template <typename T, T ... Is>
+class integer_sequence;
+\end{lstlisting}
+    \begin{itemize}
+      \item \textmark{Members}:
+        \begin{itemize}
+          \item \cppid{value\_type}: The type \cppid{T}.
+          \item \cppid{size()}: Returns the number of values.
+        \end{itemize}
+    \end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Sequence printer}
+\begin{lstlisting}
+template <typename T, T ... Is>
+void print_seq(std::integer_sequence<T,Is...>) {
+  std::cout << "[";
+  ((std::cout << Is << ' '),...);
+  std::cout << "]\n";
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Printing a sequence}
+\begin{lstlisting}
+void f() {
+  std::integer_sequence<int, 1, 3, 5, 7> s1;
+  print_seq(s1);
+  print_seq(std::integer_sequence<long,2,4>{});
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Helpers for integer sequences}
+\begin{itemize}
+  \item \cppid{std::index\_sequence<std::size\_t ... Is>}: 
+        Integer sequence for values of type \cppid{std::size\_t}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::make\_integer\_sequence<typename T, T N>}:
+        An integer sequence of type \cppid{T} for values \cppid{0},...,\cppid{N-1}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::make\_index\_sequence<std::size\_t N>}:
+        An integer sequence of type \cppid{std::size\_t} for values \cppid{0},...,\cppid{N-1}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::index\_sequence\_for<typename ... T>}:
+        Equivalente a \cppid{std::make\_index\_sequence<}\cppkey{sizeof}\cppid{...(T)>}
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using index sequences for printing tuples}
+\begin{block}{Printing a tuple}
+\begin{lstlisting}
+template <typename TPL, std::size_t ... Is>
+void print_helper(TPL const & tpl, std::index_sequence<Is...>) {
+  ((std::cout << (Is==0 ? "" : ", ") << std::get<Is>(tpl)), ...);
+}
+
+template <typename ... T>
+void print(std::tuple<T...> const & tpl) {
+  std::cout << "[";
+  print_helper(tpl, std::index_sequence_for<T...>{});
+  std::cout << "]\n";
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

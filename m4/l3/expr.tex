@@ -1,0 +1,89 @@
+\subsection{Variadic expressions}
+
+\begin{frame}[t,fragile]{Pack expansion}
+\begin{itemize}
+  \item Pack expansion can be applied to any expression involving a pack.
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A generic printer}
+\begin{lstlisting}[escapechar=@]
+template<typename T, typename ... U>
+void print(T x, U ... u) {
+  std::cout << x << '\n';
+  if constexpr (sizeof...(U) > 0) {
+    print(@\color{red}u...@);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using the printer}
+\begin{lstlisting}[escapechar=@]
+template <typename ... T>
+void print_values(T const & ... x) {
+  print(@\color{red}x...@);
+}
+
+template <typename ... T>
+void print_addresses(T const & ... x) {
+  print(@\color{red}\&x...@);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Pack expansion in initializers}
+\begin{itemize}
+  \item A pack expansion can be used in an initializer.
+    \begin{itemize}
+      \item Allows tricks with dummy initialization.
+      \item Order of evaluation is guaranteed.
+    \end{itemize}
+
+\begin{block}{Printing addresses and sizes}
+\begin{lstlisting}
+template<typename T, typename U>
+int print_pair(std::pair<T, U> const &value) {
+  std::cout << "<" << value.first << " , " << value.second << ">";
+  return 0;
+}
+
+template<typename ... T>
+void print_addresses_sizes(T const &... x) {
+  [[maybe_unused]] int vec[sizeof...(T)] = {(print_pair(std::pair{&x, sizeof(x)})) ...};
+}
+
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Generating lists of strings}
+\begin{itemize}
+  \item A \textmark{pack expansion} in initilizer may be used to generate a 
+        list of strings.
+\begin{block}{A list of strigified values}
+\begin{lstlisting}
+template <typename ... T>
+std::vector<std::string> stringfy(T ... x) {
+  return std::vector<std::string> { std::to_string(x)...};
+}
+
+void f() {
+  auto str = stringfy(1, 2.5, 3.3f);
+  for (auto s : str) {
+    std::cout << s << '\n';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
