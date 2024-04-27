@@ -1,0 +1,15 @@
+M5_DIR=m5
+M5_PARTS=$(M5_DIR)/content.tex
+
+include $(M5_DIR)/l1/Makefile.def
+
+M5_BASE=m5
+M5_PDF=$(M5_DIR).pdf
+FINAL_M5_PDF=$(FINAL_DIR)/$(M5_PDF)
+
+ALL_PARTS += \
+$(M5_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M5_PDF) \
+

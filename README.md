@@ -23,47 +23,46 @@ This repo contains the materials for a workshop on move semantics
     2. Requirements.
     3. Subsuming constraints.
     4. Standard concepts.
-3. Variadic templates.
+4. Variadic templates.
     1. Variadic function templates.
     2. Variadic class templates.
     3. Variadic expressions and folding expressions.
     4. Other variadic elements.
-4. Advanced uses of templates
-    1. Value initialization.
-    2. Member functions.
-    3. Array argument passing.
-    4. Variable templates.
-    5. Template template parameters.
-    6. Perfect forwarding.
-    7. Special member function templates.
-    8. Constraining templates.
-5. Templates and argument passing.
+5. Advanced uses of templates
+    1. Dependent names.
+    2. Member templates.
+    3. Variable templates.
+    4. Template template parameters.
+    5. Perfect forwarding.
+    6. Special member function templates.
+    7. Constraining templates.
+6. Templates and argument passing.
     1. By value versus by reference.
     2. std::ref() and std::cref().
     3. Return values.
-6. Compile-time programming.
+7. Compile-time programming.
     1. Introduction to template meta-programming.
     2. Meta-programming and constexpr.
     3. SFINAE.
     4. Compile-time selection.
-7. Generic libraries
+8. Generic libraries
     1. Callables.
     2. Implementation utilities.
     3. Perfect forwarding of temporaries.
-8. Names and instantiation
+9. Names and instantiation
     1. Argument Dependent Lookup
     2. Dependent names.
     3. Dependent expressions.
     4. Inheritance and class templates.
     5. Instantiation model.
     6. Explicit instantiation.
-9. Template argument deduction
+10. Template argument deduction
     1. Template deduction.
     2. Deduction and r-value references.
     3. Limits of deduction.
     4. Initializers and expressions.
     5. Class template argument deduction.
-10. Specialization and overloading
+11. Specialization and overloading
     1. Overloading function templates.
     2. Explicit specialization.
     3. Partial class template specialization.

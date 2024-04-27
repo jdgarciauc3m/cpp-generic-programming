@@ -1,0 +1,109 @@
+\subsection{Introduction to dependent names}
+
+\begin{frame}[t,fragile]{Finding names}
+\begin{itemize}
+  \item Any name used in a template definition needs to be found.
+    \begin{itemize}
+      \item \textmark{Name lookup}: 
+            Associating a name 
+            with the declaration that introduced it.
+      \item \textmark{Name binding}: 
+            Associating a name explicitly or implicitly used in a template
+            with the declaration that introduced it.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Names used in a template definitions can be:
+    \begin{itemize}
+      \item \textgood{Non-dependent names}: 
+            Names that do not depend on template parameters.
+
+      \item \textgood{Dependent names}:
+            Names that depend on on a template parameter.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Non-dependent names}
+\begin{itemize}
+  \item \textgood{Non-dependent names} are bound at the point of definition
+        of the template.
+\end{itemize}
+
+\begin{block}{A min value generic function}
+\begin{lstlisting}[escapechar=@]
+template <typename T>
+auto min_value(@\color{red}std::vector@<T> const & v) {
+  if (v.empty()) { throw @\color{red}std::invalid\_argument@{"empty vector"}; }
+  auto result = v[0];
+  for (auto const & value : @\color{red}std::span@{v.begin()+1, v.end()}) {
+    if (value < result) { result = value; }
+  }
+  return result;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Dependent names}
+\begin{itemize}
+  \item \textgood{Dependent names} are bound at the point of instantiation.
+\end{itemize}
+\begin{block}{A min value generic function}
+\begin{lstlisting}[escapechar=@]
+template <typename T>
+auto min_value(std::vector<T> const & v) {
+  if (@\color{red}v.empty()@) { throw std::invalid_argument{"empty vector"}; }
+  auto result = @\color{red}v[0]@;
+  for (auto const & value : std::span{@\color{red}v.begin()+1@, @\color{red}v.end()@}) {
+    if (value @\color{red}<@ result) { result @\color{red}=@ value; }
+  }
+  return result;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Error with point of instantiation}
+\begin{lstlisting}
+class string_value;
+
+void print_min(std::vector<string_value> const & v) {
+  std::cout << std::format("min = {}\n", min_value(v).to_string());
+}
+
+class string_value {
+public:
+  explicit string_value(std::string init) : value_{std::move(init)} {}
+  friend auto operator<=>(string_value const &, string_value const &) = default;
+  [[nodiscard]] auto to_string() const { return value_; }
+private:
+  std::string value_;
+};
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+\begin{block}{Correct point of instantiation}
+\begin{lstlisting}
+class string_value {
+public:
+  explicit string_value(std::string init) : value_{std::move(init)} {}
+  friend auto operator<=>(string_value const &, string_value const &) = default;
+  [[nodiscard]] auto to_string() const { return value_; }
+private:
+  std::string value_;
+}; 
+
+void print_min(std::vector<string_value> const & v) {
+  std::cout << std::format("min = {}\n", min_value(v).to_string());
+}
+
+\end{lstlisting}
+\end{block}
+
+\end{frame}

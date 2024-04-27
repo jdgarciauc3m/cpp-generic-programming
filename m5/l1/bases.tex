@@ -1,0 +1,141 @@
+\subsection{Dependent base clases}
+
+\begin{frame}[t,fragile]{Naming and base classes}
+\begin{itemize}
+  \item When a template has a base class, it can access names from the base class.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Alternatives}:
+    \begin{itemize}
+      \item The base class \textgood{does not depend} on template parameter.
+      \item The base class \textbad{does depend} on template parameter.
+    \end{itemize}
+
+\pause
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Non dependent base}
+\begin{lstlisting}[basicstyle=\tiny]
+struct shape {
+  void print_origin();
+  //...
+};
+
+struct circle : public shape {
+  void print() {
+    print_origin();
+    //...
+  }
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Dependent base}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T> struct shape {
+  void print_origin();
+  //...
+};
+
+template <typename T> 
+struct circle : public shape<T> {
+  void print() {
+    print_origin(); // Error: Undeclared identifier
+    //...
+  }
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{}
+\begin{itemize}
+  \item Names from a dependent base are \textbad{not considered} in lookup.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Alternatives}:
+    \begin{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item Qualify the name with a dependent type.
+\begin{lstlisting}
+void print() {
+  shape<T>::print_origin();
+  //...
+}
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item Use an object to invoke the member.
+\begin{lstlisting}
+void print() {
+  this->print_origin();
+  //...
+}
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item Inject the name in the scope via \cppkey{using} declaration.
+\begin{lstlisting}
+using shape<T>::print_origin;
+void print() {
+  print_origin();
+  //...
+}
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Dependent bases in practice}
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A generic shape}
+\begin{lstlisting}
+template <position P>
+class shape {
+public:
+  explicit shape(P pos) : pos_{pos} {}
+
+  void print_origin() {
+    std::cout << "origin = ";
+    pos_.print();
+  }
+
+private:
+  P pos_;
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{A generic circle}
+\begin{lstlisting}
+template <position P>
+class circle : public shape<P> {
+public:
+  circle(P pos, double r) : shape<P>{pos}, radius{r} {}
+
+  void print()  {
+    this->print_origin();
+    std::cout << std::format(" radius = {}", radius);
+  }
+
+private:
+  double radius;
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

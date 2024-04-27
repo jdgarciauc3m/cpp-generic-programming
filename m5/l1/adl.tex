@@ -1,0 +1,108 @@
+\subsection{Argument Dependent Lookup}
+
+\begin{frame}[t,fragile]{Ordinary lookup}
+\begin{itemize}
+  \item When a function (or an operator) is invoked ordinary lookup is performed.
+
+  \mode<presentation>{\vfill\pause}
+  \item Ordinary lookup may find one of the following:
+    \begin{itemize}
+      \item The name of a member function.
+      \item The name of a variable.
+      \item The name of a type.
+      \item The name of local function declaration.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Otherwise ADL is used.
+    \begin{itemize}
+      \item \textmark{ADL}: Argument Dependent Lookup.
+      \item It solves the interaction between 
+            \cppkey{template} and \cppkey{namespace}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Warning}: \textmark{ADL} is inhibited if the function name is
+        enclosed in parentheses.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{ADL}
+\begin{itemize}
+  \item When \textmark{ADL} is applied, lookup is performed in
+    \begin{itemize}
+      \item Namespaces associated with the types of call arguments.
+      \item Classes associated with the types of call arguments.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{ADL in practice}
+\begin{lstlisting}[basicstyle=\tiny]
+namespace geom {
+  struct point { double x, y; };
+  void print(point p);
+}
+
+template <typename T>
+void print_value(T value) {
+  print(value);
+}
+
+void f() {
+  geom::point origin{0.0, 0.0};
+  print_value(origin); // Invoke print(point)
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{ADL}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{block}{Enumerations}
+\begin{lstlisting}
+namespace graphics {
+  enum class color : std::int8_t { red, green, blue };
+  std::string to_string(color c);
+  void log(color c) {
+    std::cout << std::format("COLOR: {}\n", to_string(c));
+  }
+}
+
+void log(int x) {
+  std::cout << std::format("INT: {}\n", x);
+}
+
+void f() {
+  log(42); // Built in: No ADL. Prints INT: 42
+  log(graphics::color::red); // ADL: graphics. Prints COLOR: red
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Built-in types $\Rightarrow$ Empty set.
+  \item Enumeration type $\Rightarrow$ Enclosing namespace/class.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Other rules for associated set}
+\begin{itemize}
+  \item Pointer and array types $\Rightarrow$ Associated set of the underlying type.
+  \item Class members $\Rightarrow$ Enclosing class.
+  \item Class types $\Rightarrow$ Class, enclosing class and direct/indirect base classes.
+  \item Class types $\Rightarrow$ Enclosing namespace.
+  \item Class template instance $\Rightarrow$ Types of template type arguments, 
+        classes/namespaces where arguments are declared.
+  \item Function types $\Rightarrow$ namespaces/classes associated with parameter types and return type.
+  \item Pointer to member $\Rightarrow$ namespaces/classes associated with class and with type of member.
+\end{itemize}
+\end{frame}
+

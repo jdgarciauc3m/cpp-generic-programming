@@ -1,0 +1,44 @@
+\subsection{Referring dependent types}
+
+\begin{frame}[t,fragile]{Member that are types}
+\begin{itemize}
+  \item A class may include type names in its definition.
+\begin{lstlisting}
+template <typename T, int N>
+class fixed_vector {
+public:
+  using element = T;
+  using element_reference = T&;
+  //...
+};
+\end{lstlisting}
+
+  \item When used in generic contexts those nested types become \textmark{dependent names}.
+\begin{lstlisting}
+template <typename T, int N>
+void f(fixed_vector<T,N> & v) {
+  fixed_vector<T,N>::element_reference r = v[0]; // fixed_vector<T,N>::element_reference is type?
+  // ...
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Resolving ambiguity with typename}
+\begin{itemize}
+  \item The keyword \cppkey{typename} is used to resolve ambiguity.
+    \begin{itemize}
+      \item When used before a dependent name, it specifies that such name is a type.
+    \end{itemize}
+\begin{lstlisting}
+template <typename T, int N>
+void f(fixed_vector<T,N> & v) {
+  typename fixed_vector<T,N>::element_reference r = v[0]; 
+  // ...
+}
+\end{lstlisting}
+
+
+\end{itemize}
+\end{frame}
