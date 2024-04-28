@@ -1,0 +1,91 @@
+\subsection{Variable templates}
+
+\begin{frame}[t,fragile]{Variable template}
+\begin{itemize}
+  \item A \textmark{variable template} defines a family of variables.
+    \begin{itemize}
+      \item One variable is generated for each instantiation.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Counting uses per type}
+\begin{lstlisting}
+template <typename T>
+int use_count = 0;
+
+template <typename T>
+void log(T x) {
+  // Note: This is not thread-safe
+  std::cout << std::format("log: {}, uses = {}\n", x, use_count<T>++);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using variable templates for constants}
+\begin{itemize}
+  \item Variable templates can be used to define generic compile-time constants.
+\end{itemize}
+
+\begin{block}{Generic constants}
+\begin{lstlisting}
+template <std::floating_point T>
+constexpr T pi = T(3.1415926535897932385); 
+
+template <std::floating_point T>
+T circle_area(T r) {
+  return pi<T> * r * r;
+}
+
+template <std::floating_point T>
+void print_area(T x) {
+  std::cout << std::format("area({}) = {}\n", x, circle_area(x));
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Mathematical constants in the standard library}
+\begin{itemize}
+  \item The standard library offers common mathematical constants as variable constant templates.
+    \begin{itemize}
+      \item Header \cppid{<numbers>}.
+      \item Namespace \cppid{std::numbers}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Generic version with \cppid{\_v} suffix.
+    \begin{itemize}
+      \item \cppid{e\_v}, \cppid{pi\_v}, \cppid{log2e\_v}, \cppid{log10e\_v}, \cppid{inv\_pi\_v}, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Non-generic \cppkey{double} version without \cppid{\_v} suffix.
+    \begin{itemize}
+      \item \cppid{e}, \cppid{pi}, \cppid{log2e}, \cppid{log10e}, \cppid{inv\_pi}, \ldots
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Metaprogramming predicates in the standard library}
+\begin{itemize}
+  \item The standard library offers many predicates used in metaprogramming.
+    \begin{itemize}
+      \item \cppid{std::is\_integral<T>}, \cppid{is::arithmetic<T>}, \cppid{is::enum<T>}, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item All of them have a \cppid{value} member.
+\begin{lstlisting}
+if constexpr(std::is_arithmetic<T>::value) { /*...*/ }
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item The library offers shortcuts as variable constant templates.
+\begin{lstlisting}
+if constexpr(std::is_arithmetic_v<T>) { /*...*/ }
+\end{lstlisting}
+\end{itemize}
+\end{frame}
