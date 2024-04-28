@@ -1,0 +1,67 @@
+\subsection{Dependent names and member templates}
+
+\begin{frame}[t,fragile]{Invoking a member template}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Member template invocation cannot be resolved with dependent names.
+\end{itemize}
+
+\mode<presentation>{\vspace{-.25em}}
+\begin{block}{A printing functions with delims}
+\begin{lstlisting}[basicstyle=\tiny]
+class shape {
+public:
+  //...
+  template <char left='<', char right='>'>
+  void print() const;
+  //...
+};
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Printing without dependent names}
+\begin{lstlisting}
+void f() {
+  shape s{1.0, 2.0};
+  s.print(); // OK
+  s.print<'[',']'>(); // OK
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Printing with depedent names}
+\begin{lstlisting}
+template <typename S> void f() {
+  S s{1.0, 2.0};
+  s.print(); // OK
+  s.print<'[',']'>(); // Error
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invoking member template with dependent names}
+\begin{itemize}
+  \item Invoking a member template with explicit template arguments might create an ambiguity.
+    \begin{itemize}
+      \item We do not know the meaning of \cppkey{<} until we resolve the dependent name.
+    \end{itemize}
+  \item An explicit disambiguation is needed: The keyworkd \cppkey{template}.
+\end{itemize}
+\begin{block}{Printing with depedent names}
+\begin{lstlisting}
+template <typename S> void f() {
+  S s{1.0, 2.0};
+  s.print(); // OK
+  s.template print<'[',']'>(); // Error
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
