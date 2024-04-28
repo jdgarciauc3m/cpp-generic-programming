@@ -1,0 +1,139 @@
+\subsection{Copy operations and templates}
+
+\begin{frame}[t,fragile]{Problems with copy operations}
+\begin{itemize}
+  \item A copy operation depends on exact values of template parameters.
+\begin{lstlisting}
+template<std::semiregular T, int N> requires(N > 0)
+class fixed_vector {
+public:
+  fixed_vector() = default; // Default constructor
+
+  fixed_vector(fixed_vector const & other); // Copy constuctor
+  //...
+};
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Problem}: Copy source and destination need \textmark{exactly}
+        the same template arguments.
+\begin{lstlisting}
+fixed_vector<double,32> vec;
+fixed_vector vec2 = vec; // OK
+fixed_vector<double,40> vec3 = vec; // Error
+fixed_vector<int,32> vec4 = vec; // Error
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Allowing copy with different sizes}
+\begin{block}{Copy constructing fixed vectors}
+\begin{lstlisting}[escapechar=@]
+template<std::semiregular T, int N> requires(N > 0)
+class fixed_vector {
+public:
+  fixed_vector() = default;
+
+  template <int M> requires(M>0 and N<M)
+  fixed_vector(fixed_vector<T,M> const & other) : size_{other.size_} {
+    Expects(@\color<1>{blue}\color<2>{red}other.size@_ < N); // Problem
+    std::ranges::copy_n(@\color<1>{blue}\color<2>{red}other.buffer@_.begin(), @\color<1>{blue}\color<2>{red}other.size@_, buffer_.begin()); // Problem
+  }
+  //...
+};
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item<2> \textbad{Problem}: \cppid{fixed\_vector<T,N>} and \cppid{fixed\_vector<T,M>} are different classes.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Granting access to other instantiations}
+\begin{itemize}
+  \item \textgood{Solution}: Make other instantiations \cppkey{friend} classes.
+\end{itemize}
+
+\begin{block}{Templated friend classes}
+\begin{lstlisting}
+template<std::semiregular T, int N> requires(N > 0)
+class fixed_vector {
+public:
+
+  template<std::semiregular,int M> 
+      requires (M>0)
+  friend class fixed_vector;
+  //...
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Converting among element types}
+\begin{itemize}
+  \item Still same element type is required.
+\begin{lstlisting}
+fixed_vector<double,32> vec;
+fixed_vector<double,40> vec2 = vec; // OK
+fixed_vector<int, 50> vec3 = vec; // Error
+fixed_vector<std::string, 40> vec4 = vec; // Error
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item But copy construction should be allowed if source element type is convertible
+        to destination element type.
+    \begin{itemize}
+      \item Add an element type template parameter to copy construction.
+      \item Constrain via \cppid{std::convertible\_to<From,To>}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Copy constructing fixed vectors}
+\begin{lstlisting}
+template<std::semiregular T, int N> requires(N > 0)
+class fixed_vector {
+public:
+
+  template<std::semiregular, int M> requires (M > 0)
+  friend class fixed_vector;
+
+  fixed_vector() = default;
+
+  template<std::semiregular U, int M>
+  requires(M > 0 and N < M and std::convertible_to<U,T>)
+  fixed_vector(fixed_vector<U, M> const &other) : size_{other.size_} {
+    Expects(other.size_ < N);
+    std::ranges::copy_n(other.buffer_.begin(), other.size_, buffer_.begin());
+  }
+  //...
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Copy constructing fixed vectors}
+\begin{lstlisting}
+template<std::semiregular T, int N> requires(N > 0)
+class fixed_vector {
+public:
+  //...
+
+  template<std::semiregular U, int M>
+  requires(M > 0 and N < M and std::convertible_to<U, T>)
+  fixed_vector<T, N> &operator=(fixed_vector<U, M> const &other) {
+    Expects(other.size_ < N);
+    if constexpr (std::is_same_v<T, U> and M == N) {
+      if (this == &other) { return *this; }
+    }
+    size_ = other.size_;
+    std::ranges::copy_n(other.buffer_.begin(), other.size_, buffer_.begin());
+    return *this;
+  }
+  //...
+};
+\end{lstlisting}
+\end{block}
+\end{frame}

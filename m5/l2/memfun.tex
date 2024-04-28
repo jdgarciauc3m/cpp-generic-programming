@@ -1,0 +1,134 @@
+\subsection{Member function templates}
+
+\begin{frame}[t,fragile]
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.55\textwidth}
+\begin{block}{A fixed vector type}
+\begin{lstlisting}
+template<std::semiregular T, int N = 32> 
+    requires(N > 0)
+class fixed_vector {
+public:
+  T operator[](int i) const { return buffer_[i]; }
+  T &operator[](int i) { return buffer_[i]; }
+
+  [[nodiscard]] int size() const { return size_; }
+
+  void push_back(T x);
+
+  void print(std::ostream & os) const;
+
+private:
+  int size_ = 0;
+  std::array<T, static_cast<std::size_t>(N)> buffer_{};
+};
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.45\textwidth}
+\begin{block}{Printing the fixed vector}
+\begin{lstlisting}[escapechar=@]
+void f(fixed_vector<double,100> const & vec) {
+  vec.print(std::cout); // OK@\pause@
+  vec.print(std::cerr); // OK@\pause@
+
+  vec.print(std::wcout); // Error
+}
+\end{lstlisting}
+\end{block}
+
+{\footnotesize \let\small\footnotesize
+\begin{itemize}
+  \pause
+  \item \textbad{Problem}:
+    \begin{itemize}
+      \item \cppid{std::cout}/\cppid{std::cerr} are \cppid{std::ostream}.
+      \item \cppid{std::wcout} is \cppid{std::wostream}.
+    \end{itemize}
+
+  \pause
+  \item \textgood{Solutions}:
+    \begin{itemize}
+      \item Overload \cppid{print} for \cppid{std::wstream}.
+      \item Generalize for any \cppid{streamable}.
+    \end{itemize}
+\end{itemize}
+}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{A concept for streamables}
+\begin{itemize}
+  \item A \cppkey{concept} to express that values of type \cppid{T} can be streamed.
+\begin{lstlisting}
+template <typename T, typename OS>
+concept streamable = requires(OS & os, T const & x) {
+  { os << x } -> std::same_as<OS&>;
+};
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Now print can be generalized to any output stream where a value of type \cppid{T} can be 
+        streamed to.
+\begin{lstlisting}
+template<std::semiregular T, int capacity> requires(capacity > 0)
+class fixed_vector {
+public:
+  //...
+  template <typename OS> requires streamable<T,OS>
+  void print(OS & os) const;
+  //...
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Implementing inside the class}
+\begin{block}{Printing a fixed vector}
+\begin{lstlisting}
+template<std::semiregular T, int capacity> requires(capacity > 0)
+class fixed_vector {
+public:
+  //...
+  template <typename OS> requires streamable<T,OS>
+  void print(OS & os) const {
+  if (size_ <= 0) { return; }
+  os << buffer_[0];
+  for (int i = 1; i < size_; ++i) {
+    os << " , " << buffer_[gsl::narrow<std::size_t>(i)];
+  }
+  //...
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Printing a fixed vector out of class}
+\begin{lstlisting}
+template<std::semiregular T, int capacity> requires(capacity > 0)
+class fixed_vector {
+public:
+  //...
+  template <typename OS> requires streamable<T,OS>
+  void print(OS & os) const;
+};
+
+template <std::semiregular T, int N> requires (N>0) // Class template params
+template <typename OS> requires streamable<T,OS>    // Function template params
+void fixed_vector<T,N>::print(OS & os) const {
+  if (size_ <= 0) { return; }
+  os << buffer_[0];
+  for (int i = 1; i < size_; ++i) {
+    os << " , " << buffer_[gsl::narrow<std::size_t>(i)];
+  }
+}
+\end{lstlisting}
+
+\end{block}
+\end{frame}
