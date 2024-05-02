@@ -1,0 +1,22 @@
+\subsection{Using template template parameters in classes}
+
+\begin{frame}[t,fragile]{A filtered number list}
+\begin{block}{A filtered number list}
+\begin{lstlisting}
+template<template<typename, typename> typename C>
+class filtered_numbers {
+public:
+  filtered_numbers(int low, int high) : minval_{low}, maxval_{high} {}
+
+  void add_value(int x) {
+    if (x < minval_ or x > maxval_) { return; }
+    values_.push_back(x);
+  }
+private:
+  int minval_;
+  int maxval_;
+  C<int, std::allocator<int>> values_{};
+};
+\end{lstlisting}
+\end{block}
+\end{frame}

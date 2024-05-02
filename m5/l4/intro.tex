@@ -1,0 +1,52 @@
+\subsection{Templates as parameters}
+
+\begin{frame}[t,fragile]{Passing and returning containers}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Consider a function \cppid{convert()} to copy elements from one container
+        to a different container:
+\begin{lstlisting}
+std::vector vec{1.5, 2.5, 3.5};
+auto lst = convert<std::list<double>>(vec);
+auto deq = convert<std::deque<double>>(vec);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Must take two template parameters for the input (\cppid{T}) and the return (\cppid{R}).
+\begin{block}{A first convert function}
+\begin{lstlisting}
+template<typename R, typename T>
+R convert(T const & cont) {
+  R result;
+  std::ranges::copy(cont, std::back_inserter(result));
+  return result;
+}
+\end{lstlisting}
+\end{block}
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using template template parameters}
+\begin{itemize}
+  \item A \cppkey{template template} parameter is not a type, but a template.
+\begin{block}{A convert function with a template template parameter}
+\begin{lstlisting}
+template<template<typename, typename> typename R,
+    template<typename, typename> typename T, typename E, typename A>
+auto convert(T<E, A> const &cont) {
+  R<E, A> result;
+  std::ranges::copy(cont, std::back_inserter(result));
+  return result;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item When invoked explicit parameters are not types, but templates.
+\begin{lstlisting}
+  auto lst = convert<std::list>(vec);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+

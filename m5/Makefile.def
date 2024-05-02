@@ -4,6 +4,7 @@ M5_PARTS=$(M5_DIR)/content.tex
 include $(M5_DIR)/l1/Makefile.def
 include $(M5_DIR)/l2/Makefile.def
 include $(M5_DIR)/l3/Makefile.def
+include $(M5_DIR)/l4/Makefile.def
 
 M5_BASE=m5
 M5_PDF=$(M5_DIR).pdf
