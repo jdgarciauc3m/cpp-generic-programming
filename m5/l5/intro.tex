@@ -1,0 +1,131 @@
+\subsection{The need for perfect forwarding}
+
+\begin{frame}[t,fragile]{A value class}
+\begin{block}{A copyable/movable class}
+\begin{lstlisting}
+class value {
+  public:
+    explicit value(int init) : x{init} { std::cout << "init\n"; }
+    value(value const & other) : x{other.x} { std::cout << "copy cons\n"; }
+    value(value && other) noexcept : x{other.x} { std::cout << "move cons\n"; }
+    ~value() { std::cout << "destructor\n"; }
+
+    value & operator=(value const & other) = default 
+    value & operator=(value && other) noexcept = default;
+
+    [[nodiscard]] int get() const { return x; }
+
+  private:
+    int x = 0;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Parameter passing}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{block}{Overloaded print}
+\begin{lstlisting}
+void print(value & x) {
+  std::cout << std::format("print({}) by ref\n", 
+      x.get());
+}
+
+void print(value const & x) {
+  std::cout << std::format("print({}) by const ref\n", 
+      x.get());
+}
+
+void print(value && x) { // NOLINT
+  std::cout << std::format("print({}) by r-value ref\n", 
+      x.get());
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.4\textwidth}
+\begin{block}{Printing values}
+\begin{lstlisting}
+void f() {
+  constexpr int init = 42;
+  value val{init};        // By ref
+  print(val);
+  value const cval{init}; 
+  print(cval);            // By const ref
+  print(value{init});     // By r-value ref
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Forwarding parameters}
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Overloaded log}
+\begin{lstlisting}
+void log_value(value & x) {
+  std::cout << "log: ";
+  print(x);
+}
+
+void log_value(value const & x) {
+  std::cout << "log: ";
+  print(x);
+}
+
+void log_value(value && x) {
+  std::cout << "log: ";
+  print(std::move(x)); // print(x) seelcts by ref
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Printing values}
+\begin{lstlisting}
+void f() {
+  constexpr int init = 42;
+  value val{init};
+  log_value(val);
+  value const cval{init};
+  log_value(cval);
+  log_value(value{init});
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Can we generalize?}
+\begin{itemize}
+  \item \cppid{log\_value()} seems a candidate for a generic function.
+\end{itemize}
+
+\begin{block}{Generalizing by value}
+\begin{lstlisting}
+template <typename T>
+void log_val(T x) { 
+  std::cout << "log: ";
+  print(x); // Always calls by-ref
+}
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item Inside the function \cppid{x} is an \textmark{l-value}.
+\end{itemize}
+
+\end{frame}

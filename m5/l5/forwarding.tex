@@ -1,0 +1,97 @@
+\subsection{Forwarding values}
+
+\begin{frame}[t,fragile]{Using universal references}
+\begin{itemize}
+  \item A universal reference uses \cppkey{\&\&} in a generic context.
+\begin{lstlisting}
+template <typename T>
+void f(T && x);
+\end{lstlisting}
+    
+     \pause
+     \begin{itemize}
+       \item When invoked with an \textmark{l-value}, \cppid{x} is an \textmark{l-value reference}.
+       \item When invoked with an \textmark{r-value}, \cppid{x} is an \textmark{r-value reference}.
+     \end{itemize}
+
+\pause
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Generalizing by universal reference}
+\begin{lstlisting}
+template <typename T>
+void log_val(T && x) {
+  std::cout << "log: ";
+  print(x);
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using the function}
+\begin{lstlisting}
+void f() {
+  constexpr int init = 42;
+  value val{init};
+  log_val(val); // By l-value ref
+  value const cval{init};
+  log_val(cval); // By const l-value ref
+  log_val(value{init}); // By ref
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+        
+\begin{frame}[t,fragile]{The case for std::forward}
+\begin{itemize}
+  \item \cppid{std::forward<T>(x)}:
+    \begin{itemize}
+      \item If \cppid{x} is an l-value:
+        \begin{itemize}
+          \item If \cppid{T} is l-value reference, \cppid{forward} returns l-value reference.
+          \item If \cppid{T} is r-value reference, \cppid{forward} returns r-value reference.
+        \end{itemize}
+      \item If \cppid{x} is an r-value:
+        \begin{itemize}
+          \item \cppid{forward} returns r-value reference.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\pause
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Generalizing by universal reference}
+\begin{lstlisting}
+template <typename T>
+void log_val(T && x) {
+  std::cout << "log: ";
+  print(std::forward<T>(x));
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using the function}
+\begin{lstlisting}
+void f() {
+  constexpr int init = 42;
+  value val{init};
+  log_val(val); // By l-value ref
+  value const cval{init};
+  log_val(cval); // By const ref
+  log_val(value{init}); // By r-value ref
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
