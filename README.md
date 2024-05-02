@@ -34,8 +34,6 @@ This repo contains the materials for a workshop on move semantics
     3. Variable templates.
     4. Template template parameters.
     5. Perfect forwarding.
-    6. Special member function templates.
-    7. Constraining templates.
 6. Templates and argument passing.
     1. By value versus by reference.
     2. std::ref() and std::cref().
