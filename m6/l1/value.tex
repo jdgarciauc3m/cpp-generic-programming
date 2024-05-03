@@ -1,0 +1,100 @@
+\subsection{Pass by value}
+\begin{frame}[t,fragile]{By value parameters in templates}
+\begin{itemize}
+  \item Many function templates take parameters by value.
+\begin{block}{A logging function}
+\begin{lstlisting}
+template <typename T>
+void log_value(T x) {
+  std::cout << "log: " << x << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item For primitive types by value, means copy.
+\begin{lstlisting}
+log_value(42); // Copy
+int x = 42;
+log_value(x); // Copy
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{By value class type parameters}
+\begin{itemize}
+  \item Passing an l-value means invoking copy constructor.
+\begin{lstlisting}
+product book{42, "El Quijote"};
+log_value(book); // Copy constructor invoked
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Passing the result of \cppid{std::move()}, means invoking move constructor.
+\begin{lstlisting}
+product book{42, "El Quijote"};
+log_value(std::move(book)); // Move constructor invoked
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Passing an r-value optimizes away construction.
+\begin{lstlisting}
+product make_default_product(); // Factory function
+log_value(make_default_product()); // No copy/move constructor invoked
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Printing containers}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Using the concept \cppid{std::ranges::range} we may have a special print
+        for anything that is a range.
+
+\begin{block}{Printing ranges}
+\begin{lstlisting}
+template <typename T>
+void log_value(T x) {
+  std::cout << "log: " << x << '\n';
+}
+
+template <std::ranges::range R>
+void log_value(R rng) {
+  std::cout << "[ ";
+  for (auto && x : rng) {
+    std::cout << x << ", ";
+  }
+  std::cout << " ]\n";
+}
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{By value paramters and decay}
+\begin{itemize}
+  \item Value parameters decay (specially relevant for arrays and C-strings).
+\begin{lstlisting}
+int v[] {1, 2, 3};
+log_value(v); // Logs an int*
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Better use \cppid{std::array}.
+\begin{lstlisting}
+std::array v{1,2,3}; // std::array<int,3>
+log_value(v); // Array copied
+log_value(std::move(v)); // Array moved -> copy
+log_value(std::array{1,2,3}); // Copy optimized out
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item C-strings also decay.
+\begin{lstlisting}
+log_value("C++"); // char const *
+log_value(std::string_view{"C++"}); // string-view copied
+\end{lstlisting}
+\end{itemize}
+\end{frame}

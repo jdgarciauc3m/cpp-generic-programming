@@ -1,0 +1,104 @@
+\subsection{Pass by constant reference}
+
+\begin{frame}[t,fragile]{By const reference parameters in templates}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Usually passing by const reference is seen as a common alternative
+        to pass by value.
+\begin{block}{A logging function}
+\begin{lstlisting}
+template <typename T>
+void log_value(T const & x) {
+  std::cout << "log: " << x << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item The address is always passed.
+\begin{lstlisting}
+int x = 42;
+log_value(x); // Pass address of x
+log_value(42); // Pass address of temporary
+product book{42, "Quijote"); 
+log_value(book); // Pass address of book
+log_value(std::move(book)); // Pass address. No move happens
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{By const reference and decay}
+\begin{itemize}
+  \item Const reference parameters do not decay.
+\begin{lstlisting}
+int v[] {1,2,3};
+log_value(v); // T = int[3]
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Free functions \cppid{std::begin()} and \cppid{std::end()} are defined on
+        bounded arrays.
+    \begin{itemize}
+      \item A bounded array satisfies the concept \cppid{std::ranges::range}.
+    \end{itemize}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Logging ranges}
+\begin{lstlisting}
+template <std::ranges::range R>
+void log_value(R const & rng) {
+  std::cout << "[ ";
+  for (auto && x : rng) { std::cout << x << ", "; }
+  std::cout << " ]\n";
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Logging arrays}
+\begin{lstlisting}
+int v[] {1, 2, 3};
+log_value(v); // R = int[3]
+
+log_value(std::span(v)); // R = std::span<int,3>
+
+std::array w{1, 2, 3};
+log_value(w); // R = std::array<int,3>
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Strings and const reference parameters}
+\begin{itemize}
+  \item A C-string is a \cppkey{char const} array.
+\begin{lstlisting}
+log_value("C++"); // R = char const[4]
+\end{lstlisting}
+    \begin{itemize}
+      \item \textbad{Problem}: The range includes the null terminator.
+    \end{itemize}
+\begin{lstlisting}[style=terminal]
+[ C, +, +, '\0',  ]
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}: Use a \cppid{string::view}.
+\begin{lstlisting}
+log_value(std::string_view{"C++"}); // OK
+
+using namespace std::literals;
+log_value("C++"sv);
+\end{lstlisting}
+\begin{lstlisting}[style=terminal]
+[ C, +, +,  ]
+\end{lstlisting}
+\end{itemize}
+\end{frame}

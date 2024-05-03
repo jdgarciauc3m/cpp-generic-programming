@@ -1,0 +1,16 @@
+M6_DIR=m6
+M6_PARTS=$(M6_DIR)/content.tex
+
+include $(M6_DIR)/l1/Makefile.def
+
+M6_BASE=m6
+M6_PDF=$(M6_DIR).pdf
+M6_PARTS += $(M6_DIR)/*.tex
+FINAL_M6_PDF=$(FINAL_DIR)/$(M6_PDF)
+
+ALL_PARTS += \
+$(M6_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M6_PDF) \
+

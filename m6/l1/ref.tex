@@ -1,0 +1,96 @@
+\subsection{Pass by reference}
+
+\begin{frame}[t,fragile]{By reference parameters in templates}
+\mode<presentation>{\vspace{-.75em}}
+\begin{itemize}
+  \item Pass by reference is similar to pass by const reference but allows
+        modification.
+\begin{block}{An update function}
+\begin{lstlisting}
+template <typename T>
+void update(T & x) {
+  ++x;
+}
+\end{lstlisting}
+\end{block}
+
+  \mode<presentation>{\vfill\pause}
+  \item The address is always passed.
+\begin{lstlisting}
+int x = 42;
+update(x); // Pass address of x
+update(42); // Error. Not an l-value
+product book{42, "Quijote"); 
+update(book); // Pass address of book
+update(std::move(book)); // Error. Not an l-value
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{By reference and decay}
+\begin{itemize}
+  \item Reference parameters do not decay.
+\begin{lstlisting}
+int v[] {1,2,3};
+update(v); // T = int[3]
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A proper version of \cppid{update()} needed for ranges:
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Updating ranges}
+\begin{lstlisting}
+template <std::ranges::range R>
+void update(R & rng) {
+  std::ranges::transform(rng, std::begin(rng), [](auto x) { return ++x; });
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Updating arrays}
+\begin{lstlisting}
+int v[] {1, 2, 3};
+update(v); // R = int[3]
+
+log_value(std::span(v)); // Error. Not an l-value
+
+std::array w{1, 2, 3};
+log_value(w); // R = std::array<int,3>
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{By reference and const objects}
+\begin{itemize}
+  \item Calling a function with a reference parameter for a const object deduces
+        a type qualified with \cppkey{const}.
+\begin{lstlisting}
+int const id = 42;
+update(id); // T = int const
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Problem}: Instantiation of function will lead to compilation error.
+    \begin{itemize}
+      \item Cannot assign to variable \cppid{x} with const-qualified type \cppkey{const int \&}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item A C-string is a \cppkey{char const} array.
+\begin{lstlisting}
+update("C++"); // R = char const[4]
+\end{lstlisting}
+  \item \textbad{Problem}: Instantiation of function will lead to compilation error.
+    \begin{itemize}
+      \item No matching function for call to object of type \cppkey{const} \cppid{\_\_transform\_fn}.
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -19,6 +19,7 @@ include m2/Makefile.def
 include m3/Makefile.def
 include m4/Makefile.def
 include m5/Makefile.def
+include m6/Makefile.def
 include m11/Makefile.def
 include guide/Makefile.def
 
@@ -44,5 +45,6 @@ include $(M2_DIR)/Makefile.mk
 include $(M3_DIR)/Makefile.mk
 include $(M4_DIR)/Makefile.mk
 include $(M5_DIR)/Makefile.mk
+include $(M6_DIR)/Makefile.mk
 include $(M11_DIR)/Makefile.mk
 include $(GUIDE_DIR)/Makefile.mk
