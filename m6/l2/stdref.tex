@@ -1,0 +1,160 @@
+\subsection{std::ref() and std::cref()}
+
+\begin{frame}[t,fragile]{Helper functions}
+\begin{itemize}
+  \item The easiest way to create a \cppid{reference\_wrapper<T>} from l-values 
+        is through helper functions:
+    \begin{itemize}
+      \item \cppid{std::ref(x)}: A \cppid{reference\_wrapper<T>} for \cppid{x}.
+      \item \cppid{std::cref(x)}: A \cppid{reference\_wrapper<T const>} for \cppid{x}.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vspace{-.75em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A generic call interface}
+\begin{lstlisting}[basicstyle=\tiny]
+void update(int &x) {
+  ++x;
+}
+
+template<typename F, typename T>
+void call(F fun, T arg) {
+  std::cout << "log: Calling function\n";
+  fun(arg);
+  std::cout << "log: Function executed\n";
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Calling the function}
+\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+void f() {
+  int val = 42;
+  call(update, @\color{red}std::ref@(val));
+  std::cout << std::format("val = {}\n", val);
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\begin{lstlisting}[style=terminal,basicstyle=\tiny]]
+log: Calling function
+log: Function executed
+val = 43
+\end{lstlisting}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Binding arguments to callables}
+\begin{itemize}
+  \item \cppid{std::bind()} generates a function object that can be invoked later.
+
+    \mode<presentation>{\vfill\pause}
+    \begin{itemize}
+      \item From an invocable object and given concrete parameters.
+\begin{lstlisting}
+void print(int x, int y, int z);
+auto g = std::bind(print, 1, 3, 5);
+g(); // Invokes print(1,3,5)
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item May use some binding placeholder.
+\begin{lstlisting}
+void print(int x, int y, int z);
+using namespace std::place_holders
+auto g = std::bind(print, 100, _1, _2);
+g(42,99); // Invokes print(100,42,99)
+g(23,35); // Invokes print(100,23,35)
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Binding and reference parameters}
+\begin{itemize}
+  \item \textbad{Problem}: When not using a placeholder \cppid{std::bind()} makes a copy
+        of the passed argument.
+    \begin{itemize}
+      \item Problematic for l-values.
+    \end{itemize}
+\end{itemize}
+
+\begin{block}{Problems with std::bind()}
+\begin{lstlisting}[basicstyle=\tiny]
+void update(double & value, double delta) {
+  value += delta;
+}
+
+void void f() {
+  double x = 1.2; 
+  auto g = std::bind(update, _1, .5);
+  g(x);
+  std::cout << std::format("x = {}\n", x); // Prints 1.7
+
+  auto h = std::bind(update,x, .25);
+  h();
+  std::cout << std::format("x = {}\n", x); // Ouch. Prints 1.7
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Correctly binding reference parameters}
+\begin{itemize}
+  \item Use \cppid{std::ref()} and \cppid{std::cref()}.
+\end{itemize}
+
+\begin{block}{Solving problems with std::bind()}
+\begin{lstlisting}[basicstyle=\tiny]
+void update(double & value, double delta) {
+  value += delta;
+}
+
+void void f() {
+  double x = 1.2; 
+  auto g = std::bind(update, _1, .5);
+  g(x);
+  std::cout << std::format("x = {}\n", x); // Prints 1.7
+
+  auto h = std::bind(update, std::ref(x), .25);
+  h();
+  std::cout << std::format("x = {}\n", x); // Prints 1.95
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{The good and the bad}
+\begin{itemize}
+  \item \textbad{Avoid} using \cppid{std::bind()} $\Rightarrow$ Use lambdas instead.
+\begin{block}{Solving problems with lambdas}
+\begin{lstlisting}[basicstyle=\tiny]
+void update(double & value, double delta) {
+  value += delta;
+}
+
+void void f() {
+  double x = 1.2; 
+  auto g = [](double & val) { update(val, 0.5); };
+  g(x);
+
+  auto h = [&x]() { update(x, 0.5); };
+  h();
+}
+\end{lstlisting}
+\end{block}
+
+  \pause
+  \item \textemph{Remember} that you will still need \cppid{std::ref()} and \cppid{std::cref()}
+        for \cppid{std::thread}.
+
+\end{itemize}
+\end{frame}
