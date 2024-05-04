@@ -1,0 +1,112 @@
+\begin{frame}[t,fragile]{Alternatives for return types in function templates}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item \textgood{Options}: 
+    \begin{itemize}
+      \item \textmark{Return by value}: A copy is returned.
+        \begin{itemize}
+          \item May result in a \textemph{move} or even \textemph{optimized out}.
+        \end{itemize}
+      \item \textmark{Return by reference}: A reference to an object is returned.
+        \begin{itemize}
+          \item May result in a dangling reference.
+          \item There may be some valid cases: \cppkey{operator[]}, \cppkey{operator<{}<}, \ldots
+          \item Returnging read-only through const reference.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\pause
+\column{.5\textwidth}
+\begin{itemize}
+  \item In generic functions the value may deduced and explictly specified.
+\end{itemize}
+\begin{block}{A generic call function}
+\begin{lstlisting}
+template <typename F, typename T>
+T call(F fun, T value) {
+  std::cout << std::format("input = {}\t", value);
+  T result = fun(value);
+  std::cout << std::format("result = {}\t", result);
+  return result;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+ 
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Dangers with function template return types}
+\begin{itemize}
+  \item Even if the return type seems a value it might become a reference type.
+\end{itemize}
+
+\begin{block}{An increment function}
+\begin{lstlisting}
+template <typename T>
+T increment(T value) {
+  std::cout << std::format("input = {}\t", value);
+  T result = ++ value;
+  std::cout << std::format("result = {}\t", result);
+  return result;
+}
+
+void f() {
+  double x = 3;
+  auto r1 = increment(x); // OK
+  auto r2 = increment<double&>(x); // Dangling?
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Removing dangers in return type}
+\begin{itemize}
+  \item Make sure that the return type is not a reference type.
+\end{itemize}
+\begin{block}{An increment function}
+\begin{lstlisting}
+template <typename T>
+std::remove_reference_t<T> increment(T value) {
+  std::cout << std::format("input = {}\t", value);
+  auto result = ++ value;
+  std::cout << std::format("result = {}\t", result);
+  return result;
+}
+
+void f() {
+  double x = 3;
+  auto r1 = increment(x); // OK
+  auto r2 = increment<double&>(x); // OK
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Removing dangers in return type with auto}
+\begin{itemize}
+  \item Specifying \cppkey{auto} as return type triggers return type deduction.
+\end{itemize}
+\begin{block}{An increment function}
+\begin{lstlisting}
+template <typename T>
+auto increment(T value) {
+  std::cout << std::format("input = {}\t", value);
+  auto result = ++ value;
+  std::cout << std::format("result = {}\t", result);
+  return result;
+}
+
+void f() {
+  double x = 3;
+  auto r1 = increment(x); // OK
+  auto r2 = increment<double&>(x); // OK
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
