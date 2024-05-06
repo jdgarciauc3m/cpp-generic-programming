@@ -1,0 +1,247 @@
+\subsection{Introduction to metafunctions}
+
+\begin{frame}[t,fragile]{What is a metafunction?}
+\begin{itemize}
+  \item A \textgood{metafunction} is a function that:
+    \begin{itemize}
+      \item At least \textmark{takes} one parameter which is a \textemph{type}; and/or
+      \item At least \textmark{returns} one result that is a \textemph{type}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Example}: \cppkey{sizeof}.
+    \begin{itemize}
+      \item Takes a type and returns an integer value.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Examples in the \textgood{standard library}:
+\begin{lstlisting}
+static_assert(std::is_arithmetic<T>::value, "arithmetic type expected");
+static_assert(std::is_arithmetic_v<T>, "arithmetic type expected");
+
+enum class color : std::int8_t { red, green, blue };
+using base_color = typename std::underlying_type<color>::type;
+using base_color = std::underlying_type_t<color>;
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Implementing metafunctions}
+\begin{itemize}
+  \item A metafunction may be implemented using a \textmark{struct template}.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+struct array_size {
+    using type = T[N];
+    static constexpr std::size_t size = sizeof(type);
+};
+
+using string_array_type = typename array_size<std::string,10>::type;
+std::cout << "size = " << array_size<std::string,10>::size << '\n';
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A metafunction may:
+    \begin{itemize}
+      \item Take multiple type as arguments.
+      \item Take multiple values as arguments.
+      \item Return multiple types as results.
+      \item Return multiple values as results.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Conventions in metafunctions}
+\begin{itemize}
+  \item Usual convenitons to simplify metafunctions use:
+    \begin{itemize}
+      \item A metafunction that returns a type has a nested type alias named \cppid{type}.
+\begin{lstlisting}
+template <typename T>
+struct buffer_type {
+    using type = std::byte[sizeof(T)];
+};
+\end{lstlisting}
+
+      \item A metafunction that returns a value has a nested constant named \cppid{value}.
+\begin{lstlisting}
+template <typename T>
+struct elements {
+    static constexpr int value = 1;
+};
+
+template <typename T, std::size_t N>
+struct elements<T[N]> {
+    static constexpr int value = N;
+};
+\end{lstlisting}
+
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simplifying type metafunction use}
+\begin{itemize}
+  \item For metafunctions returning a type an alias template can be easily defined.
+\begin{lstlisting}
+template <typename T>
+struct buffer_type { using type = std::byte[sizeof(T)]; };
+
+template <typename T>
+using buffer_type_t = typename buffer_type<T>::type;
+\end{lstlisting}
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Without alias template}
+\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+template <typename T>
+void print_as_buffer(T value) {
+  @\color{red}typename buffer\_type<T>::type@ buffer;
+  std::memcpy(&buffer, &value, sizeof(T));
+  for (auto b : buffer) {
+    std::cout << static_cast<int>(b) << ' ';
+  }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{With alias template}
+\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+template <typename T>
+void print_as_buffer(T value) {
+  @\color{red}buffer\_type\_t<T>@ buffer;
+  std::memcpy(&buffer, &value, sizeof(T));
+  for (auto b : buffer) {
+    std::cout << static_cast<int>(b) << ' ';
+  }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Integral constants in the standard library}
+\begin{itemize}
+  \item \cppid{std::integral\_costant<T,v>} wraps a static constant of the integral type \cppid{T}.
+    \begin{itemize}
+      \item Nested type \cppid{value\_type} is type \cppid{T}.
+      \item Nested type \cppid{type} is type \cppid{std::integral\_costant<T,v>}.
+      \item Constant \cppid{value} holds the value \cppid{v}.
+      \item Value can be obtained by conversion to \cppid{value\_type} or by invoking \cppkey{operator()}.
+    \end{itemize}
+
+\begin{lstlisting}
+  using max_type = std::integral_constant<int,100>; 
+  max_type max;
+  static_assert(std::is_same_v<int, max_type::value_type>);
+  static_assert(std::is_same_v<max_type, max_type::type>);
+  std::cout << std::format("max value {}\n", max_type::value);
+  std::cout << std::format("max value {}\n", static_cast<int>(max));
+  std::cout << std::format("max value {}\n", max());
+  std::cout << std::format("max value {}\n", static_cast<int>(max_type{}));
+  std::cout << std::format("max value {}\n", max_type{}());
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Implementation: Basic definition}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T>
+struct elements {
+    static constexpr int value = 1;
+};
+
+template <typename T, std::size_t N>
+struct elements<T[N]> {
+    static constexpr int value = N;
+};
+
+template <typename T>
+static constexpr inline int elements_v = elements<T>::value;
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Implementation: Improved definition}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T>
+struct elements2 : public std::integral_constant<int, 1> {};
+
+template <typename T, std::size_t N>
+struct elements2<T[N]> : public std::integral_constant<int,N> {};
+
+template <typename T>
+static constexpr inline int elements2_v = elements2<T>::value;
+
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\pause
+\begin{block}{Usage}
+\begin{lstlisting}[basicstyle=\tiny]
+void f() {
+  std::cout << elements<int>::value;
+  std::cout << elements<int[4]>::value;
+
+  std::cout << elements_v<int>;
+  std::cout << elements_v<int[4]>;
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Boolean constants in the standard library}
+\begin{itemize}
+  \item \cppid{std::bool\_constant<v>} covers the common case of boolean constants.
+    \begin{itemize}
+      \item \cppid{std::integral\_constant<bool,v>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Two type alias are also defined:
+    \begin{itemize}
+      \item \cppid{std::true\_type} $\Rightarrow$ \cppid{std::bool\_constant<bool,}\cppkey{true}\cppid{>}.
+      \item \cppid{std::false\_type} $\Rightarrow$ \cppid{std::bool\_constant<bool,}\cppkey{false}\cppid{>}.
+    \end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{A predicate for large size types}
+\begin{lstlisting}[basicstyle=\tiny]
+static constexpr inline int size_limit = 128;
+
+template <typename T>
+struct is_large_type : public std::bool_constant<(sizeof(T) > size_limit)> {};
+
+template <typename T>
+static constexpr inline bool is_large_type_v = is_large_type<T>::value;
+
+void f() {
+  std::cout << std::format("int -> {}\n",is_large_type_v<int>);
+  std::cout << std::format("int[100] -> {}\n",is_large_type_v<int[100]>); 
+}
+\end{lstlisting}
+\end{block}
+ 
+\end{itemize}
+\end{frame}

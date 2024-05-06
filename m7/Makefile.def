@@ -1,0 +1,17 @@
+M7_DIR=m7
+M7_PARTS=$(M7_DIR)/content.tex
+
+include $(M7_DIR)/l1/Makefile.def
+include $(M7_DIR)/l2/Makefile.def
+
+M7_BASE=m7
+M7_PDF=$(M7_DIR).pdf
+M7_PARTS += $(M7_DIR)/*.tex
+FINAL_M7_PDF=$(FINAL_DIR)/$(M7_PDF)
+
+ALL_PARTS += \
+$(M7_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M7_PDF) \
+

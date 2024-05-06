@@ -1,0 +1,42 @@
+\subsection{Property types queries}
+
+\begin{frame}[t,fragile]{Queries on properties of a type}
+\begin{itemize}
+  \item A \textmark{property query} obtains an integral property 
+        on a type.
+  
+  \mode<presentation>{\vfill\pause}
+  \item Base characteristic is \cppid{std::integral\_constant<std::size\_t, value>}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Properties:
+    \begin{itemize}
+      \item \cppid{alignment\_of<T>}: Equivalent to \cppkey{alignof(T)}.
+      \item \cppid{rank<T>}: Number of dimensions of array type.
+      \item \cppid{extent<T,N>}: Number of elements for Nth dimension of array type.
+      \item \cppid{extent<T>}: Number of elements for first dimension of array type.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Printing sizes of arrays}
+\begin{lstlisting}
+template <typename T, std::size_t ... I>
+void print_dimension(T & , std::index_sequence<I...>) { 
+  ((std::cout << std::format("  Dimension {}: {}\n",I, std::extent_v<T,I>)), ...);
+}
+
+template <typename T>
+void print_info(std::string_view name, T & arr) {
+  std::cout << std::format("name {}\n", name);
+  if constexpr (std::is_array_v<T>) {
+    std::cout << std::format("  is an array of {} dimensions\n", std::rank_v<T>);
+    print_dimension(arr, std::make_index_sequence<std::rank_v<T>>{});
+  } else {
+    std::cout << "  is not an array\n";
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

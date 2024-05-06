@@ -1,0 +1,25 @@
+\subsection{Type relationships}
+
+\begin{frame}[t,fragile]{Type relationships}
+\begin{itemize}
+  \item Basic relationships:
+    \begin{itemize}
+      \item \cppid{is\_same<T,U>}.
+      \item \cppid{is\_base\_of<B,D>}.
+      \item \cppid{is\_layout\_compatible<T,U>}.
+    \end{itemize}
+  \item Conversion relationshps:
+    \begin{itemize}
+      \item \cppid{is\_convertible<S,T>}.
+      \item \cppid{is\_nothrow\_convertible<S,T>}.
+      \item \cppid{is\_pointer\_interconvertible\_base\_of<B,D>}.
+    \end{itemize}
+  \item Invocability:
+    \begin{itemize}
+      \item \cppid{is\_invocable<F,Args...>}
+      \item \cppid{is\_invocable\_r<F,Args...>}
+      \item \cppid{is\_nothrow\_invocable<F,Args...>}
+      \item \cppid{is\_nothrow\_invocable\_r<F,Args...>}
+    \end{itemize}
+\end{itemize}
+\end{frame}

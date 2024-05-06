@@ -1,0 +1,226 @@
+\subsection{Type predicates}
+
+\begin{frame}[t,fragile]{Primary type category predicates}
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Fundamental type predicates:
+    \begin{itemize}
+      \item \cppid{is\_void<T>}.
+      \item \cppid{is\_null\_pointer<T>}.
+      \item \cppid{is\_integral<T>}.
+      \item \cppid{is\_floating\_point<T>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Language constructs predicates:
+    \begin{itemize}
+      \item \cppid{is\_array<T>}.
+      \item \cppid{is\_enum<T>}.
+      \item \cppid{is\_union<T>}.
+      \item \cppid{is\_class<T>}.
+      \item \cppid{is\_function<T>}.
+    \end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+\begin{itemize}
+  \item Pointers and references:
+    \begin{itemize}
+      \item \cppid{is\_pointer<T>}.
+      \item \cppid{is\_member\_object\_pointer<T>}.
+      \item \cppid{is\_member\_function\_pointer<T>}.
+      \item \cppid{is\_lvalue\_reference<T>}.
+      \item \cppid{is\_rvalue\_reference<T>}.
+    \end{itemize}
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Composite type category predicates}
+\begin{itemize}
+  \item \cppid{is\_arithmetic<T>}: Integral or floating point type.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{is\_scalar<T>}:
+        Arithmetic type, enumeration, pointer, pointer to member or \cppid{nullptr\_t}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{is\_fundamental<T>}: 
+        Arithmetic type, \cppkey{void}, or \cppid{nullptr\_t}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{is\_object<T>}.
+        Any type that is not function, reference or \cppkey{void} type.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{is\_compound<T>}.
+        Array, function, object pointer, function pointer, member object pointer,
+        member function pointer, reference, class, union, enumeration.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{is\_reference<T>}.
+        Any l-value or r-value reference type.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{is\_member\_pointer<T>}:
+        Pointer to non-static member object or member-function.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Basic type properties predicates}
+\begin{itemize}
+  \item Type modifiers:
+    \begin{itemize}
+      \item \cppid{is\_const<T>}.
+      \item \cppid{is\_volatile<T>}.
+      \item \cppid{is\_signed<T>}.
+      \item \cppid{is\_unsigned<T>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Enum types:
+    \begin{itemize}
+      \item \cppid{is\_scoped\_enum<T>} (\textmark{C++23}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Layout properties:
+    \begin{itemize}
+      \item \cppid{is\_trivial<T>}.
+      \item \cppid{is\_trivially\_copyable<T>}.
+      \item \cppid{is\_standard\_layout<T>}.
+      \item \cppid{has\_unique\_object\_representations<T>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Lifetime properties:
+    \begin{itemize}
+      \item \cppid{is\_implicit\_lifetime<T>} (\textmark{C++23}).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Composite type properties predicates}
+\begin{itemize}
+  \item Array types:
+    \begin{itemize}
+      \item \cppid{is\_bounded\_array<T>}.
+      \item \cppid{is\_unbounded\_array<T>}.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item Class types:
+    \begin{itemize}
+      \item \cppid{is\_aggregate<T>}.
+      \item \cppid{is\_empty<T>}.
+      \item \cppid{is\_polymorphic<T>}.
+      \item \cppid{is\_abstract<T>}.
+      \item \cppid{is\_final<T>}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile,shrink=10]{Supported operations predicates}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Construction:
+    \begin{itemize}
+      \item \cppid{is\_default\_constructible<T>}\footnotemark[1]\footnotemark[2].
+      \item \cppid{is\_copy\_constructible<T>}\footnotemark[1]\footnotemark[2].
+      \item \cppid{is\_move\_constructible<T>}\footnotemark[1]\footnotemark[2].
+      \item \cppid{is\_constructible<T,Args...>}\footnotemark[1]\footnotemark[2].
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item Assignment:
+    \begin{itemize}
+      \item \cppid{is\_copy\_assignable<T>}\footnotemark[1]\footnotemark[2].
+      \item \cppid{is\_move\_assignable<T>}\footnotemark[1]\footnotemark[2].
+      \item \cppid{is\_assignable<T,U>}\footnotemark[1]\footnotemark[2].
+    \end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+\begin{itemize}
+  \pause
+  \item Swap:
+    \begin{itemize}
+      \item \cppid{is\_swappable<T>}\footnotemark[2].
+      \item \cppid{is\_swappable\_with<T,U>}\footnotemark[2].
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item Destruction:
+    \begin{itemize}
+      \item \cppid{is\_destructible<T>}\footnotemark[1]\footnotemark[2].
+      \item \cppid{has\_virtual\_destructor<T>}.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item Temporary references:
+    \begin{itemize}
+      \item \cppid{reference\_constructs\_from\_temporary<T,U>}.
+      \item \cppid{reference\_converts\_from\_temporary<T,U>}.
+    \end{itemize}
+\end{itemize}
+\end{columns}
+
+\mode<presentation>{\vspace{3em}\pause}
+\begin{enumerate}
+\item {\cppid{is\_trivially\_*} version}
+\item {\cppid{is\_nothrow\_*} version}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{A simple container}
+\begin{lstlisting}
+template <typename T>
+class container {
+  public:
+    container(int sz)
+        requires(std::is_default_constructible_v<T>)
+      : size_{sz}, 
+        buffer_{std::make_unique<T[]>(gsl::narrow<std::size_t>(size_))} 
+    { }  
+
+    container(container const & c)
+        requires(std::is_copy_constructible_v<T>);
+    container(container &&) = default;
+
+    // ...
+  private:
+    int size_;
+    std::unique_ptr<T[]> buffer_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Implementing the copy constructor}
+\begin{lstlisting}
+template <typename T>
+container<T>::container(container const & c)
+  requires(std::is_copy_constructible_v<T>)
+  : size_{c.size_},                                                                    
+    buffer_{std::make_unique_for_overwrite<T[]>(gsl::narrow<std::size_t>(c.size_))} 
+{  
+  if constexpr (std::is_trivially_copyable_v<T>) {
+    std::memcpy(buffer_.get(), c.buffer_.get(),
+                gsl::narrow<std::size_t>(size_) * sizeof(T));  // Optimization
+  } else {
+    std::ranges::uninitialized_copy_n(c.buffer_.get(), c.size_, buffer_.get(),
+                                      buffer_.get() + size_);
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

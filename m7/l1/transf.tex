@@ -1,0 +1,79 @@
+\subsection{Type transformations}
+
+\begin{frame}[t,fragile]{Basic transformations}
+\begin{itemize}
+  \item Sign transformations:
+    \begin{itemize}
+      \item \cppid{make\_signed<T>} / \cppid{make\_unsigned<T>}.
+    \end{itemize}
+  \item \cppkey{const}/\cppkey{volatile} transformations:
+    \begin{itemize}
+      \item \cppid{remove\_const<T>} / \cppid{add\_const<T>}.
+      \item \cppid{remove\_volatile<T>} / \cppid{add\_volatile<T>}.
+      \item \cppid{remove\_cv<T>} / \cppid{add\_cv<T>}.
+    \end{itemize}
+  \item References transformations:
+    \begin{itemize}
+      \item \cppid{add\_lvalue\_reference<T>}.
+      \item \cppid{add\_rvalue\_reference<T>}.
+      \item \cppid{remove\_reference<T>}.
+    \end{itemize}
+  \item Array transformations:
+    \begin{itemize}
+      \item \cppid{remove\_extent<T>} / \cppid{remove\_all\_extents<T>}.
+    \end{itemize}
+  \item Pointer transformations:
+    \begin{itemize}
+      \item \cppid{remove\_pointer<T>} / \cppid{add\_pointer<T>}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Other transformations}
+\begin{itemize}
+  \item Language support transformations:
+    \begin{itemize}
+      \item \cppid{underlying\_type<E>}.
+      \item \cppid{decay<T>}.
+      \item \cppid{invoke\_result<F,Arg...>}.
+    \end{itemize}
+  \item Referencetype transformations:
+    \begin{itemize}
+      \item \cppid{remove\_cvref<T>}.
+    \end{itemize}
+  \item Common type transformations:
+    \begin{itemize}
+      \item \cppid{common\_type<T...>}.
+      \item \cppid{common\_reference<T...>}
+    \end{itemize}
+  \item Deduction transformations:
+    \begin{itemize}
+      \item \cppid{void\_t<T...>}.
+      \item \cppid{type\_identity<T>}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Conditional transformations}
+\begin{itemize}
+  \item \cppid{conditional<B,T1,T2>}
+    \begin{itemize}
+      \item Its internal alias \cppid{type} depends on the compile time
+            boolean \cppid{B}.
+        \begin{itemize}
+          \item If \cppid{B} is \cppkey{true} $\Rightarrow$ 
+                \cppid{type} is \cppid{T1}.
+          \item If \cppid{B} is \cppkey{false} $\Rightarrow$ 
+                \cppid{type} is \cppid{T2}.
+        \end{itemize}
+
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{enable\_if<B, T>}
+    \begin{itemize}
+      \item For backwards compatibility with C++11/C++14/C++17.
+      \item Its use cases are better covered with C++20 concepts.
+    \end{itemize}
+\end{itemize}
+\end{frame}

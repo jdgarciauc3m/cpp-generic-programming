@@ -1,0 +1,100 @@
+\subsection{A case for compile-time selection}
+
+\begin{frame}[t,fragile]{Small object optimization}
+\begin{itemize}
+  \item A frequent optimization is \textbad{to avoid} using memory allocations
+        too much for \textmark{small objects}.
+    \begin{itemize}
+      \item There are multiple flavours of this idea.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Idea}:
+    \begin{itemize}
+      \item For local variables:
+        \begin{itemize}
+          \item \textmark{Small object} $\rightarrow$ on stack.
+          \item \textmark{Large object} $\rightarrow$ on heap.
+        \end{itemize}
+      \item For members or array elements:
+        \begin{itemize}
+          \item \textmark{Small object} $\rightarrow$ embed in containing object.
+          \item \textmark{Large object} $\rightarrow$ embed a pointer to object.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Effects}:
+    \begin{itemize}
+      \item Avoid extra memory access for small objects.
+      \item Avoid micro allocations for small objects.
+      \item Extra speedup for small objects.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Design}
+
+\mode<presentation>{\vspace{-1.25em}}
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{itemize}
+  \item Two types:
+    \begin{itemize}
+      \item \cppid{local\_object<T>}: For small objects.
+      \item \cppid{dynamic\_object<T>}: For large objects.
+    \end{itemize}
+\end{itemize}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Syntax:
+    \begin{itemize}
+      \item Use pointer like syntax.
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\pause
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{local\_object}
+\begin{lstlisting}
+void f() {
+  local_object<int> x;
+  *x = 42;
+  std::cout << *x << '\n';
+
+  std::vector<local_object<int>> v;
+  v.push_back(2);
+  v.push_back(3);
+  for (auto & x : v) {
+    std::cout << *x << ' ';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{dynamic\_object}
+\begin{lstlisting}
+void f() {
+  dynamic_object<record> x;
+  *x = record{"Daniel"};
+  std::cout << x->name << '\n';
+
+  std::vector<dynamic_object<record>> v;
+  v.push_back(record{"Carlos"});
+  v.push_back(record{"Maria"});
+  for (auto const & x : v) {
+    std::cout << x->name << ' ';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

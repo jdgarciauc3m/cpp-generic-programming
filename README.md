@@ -40,9 +40,7 @@ This repo contains the materials for a workshop on move semantics
     3. Return values.
 7. Compile-time programming.
     1. Introduction to template meta-programming.
-    2. Meta-programming and constexpr.
-    3. SFINAE.
-    4. Compile-time selection.
+    2. Compile-time selection.
 8. Generic libraries
     1. Callables.
     2. Implementation utilities.

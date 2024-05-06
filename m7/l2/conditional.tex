@@ -1,0 +1,67 @@
+\subsection{Using conditional type}
+
+\begin{frame}[t,fragile]{Conditional types}
+\begin{block}{An optimized object type}
+\begin{lstlisting}
+static constexpr inline int size_limit = 128;
+
+template <typename T>
+using optimized_object_t = std::conditional_t< 
+      (sizeof(T)>size_limit),
+      dynamic_object<T>, local_object<T>>;
+\end{lstlisting}
+\end{block}
+
+\begin{itemize}
+  \item \textmark{Effects}:
+    \begin{itemize}
+      \item For large types, \cppid{dynamic\_object<T>} is used.
+      \item For small types, \cppid{local\_object<T>} is used.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Using optimized objects}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Small objects}
+\begin{lstlisting}
+void f() {
+  optimized_object_t<int> x;
+  *x = 42;
+  std::cout << *x << '\n';
+
+  std::vector<optimized_object_t<int>> v;
+  v.push_back(2);
+  v.push_back(3);
+  for (auto & x : v) {
+    std::cout << *x << ' ';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Large objects}
+\begin{lstlisting}
+void f() {
+  optimized_object_t<record> x;
+  *x = record{"Daniel"};
+  std::cout << x->name << '\n';
+
+  std::vector<optimized_object_t<record>> v;
+  v.push_back(record{"Carlos"});
+  v.push_back(record{"Maria"});
+  for (auto const & x : v) {
+    std::cout << x->name << ' ';
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
