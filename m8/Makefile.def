@@ -1,0 +1,16 @@
+M8_DIR=m8
+M8_PARTS=$(M8_DIR)/content.tex
+
+#include $(M8_DIR)/l1/Makefile.def
+
+M8_BASE=m8
+M8_PDF=$(M8_DIR).pdf
+M8_PARTS += $(M8_DIR)/*.tex
+FINAL_M8_PDF=$(FINAL_DIR)/$(M8_PDF)
+
+ALL_PARTS += \
+$(M8_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M8_PDF) \
+

@@ -41,10 +41,11 @@ This repo contains the materials for a workshop on move semantics
 7. Compile-time programming.
     1. Introduction to template meta-programming.
     2. Compile-time selection.
-8. Generic libraries
-    1. Callables.
-    2. Implementation utilities.
-    3. Perfect forwarding of temporaries.
+8. Callable entities.
+    1. Kinds of callable entities.
+    2. Using callable entities in generic code.
+    3. Member functions as callable entities.
+    4. Using callables.
 9. Names and instantiation
     1. Argument Dependent Lookup
     2. Dependent names.
