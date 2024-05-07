@@ -1,0 +1,91 @@
+\begin{frame}[t,fragile]{Invoking function objects}
+\begin{itemize}
+  \item A function object type may be passed as template parameter.
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{A filtered printer}
+\begin{lstlisting}
+template <typename C, typename P, typename F>
+void print_filtered(C const & cont, 
+    P printer, F filterer) 
+{
+  for (auto && x : cont) {
+    if (not filterer(x)) { continue; }
+    printer(x);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Using the printer}
+\begin{lstlisting}
+void f() {
+  using namespace std::literals;
+  std::vector names{"Daniel"s, "Carlos"s, "Maria"s};
+  
+  print_filtered(names,
+      [](auto const & x) { 
+        std::cout << std::quoted(x) << '\n';
+       }
+      [](auto const & x) {
+        return not x.starts_with("M");
+      });
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Constraining the print filtered algorithm}
+\begin{itemize}
+  \item Using concepts:
+    \begin{itemize}
+      \item Type \cppid{C} is a \cppid{std::ranges::range}.
+      \item Type \cppid{P} must be \cppid{std::invocable} with the value type of \cppid{C}.
+      \item Type \cppid{F} must be \cppid{std::predicate} with the value type of \cppid{C}.
+    \end{itemize}
+
+\begin{block}{A filtered printer}
+\begin{lstlisting}
+template <std::ranges::range C, typename P, typename F>
+  requires(std::invocable<P, std::ranges::range_value_t<C>> and
+           std::predicate<F, std::ranges::range_value_t<C>>)
+void print_filtered(C const & cont, P printer, F filterer) {
+  for (auto && x : cont) {
+    if (not filterer(x)) { continue; }
+    printer(x);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Using print filtered algorithm with objects}
+\begin{block}{Printing points}
+\begin{lstlisting}[escapechar=@]
+struct point {
+    void print() const { std::cout << std::format("{}, {}\n", x, y); }
+    [[nodiscard]] bool first_quadrant() const { x > 0 and y > 0; }
+    double x;
+    double y;
+};
+
+void test() {
+  std::vector<point> vec{ { 1.0, 2.0}, {-1.0,   0}, { 3.5, 2.5} };
+  print_filtered(vec,
+      [](auto const & p) { p.print(); },
+      [](auto const & p) { return p.first_quadrant(); });
+  print_filtered(vec, @\color{red}\&point::print@, @\color{red}\&point::first\_quadrant@); // Error
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

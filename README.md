@@ -43,8 +43,8 @@ This repo contains the materials for a workshop on move semantics
     2. Compile-time selection.
 8. Callable entities.
     1. Kinds of callable entities.
-    2. Using callable entities in generic code.
-    3. Member functions as callable entities.
+    2. Using function objects in generic code.
+    3. Members as callable entities.
     4. Using callables.
 9. Names and instantiation
     1. Argument Dependent Lookup
