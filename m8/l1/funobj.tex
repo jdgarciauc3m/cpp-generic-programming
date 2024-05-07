@@ -1,0 +1,67 @@
+\subsection{Function objects}
+
+\begin{frame}[t,fragile]{Function pointers}
+\begin{itemize}
+   \item A pointer to function type is a function object.
+\begin{lstlisting}
+bool positive(int x) { 
+  return x > 0; 
+}
+
+void f() {
+  std::vector {1, -1, 2, 3, -2, 4};
+  auto cnt = std::ranges::count_if(v, positive);
+  std::cout << std::format("positives = {}\n", cnt);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Function objects}
+\begin{itemize}
+  \item A class type with an \cppkey{operator()} oveload is a function object.
+\begin{lstlisting}
+struct positive_fobj {
+    bool operator()(int x) const { return x>0; }
+};
+void f() {
+  std::vector {1, -1, 2, 3, -2, 4};
+  auto cnt = std::ranges::count_if(v, positive);
+  std::cout << std::format("positives = {}\n", cnt);
+}
+\end{lstlisting}
+
+  \item A lambda is syntactic sugar for a function object.
+\begin{lstlisting}
+void f() {
+  std::vector {1, -1, 2, 3, -2, 4};
+  auto cnt = std::ranges::count_if(v, [](int x) { return x>0; });
+  std::cout << std::format("positives = {}\n", cnt);
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Function objects}
+\begin{itemize}
+  \item A class type with a conversion operator returning a pointer or reference
+        to a function is a function object.
+\begin{lstlisting}
+struct positive_objptr {
+    using fun_ptr = bool (*)(int x);
+    positive_objptr(fun_ptr f) : fun_{f} {}
+    operator fun_ptr() const { return fun_; }
+  private:
+    fun_ptr fun_;
+};
+
+void f() {
+  std::vector {1, -1, 2, 3, -2, 4};
+  positive_objptr pos_obj(positive);
+  auto cnt = std::ranges::count_if(v, pos_obj);
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}

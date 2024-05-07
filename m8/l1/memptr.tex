@@ -1,0 +1,27 @@
+\subsection{Pointer to members}
+
+\begin{frame}[t,fragile]{Pointer to members}
+\begin{itemize}
+  \item The address of a member function is a pointer to member.
+\begin{lstlisting}
+struct point {
+    [[nodiscard]] bool is_first_quadrant() const { return x > 0 and y > 0; }
+    double x, y;
+};
+void f() {
+  std::vector<point> vec{ {1.0, 1.0}, {-1.0, 2.0}, {3.5, 2.5}, {-1, -2}};
+  auto cnt = std::ranges::count_if(vec, &point::is_first_quadrant);
+  std::cout << std::format("num points = {}\n", cnt);
+}
+\end{lstlisting}
+
+  \item The address of a member object is a pointer to member. 
+\begin{lstlisting}
+void g() {
+  std::vector<point> vec{ {1.0, 1.0}, {-1.0, 2.0}, {3.5, 2.5}, {-1, -2}};
+  auto rightmost = std::ranges::max(vec, {}, &point::x);
+  std::cout << std::format("right most point = {}, {}\n", rightmost.x, rightmost.y);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
