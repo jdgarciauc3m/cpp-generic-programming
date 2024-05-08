@@ -9,22 +9,25 @@
 
 using coordinates = std::vector<std::tuple<double, double>>;
 
-double compute(coordinates const & c1, coordinates const & c2) {
+struct map {
+    [[nodiscard]] double distance_to(double x, double y) const;
+    coordinates points;
+};
+
+double map::distance_to(double x, double y) const {
   double res = 0;
-  for (auto [x1, y1] : c1) {
-    for (auto [x2, y2] : c2) {
-      res += std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
-    }
+  for (auto [x1, y1] : points) {
+    res += std::sqrt(std::pow(x1 - x, 2) + std::pow(y1 - y, 2));
   }
   return res;
 }
 
 template <typename F, typename... A>
-auto measure(F fun, A... args) {
+auto measure(F && fun, A &&... args) {
   using namespace std::chrono;
-  auto start = high_resolution_clock::now();
-  double result = fun(args...);
-  auto end = high_resolution_clock::now();
+  auto start    = high_resolution_clock::now();
+  double result = std::invoke(std::forward<F>(fun),std::forward<A>(args)...);
+  auto end      = high_resolution_clock::now();
   return std::tuple{duration_cast<microseconds>(end - start), result};
 }
 
@@ -38,9 +41,8 @@ auto make_coordinates(std::size_t max) {
 }
 
 void test() {
-  auto c1   = make_coordinates(1000);  // NOLINT
-  auto c2   = make_coordinates(200);   // NOLINT
-  auto [dif2, distance] = measure(compute, c1, c2);
+  map region{make_coordinates(1000)};                              // NOLINT
+  auto [dif2, distance] = measure(&map::distance_to, region, 1.5, 1.5);  // NOLINT
   std::cout << std::format("Distance = {:.2}\n", distance);
   std::cout << std::format("Time to compute = {:L}\n", dif2);
 }

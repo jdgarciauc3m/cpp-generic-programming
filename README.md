@@ -45,7 +45,6 @@ This repo contains the materials for a workshop on move semantics
     1. Kinds of callable entities.
     2. Using function objects in generic code.
     3. Members as callable entities.
-    4. Using callables.
 9. Names and instantiation
     1. Argument Dependent Lookup
     2. Dependent names.

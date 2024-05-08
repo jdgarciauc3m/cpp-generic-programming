@@ -1,0 +1,237 @@
+\subsection{An interface for callable invocations}
+
+\begin{frame}[t,fragile]{Invoking member functions}
+\begin{block}{Measuring a member function}
+\begin{lstlisting}[escapechar=@]
+void test() {
+  map region{make_coordinates(1000)};                              
+  auto [dif2, distance] = measure(&map::distance_to, region, 1.5, 1, .5);  
+  std::cout << std::format("Distance = {:.2}\n", distance);
+  std::cout << std::format("Time to compute = {:L}\n", dif2);
+}
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item \textbad{Problem}: \cppid{\&map::distnace\_to} is member function.
+    \begin{itemize}
+      \item \cppid{fun(args...)} is not a valid syntax for member functions.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Generalized invocations}
+\begin{itemize}
+  \item Type \cppid{invoke\_result<F, Args...>}: 
+        Deduces the return type of invoking \cppid{F} with \cppid{Args...}.
+    \begin{itemize}
+      \item If the invocation is valid the return type is the
+            nested type \cppid{type}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::invoke()} can be used to invoke a callable.
+\begin{lstlisting}
+template <typename F, typename ... Args>
+std::invoke_result_t<F,Args...> invoke(F && f, Args && ... args);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invocation of a function}
+\begin{itemize}
+  \item For functions or function pointers:
+    \begin{itemize}
+      \item \cppid{std::invoke(fun, arg1, arg2, ..., argN)}
+            is equivalent to 
+            \cppid{fun(arg1, arg2, ..., argN)}
+      \item \cppid{std::invoke\_result<F,A1,A2, ..., AN>}
+            is the result type of such invocation.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Function invocation}
+\begin{lstlisting}
+auto positive(int x) { return x>0; }
+
+void f() {
+  using ret1 = std::invoke_result_t<decltype(positive), int>;
+  static_assert(std::is_same_v<ret1, bool>);
+
+  auto res1 = std::invoke(positive, 42);
+  std::cout << std::format("res1 = {}", res1);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invocation of a function object}
+\begin{itemize}
+  \item For functions object types:
+    \begin{itemize}
+      \item \cppid{std::invoke(funobj, arg1, arg2, ..., argN)}
+            is equivalent to 
+            \cppid{funobj::operator()(arg1, arg2, ..., argN)}
+      \item \cppid{std::invoke\_result<F,A1,A2, ..., AN>}
+            is the result type of such invocation.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Function invocation}
+\begin{lstlisting}[basicstyle=\tiny]
+struct max_value {
+    auto operator()(double x, double y) const { return x>y?x:y; }
+};
+
+void f() {
+  using ret2 = std::invoke_result_t<max_value, double, double>;
+  static_assert(std::is_same_v<ret2,double>);
+
+  max_value mvobj;
+  auto res2 = std::invoke(mvobj, 1.5, 2.5);
+  std::cout << std::format("res1 = {}\n", res2);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invocation of a lambda}
+\begin{itemize}
+  \item For a lambda:
+    \begin{itemize}
+      \item \cppid{std::invoke(lambda, arg1, arg2, ..., argN)}
+            is equivalent to 
+            \cppid{lambda(arg1, arg2, ..., argN)}
+      \item \cppid{std::invoke\_result<lambda\_type,A1,A2, ..., AN>}
+            is the result type of such invocation.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Function invocation}
+\begin{lstlisting}
+void f() {
+  auto lmb = [] { std::cout << "lambda\n"; };
+  using ret3 = std::invoke_result_t<decltype(lmb)>;
+  static_assert(std::is_same_v<ret3,void>);
+
+  std::invoke(lmb);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invocation of a function object convertible to function pointer}
+\begin{itemize}
+  \item For functions object types with conversion to function pointer:
+    \begin{itemize}
+      \item \cppid{std::invoke(funobj, arg1, arg2, ..., argN)}
+            is equivalent to 
+            \cppid{funptr(arg1, arg2, ..., argN)} where
+            \cppid{funptr} is obtained by function pointer conversion operator.
+      \item \cppid{std::invoke\_result<F,A1,A2, ..., AN>}
+            is the result type of such invocation.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Function invocation}
+\begin{lstlisting}[basicstyle=\tiny]
+struct max_value {
+    auto operator()(double x, double y) const { return x>y?x:y; }
+};
+
+void f() {
+  using ret2 = std::invoke_result_t<max_value, double, double>;
+  static_assert(std::is_same_v<ret2,double>);
+
+  max_value mvobj;
+  auto res2 = std::invoke(mvobj, 1.5, 2.5);
+  std::cout << std::format("res1 = {}\n", res2);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invocation of member function pointers}
+\begin{itemize}
+  \item For pointers to member functions of class \cppid{C}:
+    \begin{itemize}
+      \item For \cppid{std::invoke(f, obj, a1, ..., aN)}:
+        \begin{itemize}
+          \item \cppid{T0} is the unqualified type of \cppid{obj}.
+          \item If \cppid{T0} is class \cppid{C} or any class derived from \cppid{C},
+                then call \cppid{obj.*f(a1,...,aN)} is invoked.
+          \item If \cppid{T0} is an specialization of \cppid{std::reference\_wrapper}
+                then call \cppid{obj.get().*f(a1,...,aN)} is invoked.
+          \item Otherwise,
+                call \cppid{(*obj).*f(a1,...,aN)}
+        \end{itemize}
+       \item \cppid{std::invoke\_result\_t<F,T0,A1,...,AN>} 
+             is the result type of such invocation.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Member function pointer invocation}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{lstlisting}[basicstyle=\tiny]
+struct value {
+    [[nodiscard]] bool greater_than(float k) const { return x>k; }
+    float x;
+};
+\end{lstlisting}
+
+\column{.5\textwidth}
+\begin{lstlisting}[basicstyle=\tiny]
+void f() {
+  using ret5 = std::invoke_result_t<decltype(&value::greater_than),value,double>;
+  static_assert(std::is_same_v<ret5, bool>);
+
+  auto res5 = std::invoke(&value::greater_than, value{}, -3);
+  std::cout << std::format("res5 = {}\n", res5);
+}
+\end{lstlisting}
+\end{columns}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Invocation of member object pointers}
+\begin{itemize}
+  \item For pointers to member objects of class \cppid{C}:
+    \begin{itemize}
+      \item For \cppid{std::invoke(m, obj)}:
+        \begin{itemize}
+          \item \cppid{T0} is the unqualified type of \cppid{obj}.
+          \item If \cppid{T0} is class \cppid{C} or any class derived from \cppid{C},
+                then access \cppid{obj.*m} is performed.
+          \item If \cppid{T0} is an specialization of \cppid{std::reference\_wrapper}
+                then access \cppid{obj.get().*m} is performed.
+          \item Otherwise,
+                access \cppid{(*obj).*m}
+        \end{itemize}
+       \item \cppid{std::invoke\_result\_t<M,T0>} 
+             is the result type of such access.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Member function pointer invocation}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.45\textwidth}
+\begin{lstlisting}[basicstyle=\tiny]
+struct value {
+    [[nodiscard]] bool greater_than(float k) const { return x>k; }
+    float x;
+};
+\end{lstlisting}
+
+\column{.5\textwidth}
+\begin{lstlisting}[basicstyle=\tiny]
+void f() {
+  using ret6 = std::invoke_result_t<decltype(&value::x), value>;
+  static_assert(std::is_same_v<ret6,float&&>);
+
+  value val6{33};
+  auto res6 = std::invoke(&value::x, val6);
+  std::cout << std::format("res6 = {}\n", res6);
+}
+\end{lstlisting}
+\end{columns}
+\end{block}
+\end{frame}

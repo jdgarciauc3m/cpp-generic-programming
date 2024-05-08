@@ -3,6 +3,7 @@ M8_PARTS=$(M8_DIR)/content.tex
 
 include $(M8_DIR)/l1/Makefile.def
 include $(M8_DIR)/l2/Makefile.def
+include $(M8_DIR)/l3/Makefile.def
 
 M8_BASE=m8
 M8_PDF=$(M8_DIR).pdf
