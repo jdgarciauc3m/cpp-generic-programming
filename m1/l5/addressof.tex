@@ -1,0 +1,69 @@
+\subsection{Taking an address in generic code}
+
+\begin{frame}[t,fragile]{Priting the address of an object}
+\begin{itemize}
+  \item Generic code may use operators (e.g. unary \cppkey{\&}).
+
+\begin{block}{Print the address of an object}
+\begin{lstlisting}
+template <typename T>
+void print_address(T && object) { // NOLINT
+  void const * ptr = &object;
+  std::cout << std::format("address = {}\n", ptr);
+}
+
+void test() {
+  int x = 42;
+  print_address(x); // OK
+
+  std::string name = "Daniel";
+  print_address(name); // OK
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Operator overloading impact}
+\begin{block}{A value class}
+\begin{lstlisting}
+class value {
+public:
+  value(std::string_view id, double x) : name{id}, val{x}  {}
+  double const * operator&() const { return &val; }
+private:
+  std::string name;
+  double val;
+};
+
+void test() {
+  value var{"price", 2.5};
+  print_address(var); // Unexpected: Prints address of var.val
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Getting object address in generic code}
+\begin{itemize}
+  \item \cppid{std::addressof(x)}, gets the address of \cppid{x}.
+    \begin{itemize}
+      \item Ignores any overload of \cppkey{opertor\&}.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Print the address of an object}
+\begin{lstlisting}
+template <typename T>
+void print_address(T && object) { // NOLINT
+  void const * ptr = std::addressof(object);
+  std::cout << std::format("address = {}\n", ptr);
+}
+
+void test() {
+  value var{"price", 2.5};
+  print_address(var); // OK: Prints address of var
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
