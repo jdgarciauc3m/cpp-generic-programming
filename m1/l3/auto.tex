@@ -91,6 +91,7 @@ void print_add(std::vector<T> const & vec1, std::vector<T> const & vec2) {
 \end{lstlisting}
 \end{block}
 
+\mode<presentation>{\vspace{-1em}}
 \begin{columns}[T]
 \column{.5\textwidth}
 \begin{lstlisting}[basicstyle=\tiny]
@@ -103,7 +104,7 @@ void test1() {
 \column{.5\textwidth}
 \begin{lstlisting}[basicstyle=\tiny]
   std::vector<long> v3{1, 1, 1, 1};
-  print_add(v1,v3); // Error: Conflictin deduction
+  print_add(v1,v3); // Error: Conflicting deduction
 }
 \end{lstlisting}
 \end{columns}
@@ -194,6 +195,27 @@ auto && x3 = g(); // X & x3.
                   // Note X & && -> X &
 \end{lstlisting}
 \end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Range for-loop and auto}
+\begin{itemize}
+  \item \textmark{Alternatives}:
+
+\begin{lstlisting}[escapechar=@]
+for (auto x: expr) { /*...*/} // Work with copies
+@\pause@
+for (auto const x : expr) { /*...*/} // Useless. Prefer auto const &
+@\pause@
+for (auto & x: expr) { /*...*/} // Modify elements in non-generic code
+@\pause@
+for (auto const & x : expr) { /*...*/} // Read-only access generic/non-generic code (includes proxies)
+@\pause@
+for (auto && x : expr) { /*...*/ } // Modify elements in generic code
+@\pause@
+for (auto const && x : expr) { /*...*/ } // Useles. Prefer auto const &
+\end{lstlisting}
+
+\end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{\texttt{auto} and multiple declarations}
