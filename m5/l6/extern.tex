@@ -1,0 +1,89 @@
+\subsection{Extern template instantiations}
+
+\begin{frame}[t,fragile]{Supressing specific instantiations}
+\begin{itemize}
+  \item \textbad{Need}: \textmark{Supress an instantiation} of a template.
+    \begin{itemize}
+      \item To keep \textbad{control} on where instantiation is located.
+      \item Specially \textbad{needed} in systems with \textmark{dynamic libraries}.
+      \item Useful to \textbad{reduce} compilation/build time 
+            in \textmark{all systems}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}:
+    \begin{itemize}
+      \item \textmark{Mark an specialization} as \textbad{non instantiable}
+            in the \textgood{current translation unit}.
+    \end{itemize}
+
+\begin{lstlisting}
+extern template class fixed_vector<int>; // Do not instantiate fixed_vector<int>
+
+void f(fixed_vector<int> const & vec) {
+  for (int i=0; i<vec.size(); ++i) {
+    std::cout << vec[i] << ' ';
+  }
+  std::cout << "\n";
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Using two headers}
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.3\textwidth}
+\begin{block}{Header for impl}
+\begin{lstlisting}[basicstyle=\tiny]
+#ifndef FIXED_VECTOR_IMP_HPP
+#define FIXED_VECTOR_IMP_HPP
+
+template<typename T>
+class fixed_vector {
+  //...
+};
+
+template<typename T>
+void 
+fixed_vector<T>::push_back(T const &x) {
+  //...
+}
+
+//...
+#endif  // FIXED_VECTOR_IMP_HPP
+
+\end{lstlisting}
+\end{block}
+
+\column{.3\textwidth}
+\begin{block}{Library impl}
+\begin{lstlisting}[basicstyle=\tiny]
+#include "fixed_vector_imp.hpp"
+
+// Generate instantiation in library
+template class fixed_vector<int>;
+\end{lstlisting}
+\end{block}
+
+\column{.3\textwidth}
+\begin{block}{Header for users}
+\begin{lstlisting}[basicstyle=\tiny]
+#ifndef FIXEDVEC_LIBRARY_H
+#define FIXEDVEC_LIBRARY_H
+
+#include "fixed_vector_imp.hpp"
+
+// Supress instantiation in user code
+extern template class fixed_vector<int>;
+
+#endif //FIXEDVEC_LIBRARY_H
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
