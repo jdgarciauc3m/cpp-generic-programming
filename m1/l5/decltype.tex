@@ -1,0 +1,119 @@
+\subsection{Declaration types}
+
+\begin{frame}[t,fragile]{Type of a declaration}
+  \begin{itemize}
+    \item Gets the type of a declaration.
+    \item Useful complement to \cppkey{auto}.
+    \item Specially useful in \textmark{generic programming}.
+  \end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{lstlisting}[escapechar=@]
+T x; // x is of type T
+auto t = x; // t is of type T
+
+U y; // y is of type U
+auto z = y; // y is of type U
+@\pause@
+auto a = x+y; // a is of the same type than x+y; @\pause@
+decltype(x+y) b; // b is of the same type than x+y, 
+                 // but I do not know its initial value
+
+// Update b
+b = x+y;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Example: Adding vectors}
+\mode<presentation>{\vspace{-1em}}
+\begin{block}{Simple case: Homogeneous}
+\begin{lstlisting}
+template <class T>
+void add(const std::vector<T> & v1, const std::vector<T> & v2,
+         std::vector<T> & w) 
+{
+  //...
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Heterogeneous case}
+\begin{lstlisting}
+template <class T, class U>
+void add(const std::vector<T> & v1, const std::vector<U> & v2,
+         std::vector<decltype(T{}+U{})> & w) 
+{
+  //...
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Moving towards suffix notation}
+  \begin{itemize}
+    \item Using \textgood{trailing return type} allows to write the \textgood{return type}
+          \textmark{after} the arguments have been seen.
+      \begin{itemize}
+        \item \textgood{Important}: 
+              The \textgood{trailing return type} is in the \textmark{scope}
+              of the function (and can see the arguments).
+      \end{itemize}
+  \end{itemize}
+\pause
+\begin{lstlisting}
+template <class T, class U>
+auto add(const std::vector<T> & v1, const std::vector<U> & v2) 
+    -> std::vector<decltype(T{}+U{})>
+{
+  std::vector<decltype(v1[0]+v2[0])> r;
+  auto i=v1.begin();
+  auto j=v2.begin();
+  auto end = v1.end();
+  for (;i!=end;++i, ++j) {
+    r.push_back((*i)+(*j));
+  }
+  return r;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Rules}
+  \begin{itemize}
+    \item \cppkey{decltype}\cppid{(expr)} 
+          gets the type of an expression without evaluating it.
+    \item \pause If \cppid{expr} names an identifier or accesses a member without extra parenthesis,
+          its type is the type of the expression.
+\begin{lstlisting}
+int a;
+struct point { double x, y; };
+point p;
+decltype(a) a1; // int a1
+decltype(p.x) x1; // double x1
+\end{lstlisting}
+    \item \pause If \cppid{expr} is an r-value reference, 
+          the type is an r-value reference.
+\begin{lstlisting}
+int && f();
+decltype(f()) x; // int && x
+\end{lstlisting}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Rules}
+  \begin{itemize}
+    \item If \cppid{expr} is an l-value, the type is an l-value reference.
+\begin{lstlisting}
+int a;
+decltype(a) x1; // int x1
+decltype((a)) x1; // int & x1
+\end{lstlisting}
+    \item \pause In any other case, the type is the type of the expression.
+\begin{lstlisting}
+float x;
+double y;
+decltype(x+y) z; // double z;
+\end{lstlisting}
+  \end{itemize}
+\end{frame}
+

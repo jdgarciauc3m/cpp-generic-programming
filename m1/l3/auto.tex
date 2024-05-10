@@ -1,0 +1,229 @@
+\subsection{Type inference from initializer}
+
+\begin{frame}[t,fragile]{What is the type of that variable?}
+  \begin{itemize}
+    \item When a variable is defined and initialized, 
+          the compiler must check that the type of the variable
+          matches the type of the initialization expression.
+      \begin{itemize}
+        \item Compiler already knows the variable's type.
+        \item The variable's type can be deduced at compile time.
+      \end{itemize}
+  \end{itemize}
+\pause
+\begin{lstlisting}
+double x = 1.5;
+\end{lstlisting}
+\pause
+  \begin{itemize}
+    \item Type inference may avoid code that is specially 
+       complex or difficult to maintain.
+  \end{itemize}
+\pause
+\begin{lstlisting}
+typename std::vector<std::string>::iterator i= c.begin();
+\end{lstlisting}
+\pause
+\begin{lstlisting}
+typename std::vector<std::string>::const_iterator i=c.begin();
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{\texttt{auto} definitions}
+\begin{itemize}
+  \item \textgood{Solution}: 
+        Use keyword \cppkey{auto} to signal that the compiler
+        should infer the variable's type.
+\pause
+
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+\column{.1\textwidth}
+\column{.4\textwidth}
+\begin{lstlisting}
+auto x1 = 1.5;  // x1 is double
+auto x2 = 1.5f; // x2 is float
+\end{lstlisting}
+
+\column{.5\textwidth}
+\begin{lstlisting}
+std::vector<int> v;
+auto i = v.begin(); // i is std::vector<int>::iterator
+\end{lstlisting}
+\end{columns}
+
+\pause
+\item Specially useful in generic code.
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T>
+void print1(const std::vector<T> & v) {
+  for (typename std::vector<T>::const_iterator i=v.begin();i!=v.end();++i){
+    std::cout << *i << "\n";
+  }
+}
+\end{lstlisting}
+\mode<presentation>{\vfill\pause}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T>
+void print2(const std::vector<T> & v) {
+  for (auto i=v.begin();i!=v.end();++i){
+    std::cout << *i << "\n";
+  }
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{\texttt{auto} in generic code}
+\mode<presentation>{\vfill}
+\end{frame}
+
+\begin{frame}[t,fragile]{Example}
+  \begin{itemize}
+    \item Given two list of numbers with the same length, 
+          print corresponding pairs whose addition is positive.
+  \end{itemize}
+\begin{block}{Homogeneous solution}
+\begin{lstlisting}
+template <std::integral T>
+void print_add(std::vector<T> const & vec1, std::vector<T> const & vec2) {
+  for (auto i = vec1.begin(), j = vec2.begin(); i != vec1.end(); ++i, ++j) {
+    T sum = *i + *j;
+    if (sum > 0) { std::cout << std::format("{} + {} = {}\n", *i, *j, sum); }
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\begin{columns}[T]
+\column{.5\textwidth}
+\begin{lstlisting}[basicstyle=\tiny]
+void test1() {
+  std::vector<int> v1{1, -1, 2, - 2};
+  std::vector<int> v2{1, 1, 1, 1};
+  print_add(v1,v2);
+\end{lstlisting}
+
+\column{.5\textwidth}
+\begin{lstlisting}[basicstyle=\tiny]
+  std::vector<long> v3{1, 1, 1, 1};
+  print_add(v1,v3); // Error: Conflictin deduction
+}
+\end{lstlisting}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Heterogeneous solution}
+\begin{lstlisting}[escapechar=@]
+template <std::integral T, std::integral U>
+void print_add(std::vector<T> const & vec1, std::vector<U> const & vec2) {
+  auto i = vec1.begin();
+  auto j = vec2.begin();
+  for (; i != vec1.end(); ++i, ++j) {
+    @\color{red}std::integral auto@ sum = *i + *j;
+    if (sum > 0) { std::cout << std::format("{} + {} = {}\n", *i, *j, sum); }
+  }
+}
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item An \cppkey{auto} definition may include a concept constraint.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Deduction}
+\mode<presentation>{\vspace{-1em}}
+  \begin{itemize}
+    \item \cppkey{auto} admits modifiers:
+      \begin{itemize}
+        \item \cppkey{const} and \cppkey{volatile}.
+        \item \emph{reference} and \emph{pointer}.
+        \item Same rules as template argument deduction.
+      \end{itemize}
+  \end{itemize}
+\begin{lstlisting}[escapechar=@]
+int f();
+auto x1 = f(); // int x1
+const auto & x2 = f(); // const int & x2. Lifetime extension.
+auto & x3 = f(); // Error. Cannot bind int& to temporal.
+@\pause@
+double & g();
+auto y1 = g(); // double y1
+const auto & y2 = g(); // const double & y2
+auto & y3 = g(); // double & y3
+auto * y4 = g(); // Error g() does not return a pointer
+@\pause@
+std::string * h();
+auto s1 = h(); // string * s1
+auto * s2 = h(); // string * s2
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{auto} deduction and references}
+  \begin{itemize}
+    \item Value semantics is default option.
+    \item Reference semantics is obtained by explicitly specifying \cppkey{auto\&}.
+  \end{itemize}
+
+\begin{columns}[T]
+\column{.6\textwidth}
+\begin{lstlisting}
+X f();
+
+X x1 = f(); 
+auto x1 = f(); // X x1
+
+X & x2 = f(); // Error. Cannot bind reference to temporal.
+auto & x2 = f(); // Error. Cannot bind reference to temporal.
+
+X && x3 = f();
+auto && x3 = f(); // X && x1
+\end{lstlisting}
+
+\pause
+\column{.45\textwidth}
+\begin{lstlisting}
+X & g();
+
+X x1 = g();
+auto x1 = g(); // X x1
+
+X & x2 = g();
+auto & x2 = g(); // X & x2
+
+X && x3 = g();
+auto && x3 = g(); // X & x3. 
+                  // Note X & && -> X &
+\end{lstlisting}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{auto} and multiple declarations}
+\begin{itemize}
+  \item Multiple variables can be declared in a single declaration statement with \cppkey{auto}.
+  \item All deductions in the same statement must result in the same type.
+\end{itemize}
+\begin{lstlisting}
+auto x = f(2.5), y = f(3.0);
+auto s = 1.5, t = 1.5f; // Error
+auto z1= 10, z2; // Error z2 without initializer
+\end{lstlisting}
+\begin{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Even if it does not imply that all of then must have the same type.
+\end{itemize}
+\begin{lstlisting}
+int v[] = {1, 2, 3};
+auto x = v[0], *p = &v[0];
+\end{lstlisting}
+\begin{itemize}
+  \item Declarations are handled left to right.
+\end{itemize}
+\begin{lstlisting}
+auto x=1, *p = &x;
+\end{lstlisting}
+\end{frame}
+

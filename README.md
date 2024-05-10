@@ -46,24 +46,6 @@ This repo contains the materials for a workshop on move semantics
     1. Kinds of callable entities.
     2. Using function objects in generic code.
     3. Members as callable entities.
-9. Names and instantiation
-    1. Argument Dependent Lookup
-    2. Dependent names.
-    3. Dependent expressions.
-    4. Inheritance and class templates.
-    5. Instantiation model.
-    6. Explicit instantiation.
-10. Template argument deduction
-    1. Template deduction.
-    2. Deduction and r-value references.
-    3. Limits of deduction.
-    4. Initializers and expressions.
-    5. Class template argument deduction.
-11. Specialization and overloading
-    1. Overloading function templates.
-    2. Explicit specialization.
-    3. Partial class template specialization.
-    4. Partial variable template specialization.
 
 
 Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]

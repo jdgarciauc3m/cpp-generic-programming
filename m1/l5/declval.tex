@@ -1,0 +1,22 @@
+\subsection{Declared value}
+
+\begin{frame}[t,fragile]{Declaring values}
+  \begin{itemize}
+    \item It is a \textmark{library function} returning a \textgood{value of a given type}.
+\begin{lstlisting}
+declval<T>()
+\end{lstlisting}
+      \begin{itemize}
+        \pause
+        \item \textmark{Important}: The returned value should \textbad{never be used}.
+      \end{itemize}
+    \pause
+    \item Useful in exception specifications.
+\begin{lstlisting}
+template <typename T>
+void swap(vec<T> & v1, vec<T> & v2) 
+  noexcept(noexcept(swap(declval<T&>(), declval<T&>())));
+\end{lstlisting}
+  \end{itemize}
+\end{frame}
+

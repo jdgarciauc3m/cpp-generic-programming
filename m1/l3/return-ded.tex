@@ -1,0 +1,77 @@
+\subsection{Return type deduction}
+
+\begin{frame}[t,fragile]{What's your return type?}
+\begin{itemize}
+  \item Allows to \textmark{automatically deduce} the
+        \textgood{return type} of a function from the
+        expression in the \cppkey{return} \textmark{statement}.
+    \begin{itemize}
+      \item Uniformity with lambda expressions.
+    \end{itemize}
+\end{itemize}
+\begin{lstlisting}
+class particle {
+private:
+  point pos;
+public:
+  auto position() { return pos; }
+  auto inside(const box & b);
+};
+
+inline auto particle::inside(const box & b) {
+  return b.contains(pos);
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Limits of deduction}
+\begin{itemize}
+  \item A function \textbad{cannot be used} before deducing its type.
+\end{itemize}
+
+\begin{lstlisting}
+auto f();
+int x = f(); // Error: What does f() return?
+auto f() { return 2; }
+\end{lstlisting}
+
+\begin{itemize}
+  \pause
+  \item Multiple declarations \textmark{must have} the same declared type.
+\end{itemize}
+
+\begin{lstlisting}
+auto f();
+auto f() { return 1.0; }
+double f(); // Error redeclaration
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{More deductions}
+\begin{itemize}
+  \item A function with deduced return type may have
+        multiple \cppkey{return} statements when all of them
+        deduce to the same type.
+\end{itemize}
+\begin{lstlisting}
+auto search(int * s, int * e) {
+  for (auto i=s; i!=e; ++i) {
+    if (valid(*i))
+      return *i; // Deduce int
+  }
+  return -1; // Deduce int
+}
+\end{lstlisting}
+
+\begin{itemize}
+  \pause
+  \item \textmark{Recursive deduction} is \textgood{allowed}.
+\end{itemize}
+\begin{lstlisting}
+auto factorial(int i) {
+  if (i<=1) return 1;
+  else return i * factorial(i-1);
+}
+\end{lstlisting}
+\end{frame}
