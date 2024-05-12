@@ -1,0 +1,59 @@
+\subsection{Compile time selection}
+
+\begin{frame}[t,fragile]{Selecting exectuion paths}
+\begin{itemize}
+  \item When an \cppkey{if} statement selects on a type property 
+        condition both branches must be valid.
+    \begin{itemize}
+      \item That makes conditional code difficult to write.
+      \item Might encourage defining \textmark{micro-concepts} for everything.
+      \item \textbad{Problem}: All branches need to compile for every instantiation.
+    \end{itemize}
+
+\begin{block}{A print function}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T>
+void print(T const & value) {
+  if  (std::is_array_v<T>) {
+    for (auto x : value) { // Error if instantiated with non-range
+      std::cout << x << ' ';
+    }
+  }
+  else {
+    std::cout << value; // Decays to pointer inf instantiated with arrays
+  }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{A compile-time if statement}
+\begin{itemize}
+  \item A compile time if is achieved by using \cppkey{constexpr} before the condition
+        of an \cppkey{if} statement.
+    \begin{itemize}
+      \item During instantiation only the selected branch is intantiated.
+    \end{itemize}
+
+\begin{block}{A print function}
+\begin{lstlisting}[basicstyle=\tiny]
+template <typename T>
+void print(T const & value) {
+  if  constexpr (std::is_array_v<T>) {
+    for (auto x : value) { // OK. Only for arrays
+      std::cout << x << ' ';
+    }
+  }
+  else {
+    std::cout << value; // OK. Only for non-arrays
+  }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
