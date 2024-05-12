@@ -7,7 +7,7 @@ Generic programming has become one of the cornerstones of C++ over the years.
 This is not a book. It is just the support material for a course on how you can
 make use of generic programming in modern C++. 
 Note that this course assumes that you
-already have enough background on C++.
+already have enough background on the C++ programming language.
 
 I hope you find this course useful to improve your skills as a software
 engineer allowing you to write better software.
@@ -16,3 +16,40 @@ engineer allowing you to write better software.
 
 The contents of this course is organized in a set of topics. 
 Refer to the table of contents for details.
+
+\section*{Work in progress contents}
+
+Below you will find a list of topics that are not currently included int the materials:
+
+\begin{itemize}
+  \item Discussion of callable concepts.
+  \item \cppkey{if constexpr}.
+  \item Variadic using declarations and \cppid{overload} type.
+  \item Some standard library utilites:
+    \begin{itemize}
+      \item \cppid{std::array}.
+      \item \cppid{std::span}.
+      \item \cppid{std::tuple}.
+      \item \cppid{std::variant}.
+      \item \cppid{std::any}
+    \end{itemize}
+  \item Compile-time computations:
+    \begin{itemize}
+      \item \cppkey{consteval} and \cppkey{constinit}.
+      \item Constant evaluated contexts.
+    \end{itemize}
+  \item Lambda extensions from C++20:
+    \begin{itemize}
+      \item Default constructor in lambdas.
+      \item Lambdas as NTTPs.
+      \item Lambdas with \cppkey{consteval}.
+      \item Captures \cppkey{[=,this]} and \cppkey{[*this]}.
+      \item Capture of structured bindings.
+      \item Variadic captures and init capture.
+    \end{itemize}
+  \item Advanced techniques:
+    \begin{itemize}
+      \item Type erasure.
+      \item CRTP.
+    \end{itemize}
+\end{itemize}
