@@ -1,0 +1,211 @@
+\subsection{Lambda expressions}
+
+\begin{frame}[t,fragile]{What is a lambda expression?}
+\mode<presentation>{\vspace{-1em}}
+\begin{lstlisting}
+void f() {
+  std::vector v{1, -1, 2, 3, 4};
+  int limit = 1;
+  auto cnt = std::find_if(v, [limit](auto x) -> bool { return x>limit; });
+  //...
+}
+\end{lstlisting}
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lambda capture}: Marks the begining of the lambda and introduces
+        captured objects.
+\begin{lstlisting}[escapechar=@]
+@\color{red}[limit]@(auto x) -> bool { return x>limit; }
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lambda parameters}: Equivalent to function parameters
+\begin{lstlisting}[escapechar=@]
+[limit]@\color{red}(auto x)@ -> bool { return x>limit; }
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lambda body}: Equivalent to function body
+\begin{lstlisting}[escapechar=@]
+[limit](auto x) -> bool @\color{red}{ return x>limit; }@
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Return type}: Usually deduced.
+\begin{lstlisting}[escapechar=@]
+[limit](auto x) @\color{red}-> bool@ { return x>limit; }
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Lambda expressions and types}
+\begin{itemize}
+  \item Every \textemph{lambda expression} generates a \textmark{unique}
+        \textgood{compiler generated type}.
+    \begin{itemize}
+      \item You \textbad{cannot} know the value of such type.
+      \item However, its value can be stored in one object by using \cppkey{autor}.
+\begin{lstlisting}
+auto positive = [](std::integral auto x) { return x>0; };
+auto cnt = std::find_if(v, positive);
+\end{lstlisting}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Each \textemph{lambda expression} results in a \textmark{distinct type}:
+\begin{lstlisting}
+auto pos = [](std::integral auto x) { return x>0; };
+auto gt0 = [](std::integral auto x) { return x>0; };
+static_assert(not std::is_same_v<decltype(pos), decltype(gt0)>);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item The \textemph{type} is created in the \textmark{smallest enclosing scope}.
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Closure object}
+\begin{itemize}
+  \item The \textmark{evaluation} of a \textemph{lambda expression} generates
+        a temporal object called \textgood{closure object}.
+    \begin{itemize}
+      \item A \textemph{closure object} behaves as a function object.
+      \item The type of a \textemph{lambda expression} is the same than 
+            the type of the \textgood{closure object}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textemph{closure object} has a type that is:
+    \begin{itemize}
+      \item Unique.
+      \item Unnamed.
+      \item A class type that is not a union.
+      \item A non-aggregate type.
+      \item Declared in the smallest enclosing scope.
+    \end{itemize}
+
+\begin{lstlisting}
+auto comp = [](record const & x, record const & y) { return x.id < y.id; };
+std::ranges::sort(vec, comp);
+bool less = comp(r1,r2);    
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Closure types generated members}
+\begin{itemize}
+  \item A \textemph{closure type}:
+    \begin{itemize}
+      \item It has a \textbad{deleted} \textgood{default constructor}. 
+      \item It has a \textbad{deleted} \textgood{copy assignment operator}.
+      \item It has an \textmark{implicitly declared} \textgood{copy constructor}.
+      \item It may have an \textmark{implicitly declared} \textgood{move constructor}.
+      \item It has an \textmark{implicitly declared} \textgood{destructor}.
+      \item It has a \textgood{function call operator} 
+            (\cppkey{operator()}) which is \cppkey{inline}.
+        \begin{itemize}
+          \item Parameters and return type are the same than those in the lambda.
+          \item The operator is \cppkey{const} if the lambda was declared without \cppkey{mutable}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Conversion to function pointer}
+  \begin{itemize}
+    \item \textmark{Condition}:
+      \begin{itemize}
+        \item It must have an \textgood{empty capture}.
+      \end{itemize}
+    \item Generated \textemph{conversion operator}:
+      \begin{itemize}
+        \item Conversion to \textgood{function pointer}.
+        \item \textgood{Conversion operator} \textmark{public}, \textmark{non-virtual}, 
+              \textmark{non-explicit}, and \textmark{constant}.
+        \item \textmark{Same} \textgood{parameters} and \textgood{return type}.
+        \item Returns a \textgood{function pointer} whose invocation has the
+              \textmark{same effect} than invoking the
+              \textgood{function call operator} from the \textgood{closure object}.
+      \end{itemize}
+  \end{itemize}
+\begin{lstlisting}
+void set_func(void (*f)());
+set_func([]{ std::cerr << "Bye"; });
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Polymorphic lambdas}
+\begin{itemize}
+  \item It allows writing a lambda expression where one or more parameters are \textgood{generic}.
+    \begin{itemize}
+      \item Use \cppkey{auto}.
+      \item Use a \cppkey{concept} followed by \cppkey{auto}.
+    \end{itemize}
+\end{itemize}
+\pause
+\begin{lstlisting}
+std::sort(v.begin(), v.end(), [](auto const & x, auto const & y) {
+  return x < y;
+});
+\end{lstlisting}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Generates a class with a \textmark{templated} \textgood{call operator}.
+\end{itemize}
+\begin{lstlisting}
+class compiler_generated {
+public:
+  template <typename T1, typename T2>
+  bool operator()(T1 const & x, T2 const & y) const {
+    return x < y;
+  }
+  //...
+};
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Example: Printing a container}
+\begin{lstlisting}
+template <std::ranges::range R>
+void print(R && r) {
+  std::ranges::for_each(std::forward<R>(r),
+    [](auto const & x) {
+      std::cout << x << ' ';
+    });
+  std::cout << '\n';
+}
+
+void test() {
+  std::vector<int> vals{1, 2, 3, 4};
+  print(vals);
+
+  std::vector<std::string> names{"Daniel", "Carlos", "Maria"};
+  print(names);
+}
+\end{lstlisting}
+\end{frame}
+\begin{frame}[t,fragile]{Explcit template paramters in lambdas}
+\begin{itemize}
+  \item The template parameters in a lambda are normally deduced.
+\begin{lstlisting}
+std::sort(v.begin(), v.end(), [](auto const & x, auto const & y) {
+  return x < y;
+});
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item However, they can also be explictly specified:
+\begin{lstlisting}
+std::sort(v.begin(), v.end(), []<typename T>(T const & x, T const & y) {
+  return x < y;
+});
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+

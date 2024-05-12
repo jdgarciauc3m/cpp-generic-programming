@@ -9,7 +9,7 @@ bool positive(int x) {
 }
 
 void f() {
-  std::vector {1, -1, 2, 3, -2, 4};
+  std::vector v{1, -1, 2, 3, -2, 4};
   auto cnt = std::ranges::count_if(v, positive);
   std::cout << std::format("positives = {}\n", cnt);
 }
@@ -25,7 +25,7 @@ struct positive_fobj {
     bool operator()(int x) const { return x>0; }
 };
 void f() {
-  std::vector {1, -1, 2, 3, -2, 4};
+  std::vector v{1, -1, 2, 3, -2, 4};
   auto cnt = std::ranges::count_if(v, positive);
   std::cout << std::format("positives = {}\n", cnt);
 }
@@ -34,7 +34,7 @@ void f() {
   \item A lambda is syntactic sugar for a function object.
 \begin{lstlisting}
 void f() {
-  std::vector {1, -1, 2, 3, -2, 4};
+  std::vector v{1, -1, 2, 3, -2, 4};
   auto cnt = std::ranges::count_if(v, [](int x) { return x>0; });
   std::cout << std::format("positives = {}\n", cnt);
 }
@@ -57,7 +57,7 @@ struct positive_objptr {
 };
 
 void f() {
-  std::vector {1, -1, 2, 3, -2, 4};
+  std::vector v{1, -1, 2, 3, -2, 4};
   positive_objptr pos_obj(positive);
   auto cnt = std::ranges::count_if(v, pos_obj);
 }
