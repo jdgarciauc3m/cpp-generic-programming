@@ -46,6 +46,7 @@ This repo contains the materials for a workshop on move semantics
     1. Kinds of callable entities.
     2. Using function objects in generic code.
     3. Members as callable entities.
+    4. Standard concepts for callables.
 
 
 Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]

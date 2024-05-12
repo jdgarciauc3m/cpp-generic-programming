@@ -1,0 +1,41 @@
+\subsection{Concepts in the standard library}
+
+\begin{frame}[t,fragile]{Concepts for general invocations}
+\begin{itemize}
+  \item \cppid{std::invocable<F, Args\ldots>}:
+        \cppid{F} can be invoked for arguments of types \cppid{Args\ldots}
+        using \cppid{std::invoke()}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::regular\_invocable<F, Args\ldots>}:
+        \cppid{F} is \cppid{std::invocable} with \cppid{Args\ldots}.
+        in an \textmark{equality preserving manner}.
+          \begin{itemize}
+            \item Neither the invocable nor the arguments are modified by de invocation.
+          \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Special kinds of invocables}
+\begin{itemize}
+  \item \cppid{std::predicate<P, Args\ldots>}:
+        \cppid{std::regular\_invocable<P,Args\ldots>} is satified and the result
+        of the invocation is convertible to \cppkey{bool}.   
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::relation<R,T,U>}:
+        Two objects of types \cppid{T}, two objectos of type \cppid{U} or one of each type
+        (in any order) can be passed to binary predicate \cppid{R}.
+            
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::equivalence\_order<R,T,U>} 
+        adds to \cppid{std::relation} as a semantic constraint that the
+            relation is reflexive, symmetric and transitive.
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::strict\_weak\_order<P,T,U>} 
+        adds to \cppid{std::relation} as a semantic constraint that the
+            relation is irreflexive and transitive.
+\end{itemize}
+\end{frame}
+
