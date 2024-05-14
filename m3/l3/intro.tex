@@ -40,10 +40,10 @@ void print_warning(auto & l, std::string_view message)
 }
 
 void print_warning(auto & l, std::string_view message)
-requires(requires{
-  l.log("");
-  l.log(log_level{}, "");
-})
+  requires(requires{
+    l.log("");
+    l.log(log_level{}, "");
+  })
 {
   l.log(log_level::warn, "Start of warning");
   l.log(message);
@@ -63,7 +63,7 @@ requires(requires{
 
 \begin{columns}[T]
 
-\column{.5\textwidth}
+\column{.4\textwidth}
 \begin{block}{Concepts for logging}
 \begin{lstlisting}
 template <typename L>
@@ -79,7 +79,7 @@ concept extended_logger = requires(L l) {
 \end{lstlisting}
 \end{block}
 
-\column{.5\textwidth}
+\column{.6\textwidth}
 \begin{block}{Printing a warning}
 \begin{lstlisting}
 void print_warning(basic_logger auto & l, 
@@ -113,7 +113,7 @@ void print_warning(extended_logger auto & l,
 
 \begin{columns}[T]
 
-\column{.5\textwidth}
+\column{.4\textwidth}
 \begin{block}{Logging concepts}
 \begin{lstlisting}[basicstyle=\tiny]
 template <typename L>
@@ -128,7 +128,7 @@ concept extended_logger = logger<L> and requires(L l) {
 \end{lstlisting}
 \end{block}
 
-\column{.5\textwidth}
+\column{.6\textwidth}
 \begin{block}{Overload resolution}
 \begin{lstlisting}[basicstyle=\tiny]
 void print_warning(logger auto & l, std::string_view message) {

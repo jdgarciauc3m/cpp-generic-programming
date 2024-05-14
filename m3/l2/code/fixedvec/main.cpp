@@ -2,6 +2,13 @@
 #include <memory>
 #include <gsl/gsl>
 #include <format>
+#include <type_traits>
+
+template <typename T>
+consteval bool is_poly_reference() {
+  return std::is_lvalue_reference_v<T>  and
+      std::is_polymorphic_v<std::remove_reference_t<T>>;
+}
 
 template <typename T>
 struct size_printer {
@@ -137,6 +144,12 @@ private:
   S storage_;
 };
 
+void f0() {
+  std::cout << "ios_base& is polyref = " << is_poly_reference<std::ios_base&>() << '\n';
+  std::cout << "cout is polyref = " << is_poly_reference<decltype(std::cout)>() << '\n';
+  std::cout << "string& is polyref = " << is_poly_reference<std::string&>() << '\n';
+}
+
 void f1() {
   constexpr int vecsize = 10;
   fixed_vector<double, local_storage<double, vecsize>> values;
@@ -148,6 +161,7 @@ void f1() {
 int main() {
   try {
     g();
+    f0();
     f1();
   }
   catch (...) {

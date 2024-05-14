@@ -40,7 +40,7 @@
   \item A requirement may be a non-dependent boolean expression.
 \begin{lstlisting}
 template <typename T>
-requires (sizeof(long) == sizeof(void*))
+    requires (sizeof(long) == sizeof(void*))
 void f(T x);
 \end{lstlisting}
 
@@ -48,7 +48,7 @@ void f(T x);
   \item A requirement may be a boolean expression depending on a parameter.
 \begin{lstlisting}
 template <typename T>
-requires (sizeof(T) <= 2 * sizeof(void*))
+    requires (sizeof(T) <= 2 * sizeof(void*))
 void f(T x);
 \end{lstlisting}
 
@@ -56,7 +56,7 @@ void f(T x);
   \item A requirement may depend on a NTTP value.
 \begin{lstlisting}
 template <typename T, std::size_t N>
-requires (sizeof(T[N]) <= 4096)
+    requires (sizeof(T[N]) <= 4096)
 class fixed_vector { /*...*/ };
 \end{lstlisting}
 
@@ -71,11 +71,11 @@ class fixed_vector { /*...*/ };
     \end{itemize}
 \begin{lstlisting}
 template <typename T>
-requires (std::is_integral<T>::value)
+    requires (std::is_integral<T>::value)
 void f(T x);
 
 template <typename T>
-requires (std::is_integral_v<T>)
+    requires (std::is_integral_v<T>)
 void f(T x);
 \end{lstlisting}
 
@@ -83,8 +83,8 @@ void f(T x);
   \item A combination of expressions can also be used.
 \begin{lstlisting}
 template <typename T>
-requires (std::is_bounded_array_v<T> and 
-          std::is_convertible_v<remove_all_extents_t<T>, std::string>)
+    requires (std::is_bounded_array_v<T> and 
+              std::is_convertible_v<remove_all_extents_t<T>, std::string>)
 void f(T x);
 \end{lstlisting}
 
@@ -99,20 +99,20 @@ void f(T x);
 template <typename T>
 consteval bool is_poly_reference() {
   return std::is_lvalue_reference_v<T> and
-         std::is_polymorphic_v<T>;
+         std::is_polymorphic_v<std::remove_reference_t<T>>;
 }
 
 template <typename T>
-requires (is_poly_reference<T>())
+    requires (is_poly_reference<T>())
 void f(T x);
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
-  \item Usually this is better expressed with a concept.
+  \item Usually, this is better expressed with a concept.
 \begin{lstlisting}
 template <typename T>
 concept poly_reference = std::is_lvalue_reference_v<T> and
-                         std::is_polymorphifc_v<T>;
+                         std::is_polymorphic_v<std::remove_reference_t<T>>;
 
 void f(poly_reference auto x);
 \end{lstlisting}
