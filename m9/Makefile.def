@@ -1,0 +1,16 @@
+M9_DIR=m9
+M9_PARTS=$(M9_DIR)/content.tex
+
+include $(M9_DIR)/l1/Makefile.def
+
+M9_BASE=m9
+M9_PDF=$(M9_DIR).pdf
+M9_PARTS += $(M9_DIR)/*.tex
+FINAL_M9_PDF=$(FINAL_DIR)/$(M9_PDF)
+
+ALL_PARTS += \
+$(M9_PARTS)
+
+ALL_SLIDES_FINAL_PDF += \
+$(FINAL_DIR)/$(M9_PDF) \
+

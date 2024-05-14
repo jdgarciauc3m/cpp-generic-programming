@@ -1,0 +1,91 @@
+\subsection{Array initialization}
+
+\begin{frame}[t,fragile]{Using \texttt{std::array}}
+  \begin{itemize}
+    \item Compile time fixed size (as primitive arrays).
+      \begin{itemize}
+        \mode<presentation>{\vfill}
+        \item Size can be provided as with arrays.
+\begin{lstlisting}
+int v[3] {1, 2, 3}; // OK
+std::array<int,3> v {1, 2, 3}; // OK
+\end{lstlisting}
+
+        \mode<presentation>{\vfill\pause}
+        \item Size can be deduced from initializer as with arrays.
+\begin{lstlisting}
+long v[] {1, 2, 3}; // OK
+auto v = std::to_array<long>({1, 2, 3}); // OK
+\end{lstlisting}
+
+        \mode<presentation>{\vfill\pause}
+        \item \textbad{Difference}: Element type can be deduced.
+\begin{lstlisting}
+auto v[] {1, 2, 3}; // Error
+std::array v {1, 2, 3}; // OK
+\end{lstlisting}
+      \end{itemize}
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Initialization}
+  \begin{itemize}
+    \item A \cppid{std::array} is an \textmark{aggregate}.
+    
+    \mode<presentation>{\vfill\pause}
+    \item If no initializer list is provided, \textmark{default initialization} is applied.
+      \begin{itemize}
+        \item \textmark{Automatic} (stack) or \textmark{dynamic} (heap) variables 
+              $\rightarrow$ 
+              primitive types are \textbad{not initialized}.
+        \item \textmark{Static duration} variables
+              $\rightarrow$ 
+              primitive types are \textgood{zero initialized}.
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item If an \textbad{insufficient number of values} is in the initializer list:
+      \begin{itemize}
+        \item Remaining elements are \textgood{value initialized}:
+        \begin{itemize}
+          \item \textmark{Primitive} types
+              $\rightarrow$ 
+              \textgood{zero initialized}.
+          \item Types with \textmark{default constructor}   
+              $\rightarrow$ 
+              \textgood{default constructed}.
+          \item Types \textmark{without constructors}
+              $\rightarrow$
+              Members are \textgood{value initialized}.
+        \end{itemize}
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item If \textbad{too many} initializers are present,
+          the program is \textbad{ill formed}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Initialization}
+\begin{lstlisting}[escapechar=@]
+struct point {
+  double x, y;
+  point() : x{5.0}, y{5.0} {}
+};
+
+std::array<int,5> v1; // @\pause@Initialized to 0@\pause@
+std::array<point,5> p1; // @\pause@Initialized to {5.0,5.0}@\pause@
+
+void f() {
+  std::array<int,5> v2; // @\pause@Uninitialized@\pause@
+  std::array<point,5> p1; // @\pause@Initialized to a {5.0, 5.0}@\pause@
+  // ...
+}
+
+std::array<int,10> w1 {1, 2}; // @\pause@Rest are zero-initialized@\pause@
+std::array<point,5> w2 { {1.0, 1.0} }; // @\pause@Rest initialized to {5.0, 5.0}@\pause@
+std::array<int,2> z { 1, 2, 3 }; // Error
+\end{lstlisting}
+\end{frame}
+

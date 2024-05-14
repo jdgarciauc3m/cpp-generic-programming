@@ -1,0 +1,96 @@
+\subsection{Better arrays with std::array}
+
+\begin{frame}[t,fragile]{Motivation}
+  \begin{itemize}
+    \item Primitive arrays \textbad{cannot} be completely integrated into the STL.
+      \begin{itemize}
+        \item \textbad{Missing} iterator access: \cppid{begin()}, \cppid{end()}, \ldots
+        \item Size information is \textbad{lost} in argument passing 
+              (they \textmark{decay}).
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item \textgood{Typical solution}: Use \cppid{std::vector}.
+      \begin{itemize}
+        \item Dynamic memory overhead.
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item \cppid{std::array} as a container interface for fixed size arrays.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+struct array {
+  //...
+};
+\end{lstlisting}
+
+    \mode<presentation>{\vfill\pause}
+    \item Aggregate type with same semantics (and layout) as a struct with
+          an array \cppid{T[N]}.
+      \begin{itemize}
+        \item Does not decay to \cppid{T*}.
+        \item Aggregate initialization.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Interface summary}
+  \begin{itemize}
+    \item \textmark{Iterators}:
+      \begin{itemize}
+        \item Normal: \cppid{begin()}, \cppid{end()}.
+        \item Other: 
+              \cppid{cbegin()}, \cppid{cend()},
+              \cppid{rbegin()}, \cppid{rend()},
+              \cppid{crbegin()}, \cppid{crend()}.
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{Fixed Capacity}: 
+          \cppid{size()}, \cppid{max\_size()}, \cppid{empty()}.
+      \begin{itemize}
+        \item No allocators.
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{element access}:
+      \begin{itemize}
+        \item \cppid{v[i]}, \cppid{v.at(i)}.
+        \item \cppid{front()}, \cppid{back()}, \cppid{data()}.
+      \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{Filling}: \cppid{fill(x)} (but no insertion/erasure).
+
+    \mode<presentation>{\vfill\pause}
+    \item \textmark{Swapping}:
+      \begin{itemize}
+        \item \cppid{v.swap(w)}, \cppid{std::swap(v,w)}.
+              (\textbad{Note}: $\mathcal{O}(n)$ instead of $\mathcal{O}(1)$).
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using arrays}
+\begin{block}{Basic use of std::array}
+\begin{lstlisting}
+struct point {
+  double x, y;
+};
+
+void f() {
+  std::array<int,5> values { 1, 2, 3, 4, 5 };
+  for (auto x : values) {
+    std::cout << x << ' ';
+  }
+
+  std::array<point,3> coords { {1.0, 1.0}, {2.0, 3.5}, {10.0, -5.2} };
+  for (auto p : coords) {
+    std::cout << std::format("({} , {})\n", p.x, p.y);
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+

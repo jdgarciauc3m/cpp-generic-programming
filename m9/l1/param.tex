@@ -1,0 +1,59 @@
+\subsection{Passing arrays to functions}
+
+\begin{frame}[t,fragile]{Parameter passing}
+\mode<presentation>{\vspace{-1.5em}}
+\begin{columns}[T]
+\column{.5\textwidth}
+\begin{block}{Old style}
+\begin{lstlisting}
+void print(int v[], int n) {
+  for (int i=0; i!=n; ++i) {
+    cout << v[i] << "\n";
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+
+\column{.5\textwidth}
+\begin{block}{New style}
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::array<T,N> & a) {
+  for (auto x : a) {
+    cout << x << "\n";
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+\column{.5\textwidth}
+\begin{block}{Old style usage}
+\begin{lstlisting}
+void f() {
+  int v[] { 1, 2, 3, 4, 5 };
+
+  print(v, 5); // OK
+  print(v, 10); // Might be problematic
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{New safe style}
+\begin{lstlisting}
+void f() {
+  std::array w { 1, 2, 3, 4, 5 };
+
+  print(w); // OK. Always safe.
+}
+
+\end{lstlisting}
+\end{block}
+\end{columns}
+\end{frame}
