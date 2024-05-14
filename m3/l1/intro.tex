@@ -20,7 +20,8 @@ T square(T x) {
 
 \column{.5\textwidth}
 \begin{itemize}
-  \item Binary operator \cppkey{*} must be define on \cppid{T}.
+  \item Binary operator \cppkey{*} must be defined on \cppid{T}.
+  \item Result must be convertible to \cppid{T}.
   \item Values of type \cppid{T} must be returnable.
 \end{itemize}
 
@@ -139,7 +140,7 @@ void print(T ptr) {
 \begin{itemize}
   \item A requirement may be stated between function specification and function body.
     \begin{itemize}
-      \item Usefule if function parameters are used.
+      \item Useful if function parameters are used.
     \end{itemize}
 \end{itemize}
 

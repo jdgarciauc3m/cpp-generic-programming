@@ -40,7 +40,7 @@ void print(value const & x) {
       x.get());
 }
 
-void print(value && x) { // NOLINT
+void print(value && x) { 
   std::cout << std::format("print({}) by r-value ref\n", 
       x.get());
 }
