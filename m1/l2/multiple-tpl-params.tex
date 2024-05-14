@@ -8,7 +8,7 @@
 \begin{lstlisting}
 template <arithmetic T, arithmetic U>
 void print_squares_sum(T x, U y) {
-  std::cout << "|<" << x << "," << y << ">|^2 = " << x*x + y*y <<'\n';
+  std::cout << std::format("|<{},{}>|^2 = {}\n", x, y, x * x + y * y);
 }
 \end{lstlisting}
 \end{block}
@@ -19,7 +19,7 @@ void print_squares_sum(T x, U y) {
 \begin{block}{Function with multiple template parameters}
 \begin{lstlisting}
 void print_squares_sum(arithmetic auto x, arithmetic auto y) {
-  std::cout << "|<" << x << "," << y << ">|^2 = " << x*x + y*y <<'\n';
+  std::cout << std::format("|<{},{}>|^2 = {}\n", x, y, x * x + y * y);
 }
 \end{lstlisting}
 \end{block}

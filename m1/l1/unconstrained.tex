@@ -9,16 +9,16 @@
 \begin{block}{Unconstrained generic \textbf{square} function}
 \begin{lstlisting}
 void print_square(auto x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}
 
 \begin{itemize}
   \item The keyword \cppkey{auto} without a preceding concept name
-        stands for the universal concept (any type).
+        stands for the \textmark{universal concept} (any type).
     \begin{itemize}
-      \item Function can be called with a value from any type.
+      \item Function can be called with a value from \textgood{any type}.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -32,7 +32,7 @@ void print_square(auto x) {
 \begin{lstlisting}
 template <typename T>
 void print_square(T x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}
@@ -50,9 +50,9 @@ void print_square(T x) {
 \begin{block}{Constrained generic \textbf{square} function with template notation}
 \begin{lstlisting}
 template <typename T>
-  requires integral<T>
+  requires std::integral<T>
 void print_square(T x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}

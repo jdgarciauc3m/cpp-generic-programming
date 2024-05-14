@@ -1,11 +1,9 @@
 #include <iostream>
 
-void print_square1(std::integral auto x) {
-#if 0
-  print("hello"); // Undeclared identifier print
-  std::integral auto r = x * x // Syntax error: mssing semicolon
-  static_assert(sizeof(int) >= sizeof(long)); // static_assert failed
-#endif
+void print_square1([[maybe_unused]] std::integral auto x) { // NOLINT
+//  print("hello"); // Undeclared identifier print
+//  std::integral auto r = x * x // Syntax error: mssing semicolon
+//  static_assert(sizeof(int) >= sizeof(long)); // static_assert failed
 }
 
 void print_value(int x) { std::cout << x << '\n'; }
@@ -19,7 +17,5 @@ void print_square2(std::integral auto x) {
 
 int main() {
   print_square1(2); // OK
-#if 0
-  print_square2(2L); // Error: cannot instantiate for long
-#endif
+//  print_square2(2L); // Error: cannot instantiate for long
 }

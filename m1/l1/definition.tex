@@ -12,7 +12,7 @@
 \begin{block}{maximum for integers}
 \begin{lstlisting}
 void print_square(int x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}
@@ -21,8 +21,9 @@ void print_square(int x) {
 \begin{block}{maximum for long integers}
 \begin{lstlisting}
 void print_square(long x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
+
 \end{lstlisting}
 \end{block}
 
@@ -47,8 +48,8 @@ void print_square(long x) {
 
 \begin{frame}[t,fragile]{Generalizing a function}
 \begin{itemize}
-  \item We would like to generalize for any type that satisfies the
-        \textmark{concept} of an \textemph{integral type}.
+  \item We would like to generalize for \textmark{any type} that satisfies the
+        \textemph{concept} of an \textgood{integral type}.
     \begin{itemize}
       \item There is such a concept in header \cppid{<concepts>}: \cppid{std::integral}.
     \end{itemize}
@@ -58,14 +59,14 @@ void print_square(long x) {
 \begin{block}{Generalized square function}
 \begin{lstlisting}
 void print_square(std::integral auto x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}
 
 \mode<presentation>{\vfill\pause}
 \begin{itemize}
-  \item Parameter type is specified with \textmark{concept} \cppid{std::integral}
+  \item Parameter type is specified with \textemph{concept} \cppid{std::integral}
         followed by keyword \cppkey{auto}.
 
 

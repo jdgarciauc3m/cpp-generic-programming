@@ -10,16 +10,16 @@
     \item \textmark{Definition time}:
           The code is checked without considering generic types porperties.
       \begin{itemize}
-        \item Check unknown names that do not depend on generic types.
-        \item Check syntax errors.
-        \item Evaluate static assertions that do not depend on generic types.
+        \item Check \textbad{unknown names} that do not depend on generic types.
+        \item Check \textbad{syntax errors}.
+        \item Evaluate \textbad{static assertions} that do not depend on generic types.
       \end{itemize}
     
 
     \mode<presentation>{\vfill\pause}
     \item \textmark{Instantiation time}.
       \begin{itemize}
-        \item Check all parts that depend on generic types.
+        \item Check all parts that \textmark{depend on generic types}.
       \end{itemize}
 
   \end{enumerate}
@@ -40,11 +40,14 @@ void print_square(std::integral auto x) {
 \end{block}
 
   \begin{itemize}
-    \item Unknown functions can be diagnosed when they do not depend on the type of \cppid{x}.
+    \item \textbad{Unknown functions} can be diagnosed 
+          when they do not depend on the type of \cppid{x}.
 
-    \item Syntax errors can be found without knowing the exact type of \cppid{x}.
+    \item \textbad{Syntax errors} can be found 
+          without knowing the exact type of \cppid{x}.
 
-    \item Static assertions that do not depend on generic properties can be evaluated.
+    \item \textbad{Static assertions} that do not depend 
+          on generic properties can be evaluated.
   \end{itemize}
 \end{frame}
 
@@ -66,7 +69,7 @@ void print_square2(std::integral auto x) {
 }
 
 int main() {
-  print_square1(2); // OK
+  print_square2(2); // OK
   print_square2(2L); // Error: cannot instantiate for long
 }
 \end{lstlisting}
@@ -76,13 +79,15 @@ int main() {
 
 \pause
 \begin{itemize}
-  \item Instantiation time errors depend on properties unknown until a specific instantiation occurs.
+  \item Instantiation time errors \textmark{depend} on properties 
+        \textbad{unknown} until a \textmark{specific instantiation} occurs.
 
   \mode<presentation>{\vfill\pause}
   \item When instantiation happens the defintion must be visible.
 
   \mode<presentation>{\vfill\pause}
-  \item \textbad{Consequence}: Generic functions need to be defined before they are used.
+  \item \textbad{Consequence}: Generic functions need to be 
+        defined before they are used.
     \begin{itemize}
       \item Place generic functions in header files.
     \end{itemize}

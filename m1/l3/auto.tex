@@ -11,8 +11,9 @@
       \end{itemize}
   \end{itemize}
 \pause
-\begin{lstlisting}
-double x = 1.5;
+\begin{lstlisting}[escapechar=@]
+double x = 1.5;@\pause@
+auto x = 1.5; // Type of x is deduced to double
 \end{lstlisting}
 \pause
   \begin{itemize}
@@ -20,41 +21,17 @@ double x = 1.5;
        complex or difficult to maintain.
   \end{itemize}
 \pause
-\begin{lstlisting}
-typename std::vector<std::string>::iterator i= c.begin();
-\end{lstlisting}
-\pause
-\begin{lstlisting}
-typename std::vector<std::string>::const_iterator i=c.begin();
+\begin{lstlisting}[escapechar=@]
+typename std::vector<std::string>::iterator i= c.begin();@\pause@
+typename std::vector<std::string>::const_iterator i=c.begin();@\pause@
+auto i = c.begin();
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[t,fragile]{\texttt{auto} definitions}
 \begin{itemize}
-  \item \textgood{Solution}: 
-        Use keyword \cppkey{auto} to signal that the compiler
-        should infer the variable's type.
-\pause
-
-\mode<presentation>{\vspace{-1em}}
-\begin{columns}[T]
-\column{.1\textwidth}
-\column{.4\textwidth}
-\begin{lstlisting}
-auto x1 = 1.5;  // x1 is double
-auto x2 = 1.5f; // x2 is float
-\end{lstlisting}
-
-\column{.5\textwidth}
-\begin{lstlisting}
-std::vector<int> v;
-auto i = v.begin(); // i is std::vector<int>::iterator
-\end{lstlisting}
-\end{columns}
-
-\pause
 \item Specially useful in generic code.
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}
 template <typename T>
 void print1(const std::vector<T> & v) {
   for (typename std::vector<T>::const_iterator i=v.begin();i!=v.end();++i){
@@ -63,7 +40,7 @@ void print1(const std::vector<T> & v) {
 }
 \end{lstlisting}
 \mode<presentation>{\vfill\pause}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}
 template <typename T>
 void print2(const std::vector<T> & v) {
   for (auto i=v.begin();i!=v.end();++i){

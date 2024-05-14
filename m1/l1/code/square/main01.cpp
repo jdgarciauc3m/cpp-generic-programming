@@ -1,11 +1,12 @@
 #include <iostream>
+#include <format>
 
 void print_square(int x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x * x);
 }
 
 void print_square(long x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 
 int main() {

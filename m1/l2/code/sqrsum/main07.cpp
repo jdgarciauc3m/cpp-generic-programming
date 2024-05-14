@@ -4,7 +4,7 @@
 template <typename T>
 concept arithmetic = std::integral<T> or std::floating_point<T>;
 
-template <arithmetic T, arithmetic U, arithmetic R>
+template <arithmetic R, arithmetic T, arithmetic U>
 R squares_sum(T x, U y) {
   return x * x + y * y;
 }
@@ -21,5 +21,6 @@ int main() {
   auto b = squares_sum<double, double, double>(2.0, 3.1);  // NOLINT
   print_squares_sum(2.0, 3.1, b);                          // NOLINT
 
-  // auto c = squares_sum<double, double>(2.0, 3.1);
+  auto c = squares_sum<double, double>(2.0, 3.1);  // NOLINT
+  print_squares_sum(2.0, 3.1, c);                  // NOLINT
 }

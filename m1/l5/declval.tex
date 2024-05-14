@@ -4,7 +4,7 @@
   \begin{itemize}
     \item It is a \textmark{library function} returning a \textgood{value of a given type}.
 \begin{lstlisting}
-declval<T>()
+std::declval<T>()
 \end{lstlisting}
       \begin{itemize}
         \pause
@@ -15,7 +15,7 @@ declval<T>()
 \begin{lstlisting}
 template <typename T>
 void swap(vec<T> & v1, vec<T> & v2) 
-  noexcept(noexcept(swap(declval<T&>(), declval<T&>())));
+  noexcept(noexcept(swap(std::declval<T&>(), std::declval<T&>())));
 \end{lstlisting}
   \end{itemize}
 \end{frame}

@@ -7,7 +7,7 @@
 \begin{block}{Print the address of an object}
 \begin{lstlisting}
 template <typename T>
-void print_address(T && object) { // NOLINT
+void print_address(T && object) { 
   void const * ptr = &object;
   std::cout << std::format("address = {}\n", ptr);
 }
@@ -55,7 +55,7 @@ void test() {
 \begin{block}{Print the address of an object}
 \begin{lstlisting}
 template <typename T>
-void print_address(T && object) { // NOLINT
+void print_address(T && object) { 
   void const * ptr = std::addressof(object);
   std::cout << std::format("address = {}\n", ptr);
 }

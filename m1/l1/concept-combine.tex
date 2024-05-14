@@ -17,11 +17,11 @@
 \begin{block}{Square function duplication}
 \begin{lstlisting}
 void print_square(std::integral auto x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 
 void print_square(std::floating_point auto x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}
@@ -53,7 +53,7 @@ concept arithmetic =
 \begin{block}{Square function}
 \begin{lstlisting}
 void print_square(arithmetic auto x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}
@@ -65,8 +65,8 @@ void print_square(arithmetic auto x) {
 \begin{itemize}
   \item A \cppkey{concept} can be defined as a predicate on a type.
     \begin{itemize}
-      \item The predicate is evaluated at compile time.
-      \item If it is true the type satisfies the concept.
+      \item The \textmark{predicate} is \textgood{evaluated at compile time}.
+      \item If it is \cppkey{true} the type \textgood{satisfies the concept}.
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
@@ -92,7 +92,7 @@ concept arithmetic = std::is_arithmetic_v<T>;
 \begin{block}{Square function}
 \begin{lstlisting}
 void print_square(arithmetic auto x) {
-  std::cout << x << "^2 = " << x*x << '\n';
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
 }
 \end{lstlisting}
 \end{block}

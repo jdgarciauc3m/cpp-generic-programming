@@ -114,7 +114,7 @@ bool is_greater_fp(T x) {
 \begin{block}{Using a generic function}
 \begin{lstlisting}
 void f() {
-  double x = 5.0; // NOLINT
+  double x = 5.0;
   std::cout << is_greater_fp<2.0>(x) << '\n';
   //...
 
@@ -257,7 +257,7 @@ void print_message(std::string_view message) {
 \column{.5\textwidth}
 \begin{block}{Using string literals}
 \begin{lstlisting}
-char const info[] = "INFO"; // NOLINT
+char const info[] = "INFO"; 
 
 void f1() {
   print_message<info>("Start");

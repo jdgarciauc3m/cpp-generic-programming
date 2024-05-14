@@ -53,7 +53,7 @@ void f() {
   int a = 2, b = 5;
   int const cb = b;
 
-  auto r = maximum(a,cb); // T = int / T = int const
+  auto r = maximum(a,cb); // Error: T = int / T = int const
 }
 \end{lstlisting}
 \end{block}
@@ -73,11 +73,11 @@ void f() {
   int a = 2, b = 5;
 
   int const & ra = a;
-  auto r1 = maximum(ra,b); // Error. T = const int or int
+  auto r1 = maximum(ra,b); // Error: T=const int / T=int
 
 
   int const && rrz = a + b;
-  auto r3 = maximum(rra,b); // T = const int or int
+  auto r3 = maximum(rra,b); // Error: T=const int / T=int
 }
 
 \end{lstlisting}
