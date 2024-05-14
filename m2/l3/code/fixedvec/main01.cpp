@@ -15,7 +15,7 @@ void f1() {
 void f2() {
   std::string person1 = "Daniel";
   std::string person2 = "Carlos";
-  fixed_vector<std::string*> names{8};
+  fixed_vector<std::string*> names{8}; // NOLINT
   names.push_back(&person1);
   names.push_back(nullptr);
   names.push_back(&person2);

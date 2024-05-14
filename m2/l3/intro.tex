@@ -32,7 +32,7 @@ class fixed_vector<std::string> {
     \begin{itemize}
       \item \cppkey{const} version of \cppkey{operator[]} might return a \textemph{const reference}.
 \begin{lstlisting}
-std::string operator[](int i);
+std::string const & operator[](int i);
 \end{lstlisting}
       \item \cppid{push\_back()} might take a \textemph{const reference}.
 \begin{lstlisting}
@@ -42,9 +42,10 @@ void push_back(std::string const & x);
 
   \item \textbad{Notes}:
     \begin{itemize}
-      \item A class specialization may have different data members.
-      \item A class specialization may have different member functions.
-      \item Member functions may have different signature in an specialization.
+      \item A class specialization may have \textmark{different data members}.
+      \item A class specialization may have \textmark{different member functions}.
+      \item Member functions may have \textmark{different signature} 
+            in an specialization.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -90,7 +91,8 @@ public:
 
   void push_back(std::string const & x);
 
-  friend std::ostream & operator<<(std::ostream &os, fixed_vector<@\color{red}std::string@> const &v);
+  friend std::ostream & operator<<(std::ostream &os, 
+                                   fixed_vector const &v);
 
 private:
   int capacity_ = 0;

@@ -9,7 +9,7 @@ void f1() {
   names.push_back("Carlos");
   names.push_back("Daniel");
   serialize(std::cout, names);
-  std::cout << names;
+  std::cout << '\n' << names;
   // NOLINTEND
 }
 

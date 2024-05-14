@@ -32,12 +32,12 @@ template <typename ... T>
 class tuple {
 public:
   //...
-  constexpr pair(const T & ... x);
+  constexpr tuple(const T & ... x);
   //...
 };
 
 template <typename ... T>
-pair(T...) -> pair<T...>;
+tuple(T...) -> tuple<T...>;
 \end{lstlisting}
 \end{block}
 

@@ -10,6 +10,7 @@ void f1() {
   names.push_back("Daniel");
   //serialize(std::cout, names);
   // NOLINTEND
+  std::cout << "size = " << names.size() << '\n';
 }
 
 int main() {

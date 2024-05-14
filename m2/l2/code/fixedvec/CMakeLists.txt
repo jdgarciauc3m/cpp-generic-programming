@@ -6,10 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors -Wsign-conversion)
-add_compile_options(-lstdc++_libbacktrace -llibstdc++exp)
 
 include(FetchContent)
-
 FetchContent_Declare(GSL
         GIT_REPOSITORY "https://github.com/microsoft/GSL"
         GIT_TAG "v4.0.0"

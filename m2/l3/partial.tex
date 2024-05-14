@@ -9,9 +9,9 @@
     \end{itemize}
 
 \begin{block}{A partial specialization for pointers}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <std::semiregular T>
-class fixed_vector<T*> {
+class fixed_vector<@\color{red}T*@> {
   //...
 };
 \end{lstlisting}
@@ -64,7 +64,7 @@ public:
   void serialize(std::ostream &os) const;
   friend std::ostream &operator <<<T*>(
       std::ostream &os, 
-      fixed_vector<@\color{red}T *@> const &v);
+      fixed_vector const &v);
 
 private:
   int capacity_ = 0;

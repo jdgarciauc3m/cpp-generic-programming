@@ -6,9 +6,9 @@
 
 \column{.45\textwidth}
 \begin{block}{Default storage strategy}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <std::semiregular T, 
-          typename S = local_storage<T>>
+          typename S @\color{red}= local\_storage<T>@>
 class fixed_storage {
   //...
   // T and S used in definitions
@@ -44,9 +44,9 @@ void f() {
 
 \column{.45\textwidth}
 \begin{block}{Default storage strategy}
-\begin{lstlisting}
-template <std::semiregular T = double, 
-          typename S = local_storage<T>>
+\begin{lstlisting}[escapechar=@]
+template <std::semiregular T @\color{red}= double@, 
+          typename S @\color{red}= local\_storage<T>@>
 class fixed_storage {
   //...
   // T and S used in definitions

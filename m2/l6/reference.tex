@@ -66,8 +66,7 @@ template <typename T>
 counted_value_ref<T> make_counted_value_ref(T x) {
   return counted_value_ref<T>(x);
 }
-
-auto y = make_counted_value_ref("World"); // counted_value_ref<const char *>
+auto y = make_counted_value_ref("World"); // counted_value_ref<char const *>
 \end{lstlisting}
 \end{block}
 

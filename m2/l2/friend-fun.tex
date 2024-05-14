@@ -2,7 +2,7 @@
 
 \begin{frame}[t,fragile,shrink=18]{Defining a friend function}
 \begin{itemize}
-  \item A friend function may be defined inside a generic class.
+  \item A \cppkey{friend} function may be defined inside a generic class.
 \end{itemize}
 
 \begin{columns}[T]
@@ -81,7 +81,8 @@ public:
 
 \begin{frame}[t,fragile,shrink=15]{Forward declaring a function template}
 \begin{itemize}
-  \item To forward declare a function template we need to forwarde declare the class.
+  \item To \textmark{forward declare a function template} 
+        we \textbad{need to} \textgood{forward declare the class}.
 
 \begin{block}{Forward declarations}
 \begin{lstlisting}
@@ -94,7 +95,7 @@ void serialize(std::ostream & os, fixed_vector<T> const & v);
 \end{block}
 
   \mode<presentation>{\vfill\pause}
-  \item Declaration inside the class needs to specialize.
+  \item Declaration inside the class \textbad{needs} to \textgood{specialize}.
 \begin{block}{Declaration}
 \begin{lstlisting}[escapechar=@]
 template<std::semiregular T>

@@ -17,47 +17,26 @@ void g() {
   print_size(z); // print_size<complex<double>>(z)
 @\pause@   
   std::vector<std::map<std::string, int>> v;
-  print_size(v); f<std::vector<std::map<std::string, int>>>(v)
+  print_size(v); // f<std::vector<std::map<std::string, int>>>(v)
 }
 \end{lstlisting}
 \end{block}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t,fragile]{Class template argument deduction}
-\begin{itemize}
-  \item \textbad{However}, for classes \ldots
-\begin{block}{Deducing class template arguments}
-\begin{lstlisting}
-void g() {
-  std::pair<int,std::string> p{1969, "Daniel"};
-
-  auto q = std::make_pair(1950, "Bjarne");
-
-  std::pair r{1955, "James"}; // Error. Missing template arguments 
-}
-\end{lstlisting}
-\end{block}
-
-  \mode<presentation>{\vfill}
-  \item In C++14 it was not possible to deduce class template arguments.
-
 \end{itemize}
 \end{frame}
 
 \begin{frame}[t,fragile]{Argument deduction}
 \begin{itemize}
-  \item Since C++17 class template arguments can be deduced.
+  \item Class template arguments can be deduced from constructor arguments.
 
 \begin{block}{Using argument deduction}
 \begin{lstlisting}
 std::pair p{1969, "Daniel"}; // std::pair<int, char const *>
 
+using namespace std::literals;
 std::pair q{1950, "Bjarne"s}; // std::pair<int,std::string>
 
 std::map<int,double> create_dic();
-// std::tuple<int, double, std::map<int,double>>
-std::tuple t{1, 2.5, create_dic()};
+std::tuple t{1, 2.5, create_dic()};// std::tuple<int, double, std::map<int,double>>
 \end{lstlisting}
 \end{block}
 

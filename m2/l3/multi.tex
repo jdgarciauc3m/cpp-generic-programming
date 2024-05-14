@@ -176,9 +176,9 @@ std::ostream &operator<<(std::ostream &os, fixed_vector<T,S> const &v) {
 
 \begin{frame}[t,fragile,shrink=10]{Specializing for local storage}
 \begin{block}{A specialized \textbf{fixed\_vector}}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template<std::semiregular T>
-class fixed_vector<T, local_storage<T>> {
+class fixed_vector<T, @\color{red}local\_storage<T>@> {
 public:
   explicit fixed_vector(int n) {
     Expects(n>=0 and n<storage_.capacity());
