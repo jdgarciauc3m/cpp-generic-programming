@@ -1,0 +1,49 @@
+\subsection{A n-dimensional tuple}
+
+\begin{frame}[t,fragile]{What's a tuple?}
+  \begin{itemize}
+    \item \cppid{std::tuple}: 
+          A natural extension of the \cppid{std::pair} using 
+          \textmark{variadic templates}.
+\begin{lstlisting}
+template <typename ... T>
+class tuple;
+\end{lstlisting}
+
+    \mode<presentation>{\pause\vfill}
+    \item A tuple is a sequence of \cppid{N} elements of arbitrary types.
+      \begin{itemize}
+        \item Type for each element is known at compile time.
+\begin{lstlisting}
+std::tuple<string, int, double> student{"Daniel", 1965, 1.82};
+\end{lstlisting}
+        \item Its size is known at compile time.
+        \item It does not directly use dynamic memory.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Creaing tuples}
+  \begin{itemize}
+    \item \cppid{std::tuple} has multiple constructors:
+      \begin{itemize}
+        \item Deduction guides usally help.
+\begin{lstlisting}
+std::tuple student{"Daniel"s, 1965, 1.82}; // tuple<std::string, int, double>
+std::tuple other{"Carlos", 2003, 1.96}; // tuple<char const*, int, double> 
+\end{lstlisting}
+
+        \item There is also a \cppid{std::make\_tuple()} function.
+\begin{lstlisting}
+template <typename ... T>
+std::tuple <T...> make_tuple(T&& ... t) {
+  return std::tuple<T...>{t...};
+}
+\end{lstlisting}
+      \item Specially convenient in combination with \cppid{auto}.
+\begin{lstlisting}
+auto t = std::make_tuple(std::string("Carlos"), 2003, 1.96);
+\end{lstlisting}
+  \end{itemize}
+\end{itemize}
+\end{frame}

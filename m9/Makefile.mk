@@ -1,4 +1,5 @@
 include $(M9_L1_DIR)/Makefile.mk
+include $(M9_L3_DIR)/Makefile.mk
 include $(M9_L4_DIR)/Makefile.mk
 include $(M9_L5_DIR)/Makefile.mk
 

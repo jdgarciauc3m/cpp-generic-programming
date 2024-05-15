@@ -1,0 +1,92 @@
+\subsection{Accessing elements}
+
+\begin{frame}[t,fragile]{Element access in a tuple}
+  \begin{itemize}
+    \item Non-member function \cppid{get<N>(t)}.
+\begin{lstlisting}
+std::tuple<std::string,int,std::map<std::string,int>> e;
+auto name = std::get<0>(e); // string
+auto age = std::get<1>(e); // int
+auto marks = std::get<2>(e);  // map<string,int>
+\end{lstlisting}
+
+    \mode<presentation>{\vfill}
+    \item Access index must be known at compile time.
+      \begin{itemize}
+        \item It is not possible to write loops for tuples.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Other form of tuple access}
+\begin{itemize}
+  \item The elements of a tuple can be accessed by type.
+    \begin{itemize}
+      \item In addition to index.
+    \end{itemize}
+\end{itemize}
+\begin{lstlisting}
+std::tuple<string, string, int> a { "Daniel", "Garcia", 1969 };
+auto x = std::get<2>(a); // int x = 1969
+auto y = std::get<int>(a); // int x = 1969
+auto z = std::get<string>(a) // Error.
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Tuple and returning multiple values from functions}
+  \begin{itemize}
+    \item A tuple can be used to return multiple values.
+\begin{lstlisting}
+std::tuple<int,int> divide(int x, int y) {
+  return std::make_tuple(x/y, x%y);
+}
+
+auto r = divide(10,3);
+int quotient = std::get<0>(r);
+int remainder = std::get<1>(r);
+\end{lstlisting}
+
+    \mode<presentation>{\vfill\pause}
+    \item \cppid{tie} provides a way to associate tuple elements
+          with variables.
+\begin{lstlisting}
+int quotient, remainder;
+std::tie(quotient, remainder) = divide(10,3);
+std::tie(quotient, std::ignore) = divide(15,2);
+std::tie(std::ignore, remainder) = divide(3, 2);
+\end{lstlisting}
+
+    \mode<presentation>{\vfill}
+    \item Solution for functions with multiple return values.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simplifying multiple returns with structured bindings}
+\begin{itemize}
+  \item Structured bindings offer a simpler way of decomposing
+        the value of a \cppid{std::tuple}.
+\begin{lstlisting}
+auto [q1, r1] = divide(10,3);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ask your tuple (at compile time)}
+  \begin{itemize}
+    \item You can get the size of tuple and the types of its elements.
+\begin{lstlisting}
+using record = std::tuple<std::string, int, std::vector<int>>;
+using entry = std::tuple<int, record>
+
+template <typename T>
+void f(T t) {
+  constexpr std::size_t num = std::tuple_size_v<T>;
+
+  using key_type = typename std::tuple_element_t<0, T>;
+
+  // ...
+}
+\end{lstlisting}
+  \end{itemize}
+\end{frame}
+
