@@ -1,0 +1,115 @@
+\subsection{Variants and dynamic polymorphism}
+
+\begin{frame}[t,fragile]{Non-intrusive dynamic polymorphism with variants}
+\begin{itemize}
+  \item Usually \textmark{dynamic polymorphism} 
+    \begin{itemize}
+      \item Require a \textbad{common base class} defining an interface.
+      \item Require a set of \textbad{virtual functions}.
+      \item Require extensive use of \textbad{dynamic memory}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Dynamic polymorphism} may be also achived with 
+        \cppid{std::variant} and \cppid{std::visit()}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Example}: An heterogeneous list of figures.
+    \begin{itemize}
+      \item Printing figures.
+      \item Computing the sum of areas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Basic types}
+\begin{block}{Coordinates and sizes}
+\begin{lstlisting}
+struct point {
+  double x, y;
+};
+
+std::ostream &operator<<(std::ostream &os, point p) {
+  return os << std::format("({},{})",p.x, p.y);
+}
+
+struct size {
+  double width, height;
+};
+
+std::ostream &operator<<(std::ostream &os, size s) {
+  return os << std::format("({},{})", s.width, s.height);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Circles}
+\begin{block}{A circle type}
+\begin{lstlisting}
+class circle {
+public:
+  circle(point c, double r) : center_{c}, radius_{r} {}
+
+  [[nodiscard]] double area() const { return radius_ * std::numbers::pi; }
+
+  friend std::ostream & operator<<(std::ostream & os, circle const & c) {
+    return os << "circle[" << c.center_ << " , " << c.radius_ << "]";;
+  }
+
+private:
+  point center_;
+  double radius_;
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Rectangles}
+\begin{block}{A rectangle type}
+\begin{lstlisting}
+class rectangle {
+public:
+  rectangle(point ll, size sz) : lower_left_{ll}, size_{sz} {}
+
+  [[nodiscard]] double area() const { return size_.width * size_.height; }
+
+  friend std::ostream & operator<<(std::ostream & os, rectangle const & r) {
+    return os << "circle[" << r.origin_ << " , " << r.size_ << "]\n";;
+  }
+  private:
+    point origin_;
+    size size_;
+
+};
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Dynamic polymorphism}
+\begin{block}{A polymorphic collection}
+\begin{lstlisting}[basicstyle=\tiny]
+int main() {
+  using figure = std::variant<rectangle, circle>;
+  using diagram = std::vector<figure>;
+  diagram d{circle{{1.0, 1.0}, 3.0}, rectangle{{2.0, 2.0}, {3.0, 4.0}}, /*...*/ };
+
+  for (auto const & fig : diag) {
+    std::visit([](auto const & f) { std::cout << f << '\n'; }, fig);
+  }
+  auto sum = std::transform_reduce(diag.begin(), diag.end(), 
+              0.0,
+              [](double x, double y) {return x+y; },
+              [](auto const & fig) {
+                return std::visit(
+                  [](auto const & f) { return f.area(); }, 
+                  fig);
+              });
+  std::cout << std::format("sum areas = {}\n", sum);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+
+

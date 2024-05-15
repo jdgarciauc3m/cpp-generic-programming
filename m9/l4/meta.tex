@@ -1,0 +1,22 @@
+\subsection{Metafunctions on variants}
+
+\begin{frame}[t,fragile]{Variant size and types}
+\begin{itemize}
+  \item \cppid{std::variant\_size\_v<V>}:
+        Compile-time constant with the number of alternatives
+        in the variant \cppid{V}.
+\begin{lstlisting}
+std::variant<int, double, std::string> var;
+constexpr auto sz = std::variant_size_v<decltype(var)>; // sz == 3
+\end{lstlisting}
+
+  \item \cppid{std::variant\_alternative\_t<I,V>}:
+        Type for the \cppid{I}\textsuperscript{th} alternative 
+        in the variat \cppid{V}.
+\begin{lstlisting}
+using record = std::variant<int, double, std::string>;
+using text = std::variant_alternative_t<2, record>;
+\end{lstlisting}
+        
+\end{itemize}
+\end{frame}

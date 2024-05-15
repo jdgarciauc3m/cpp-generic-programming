@@ -1,0 +1,102 @@
+\subsection{Visiting a variant}
+
+\begin{frame}[t,fragile]{Variant visitors}
+\begin{itemize}
+  \item A \textmark{visitor} provides a function call interfaces for every
+        possible type.
+\end{itemize}
+\begin{block}{Visiting a \texttt{variant}}
+\begin{lstlisting}
+void visit1() {
+  std::variant<int,double> v;
+  struct printer {
+    void operator()(int x) const { std::cout << "int: " << x << "\n"; }
+    void operator()(double x) const { std::cout << "double: " << x << "\n"; }
+  };
+  std::visit(printer{}, v);
+  v = 2.5;
+  std::visit(printer{}, v);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Supporting visits in empty variants}
+\begin{itemize}
+  \item If \cppid{std::monostate} is an alternative the visitor
+        needs to handle it.
+\end{itemize}
+\begin{block}{Visiting and \texttt{std::monostate}}
+\begin{lstlisting}
+void visit2() {
+  std::variant<std::monostate, int,double> v;
+  struct printer {
+    void operator()(std::monostate) const { std::cout << "empty\n"; }
+    void operator()(int x) const { std::cout << "int: " << x << "\n"; }
+    void operator()(double x) const { std::cout << "double: " << x << "\n"; }
+  };
+  std::visit(printer{}, v);
+  v = 2.5;
+  std::visit(printer{}, v);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Visiting with generic lambdas}
+\begin{itemize}
+  \item A \textmark{generic lambda} can be used for all the visitor alternatives.
+\end{itemize}
+\begin{block}{Visiting with generic lambdas}
+\begin{lstlisting}
+void visit3() {
+  std::variant<int,double> v;
+  auto printer = [](auto x) { std::cout << "value = " << x << "\n"; };
+  std::visit(printer, v);
+  v = 2.5;
+  std::visit(printer, v);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Visiting with overloaded lambdas}
+\begin{block}{Using overloaded lambdas}
+\begin{lstlisting}
+template <typename ... F>
+struct overload : F ... { using F::operator()...; };
+
+template <typename ... F> overload(F...) -> overload<F...>;
+
+void visit4() {
+  std::variant<std::monostate,int,double> v;
+  auto printer = overload{
+    [] (std::monostate) { std::cout << "empty\n"; },
+    [] (int x) { std::cout << "int: " << x << "\n"; },
+    [] (double x) { std::cout << "double: " << x << "\n"; }
+  };
+  std::visit(printer, v);
+  v = 2.5;
+  std::visit(printer, v);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Visiting with overloaded generic lambdas}
+\begin{block}{Comibining \texttt{overload} and generic lambdas}
+\begin{lstlisting}
+void visit5() {
+  std::variant<std::monostate,int,double> v;
+  auto printer = overload{
+      [] (std::monostate) { std::cout << "empty\n"; },
+      [] (auto x) { std::cout << x << "\n"; },
+  };
+  std::visit(printer, v);
+  v = 2.5;
+  std::visit(printer, v);
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+

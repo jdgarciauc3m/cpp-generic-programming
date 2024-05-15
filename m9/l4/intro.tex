@@ -1,0 +1,87 @@
+\subsection{Variant records}
+
+\begin{frame}[t,fragile]{\texttt{variant} type}
+\begin{itemize}
+  \item A \cppid{std::variant} type may hold
+        values from a given closed set of types.
+    \begin{itemize}
+      \item Is like a \textgood{type safe} \textmark{union}.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Using \texttt{variant}}
+\begin{lstlisting}
+void f() try {
+  std::variant<int, std::string, double> v;
+
+  v = 42.0;
+  auto x = get<double>(v);     // x == 42.0, x is double
+  std::size_t idx = v.index(); // idx == 2
+
+  auto s1 = get<1>(v)            // s1 is std::string, will throw
+  auto s2 = get<std::string>(v); // s2 is std::string, will throw  
+} 
+catch (const std::bad_variant_access & e) {
+  std::cerr << e.what() << '\n';
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Default construction}
+\begin{itemize}
+  \item Default construction of a variant default initializes its first type.
+\begin{lstlisting}
+std::variant<std::string, int, double> v; // v.index() == 0
+auto s = std::get<0>(v); // s == ""
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item First type must be default constructible
+\begin{lstlisting}
+struct point {
+  double x, y;
+  point(double cx, double cy) : x{cx}, y{cy} {}
+};
+
+std::variant<point,double> v; // Error: Point without default constr
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item First alternative can be \cppid{std::monostate} 
+        (default constructible but empty).
+\begin{lstlisting}
+std::variant<std::monostate, point, double> v; // OK
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invalid variants}
+\begin{itemize}
+  \item \textbad{Empty variants} are not allowed.
+\begin{lstlisting}
+std::variant v; // Error
+std::variant<> w; // Error
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textbad{reference type} cannot be an alteranative in a \cppid{variant}.
+\begin{lstlisting}
+std::variant<int, double&> v; // Error  
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Array types} cannot be an alternative in a \cppid{variant}.
+\begin{lstlisting}
+std::variant<int[3], double> v; // Error. Would not be able to compare.
+std::variant<std::array<int,3>, double> v; // OK
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{void} cannot be an alternative in a \cppid{variant}.
+\begin{lstlisting}
+std::variant<int, double, void> v; // Error
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}

@@ -1,0 +1,93 @@
+\subsection{Accessing a variant}
+
+\begin{frame}[t,fragile]{In-place construction/modification}
+\begin{itemize}
+  \item \textmark{In-place construction} allows constructing an alternative
+        with multiple constructor arguments.
+    \begin{itemize}
+      \item Selecting the type:
+\begin{lstlisting}
+std::variant<double, point, int> v{std::in_place_type<point>, 1, 1};
+\end{lstlisting}
+
+      \item Selecting the index:
+\begin{lstlisting}
+std::variant<double, point, int> v{std::in_place_index<1>, 1, 1};
+\end{lstlisting}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Member function \cppid{emplace()} for modification.
+\begin{lstlisting}
+v.emplace<1>(3,4);
+v.emplace<point>(4,2);
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Note that \cppid{std::get()} can only be used to modify current alternative.
+\begin{lstlisting}
+std::get<point>() = {3,4}; // OK
+std::get<int>() = 5; // throws
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Checking contained alternative}
+\begin{itemize}
+  \item Get the index with \cppid{index()} member function.
+\begin{lstlisting}
+std::variant<point, double, int, std::string> v = 42;
+std::size_t x = v.index(); // 2
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Use \cppid{holds\_alternative()} free function.
+\begin{lstlisting}
+if (std::holds_alterantive<int>(v)) { std::cout << "int"; }
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Use \cppid{std::get\_if} free function.
+    \begin{itemize}
+      \item Avoids exceptions.
+      \item Returns \cppkey{nullptr} on failure.
+    \end{itemize}
+\begin{lstlisting}
+if (auto p = std::get_if<int>(&v); p!=nullptr) {
+  std::cout << "value: " << *p;
+}
+else { 
+  std::cout << "value not found"; 
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Comparing variants}
+\begin{itemize}
+  \item Only variants of the same type can be compared.
+\begin{lstlisting}
+std::variant<int, std::string, double> v = "hello";
+std::variant<int, double, std::string> w = "hello";
+if (v != w) { /*...*/ } // Error
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item If different alterantive, \textmark{alternatives ordering} is applied:
+\begin{lstlisting}
+std::variant<int, std::string, double> v = "hello";
+std::variant<int, std::string, double> w = 2.5;
+if (v < w) { std::cout << "v<w\n"; } // v is less than w
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item If same alterantive, \textmark{value ordering} is applied:
+\begin{lstlisting}
+std::variant<int, std::string, double> v = 3.0;
+std::variant<int, std::string, double> w = 2.5;
+if (v < w) { std::cout << "v<w\n"; } // v is greater than w
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
