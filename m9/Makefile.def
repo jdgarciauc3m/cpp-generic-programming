@@ -3,6 +3,7 @@ M9_PARTS=$(M9_DIR)/content.tex
 
 include $(M9_DIR)/l1/Makefile.def
 include $(M9_DIR)/l4/Makefile.def
+include $(M9_DIR)/l5/Makefile.def
 
 M9_BASE=m9
 M9_PDF=$(M9_DIR).pdf

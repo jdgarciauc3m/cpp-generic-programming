@@ -1,0 +1,76 @@
+\subsection{Generalized values}
+
+\begin{frame}[t,fragile]{Values \textbf{any}}
+\begin{itemize}
+  \item New \cppid{any} type to represent a value of \textmark{any} type.
+    \begin{itemize}
+      \item A type-safe container for a single value.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Using any}
+\begin{lstlisting}[escapechar=@]
+std::any a; // empty state
+a = 0.5;                    // a holds a double
+a = "hello"s;               // holds a std::string
+a = std::vector<int>(10);   // holds a std::vector<int> 
+@\pause@
+if (a.type() == typeid(int)) {
+  std::cout << std::any_cast<int>(a) << "\n";
+}
+@\pause@
+try {
+  std::any_cast<std::string&>(a) = "bye"s;
+}
+catch (std::bad_any_cast & e) {
+  std::cerr << e.what() << "\n";
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constructing anys}
+\begin{itemize}
+  \item Default construction creates an empty \cppid{std::any}.
+\begin{lstlisting}
+std::any a; // Empty any
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item The initalization value is deduced.
+\begin{lstlisting}
+std::any a = 42; // Holds an int
+std::any b = "Hello"; // Holds a const char *
+std::any c = std::array{1,2,3}; // std::array<int,3>
+int v[] {1, 2, 3}; // int[3]
+std::any d = v; // int *
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{In-place} construction allows to use a different type.
+\begin{lstlisting}
+std::any a{std::in_place_type<std::string>, "C++"}; // std::string
+std::any b = std::string{"C++"}; // std::string
+std::any p{std::in_place_type<point>, 2, 3}; // point{2,3}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{\texttt{make\_any} and \texttt{emplace}}
+\begin{itemize}
+  \item \textmark{In-place construction} is equivalent to use of \cppid{std::make\_any<T>()}.
+\begin{lstlisting}
+auto a = std::make_any<std::string>("C++");
+auto p = std::make_any<point>(2, 3); // point{2,3}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item The value of an \cppid{std::any} can be changed with \cppid{emplace()}
+        member function.
+\begin{lstlisting}
+a.emplace<std::string>("C++");
+a.emplace<point>(2.5, 3.4);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+

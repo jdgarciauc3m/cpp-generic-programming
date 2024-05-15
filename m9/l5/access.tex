@@ -1,0 +1,90 @@
+\subsection{Accessing any objects}
+
+\begin{frame}[t,fragile]{Value access: \texttt{any\_cast}}
+\begin{itemize}
+  \item \cppid{std::any\_cast<T>()} returns an object of type \cppid{T}.
+    \begin{itemize}
+      \mode<presentation>{\vfill\pause}
+      \item \cppid{T} can also be a \textemph{reference} or \textemph{const reference}. 
+\begin{lstlisting}
+std::any s = std::string{"Hello"};
+print_string(std::any_cast<std::string>(s)); // Pass temporary
+print_string(std::any_cast<const std::string &>(s)); // Pass const reference
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item An \cppid{std::any\_cast<T\&>()} can be used to modify the value without
+            replacing the object.
+\begin{lstlisting}
+std::any_cast<std::string&>(s) = "Bye";
+std::any_cast<std::string&>(x).append("!"); // "Bye!"
+\end{lstlisting}
+
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::any\_cast<T>()} can also take a pointer.
+    \begin{itemize}
+      \item Returns a \cppid{T*} if the cast succeeds.
+      \item Otherwise it returns \cppid{nullptr}, but never throws.
+    \end{itemize}
+\begin{lstlisting}
+  if (auto p = std::any_cast<std::string>(&x); p!=nullptr) {
+    *p = "C++";
+  }
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Empty anys}
+\begin{itemize}
+  \item An \cppid{std::any} may set to empty:
+  
+    \begin{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item Using member function \cppid{reset()}.
+\begin{lstlisting}
+a.reset();
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item Copy assign to an empty \cppid{std::any}.    
+\begin{lstlisting}
+a = std::any{};
+a = {};
+\end{lstlisting}
+
+    \end{itemize}
+
+  \item Member function \cppid{has\_value()} checks for emptyness.
+\begin{lstlisting}
+if (a.has_value()) { std::cout << "has value\n"; }
+\end{lstlisting}
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using any}
+\begin{block}{Vector of anything}
+\begin{lstlisting}[escapechar=@]
+void add_element(std::vector<std::any> & v, int id) {
+  if (is_valid_A(id)) v.push_back(element{id});
+  else if (is_valid_composite(id)) v.push_back(composite{id});
+  else v.push_back(derived{id});
+}
+@\pause@
+void print_elements(const std::vector<std::any> & v) {
+  for (auto & x : v) {
+    std::cout << "Type: " << x.type().name() << "\n";
+    if (x.type() == typeid(element)) {
+      auto e = std::any_cast<element>(x); // Might throw bad_any_cast
+      e.print_element(std::cout);
+    }
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
