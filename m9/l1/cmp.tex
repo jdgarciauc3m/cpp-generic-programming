@@ -1,0 +1,57 @@
+\subsection{Assignment and comparison}
+
+\begin{frame}[t,fragile]{Array assignment}
+\begin{itemize}
+  \item Primitive arrays have limitations:
+    \begin{itemize}
+      \item No init construction from other array.
+\begin{lstlisting}
+int vec1[5] { 1, 2, 3, 4, 5 };
+int vec2[5] { vec1 }; // Error
+int vec3[5] = vec1; // Error
+\end{lstlisting}
+      \item No assignment.
+\begin{lstlisting}
+int vec2[5];
+vec2 = vec1; // Error
+\end{lstlisting}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::array} has no such limitations:
+\begin{lstlisting}
+std::array vec1 { 1, 2, 3, 4, 5 };
+std::array vec2 = vec1; // OK
+std::array vec3 { vec1 }; // OK
+vec3 = vec2; // OK
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Comparing arrays}
+\begin{itemize}
+  \item \cppid{std::array} allows equality comparisons that is element-wise.
+    \begin{itemize}
+      \item Only of both arrays have the same type and size.
+    \end{itemize}
+\begin{lstlisting}
+std::array<int,5> vec1 = //...
+std::array<int,5> vec2 = //...
+if (vec1 == vec2) { /*...*/ }
+if (vec1 != vec2) { /*...*/ }
+\end{lstlisting}
+
+  \mode<presentation>{\vfill}
+  \item \cppid{std::array} allows ordering comparisons (
+        \cppkey{<}, \cppkey{<=}, \cppkey{>}, \cppkey{>=}).
+    \begin{itemize}
+      \item Uses lexicographical order.
+    \end{itemize}
+\begin{lstlisting}
+if (vec1 < vec2) { /*...*/ }
+\end{lstlisting}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Note}: Primitive array comparisons are \textbad{deprecated}.
+\end{itemize}
+\end{frame}

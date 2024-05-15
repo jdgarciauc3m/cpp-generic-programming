@@ -15,7 +15,7 @@ FetchContent_Declare(GSL
 )
 FetchContent_MakeAvailable(GSL)
 
-set(CMAKE_CXX_CLANG_TIDY clang-tidy -header-filter=.*)
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy -header-filter=.*)
 
 add_executable(array main.cpp)
 target_link_libraries(array PRIVATE Microsoft.GSL::GSL)

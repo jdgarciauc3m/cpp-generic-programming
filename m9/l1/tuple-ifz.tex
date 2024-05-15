@@ -1,0 +1,52 @@
+\subsection{Tuple-like interface for arrays}
+
+\begin{frame}[t,fragile]{Compile time indexing}
+\begin{itemize}
+  \item Global function \cppid{std::get<I>(a)} gets 
+        I\textsuperscript{th} element of array \cppid{a}.
+    \begin{itemize}
+      \item \cppid{I} must be known at compile-time.
+      \item \cppid{I} must be in the range \cppid{[0,N)}.
+    \end{itemize}
+\begin{lstlisting}
+std::array vec{ 1, 2, 3, 4, 5 };
+auto x = std::get<2>(vec); // Equivalent to x = vec[2]
+std::get<0>(vec) = 42;
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Note}: The index must be known at compile time.
+    \begin{itemize}
+      \item A regular loop is not possible.
+      \item But an implementation using \cppid{std::index\_sequence} is possible.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Tuple-like metafunctions}
+\begin{itemize}
+  \item \cppid{std::tuple\_size\_v<A>}: Size of the array type \cppid{A}.
+    \begin{itemize}
+      \item The value is a compile-time constant.
+    \end{itemize}
+\begin{lstlisting}
+std::array vec{1,2,3};
+constexpr auto sz1 = vec.size(); // OK
+auto & vec2 = vec;
+constexpr auto sz2 = vec.size(); // Error
+constexpr auto sz3 = std::tuple_size_v<std::decay_t<decltype(vec2)>>; // OK
+\end{lstlisting}
+
+  \item \cppid{std::tuple\_element\_t<I,A>}: Type of I\textsuperscript{th}
+        element of the array.
+    \begin{itemize}
+      \item For compatibility with \cppid{std::tuple}.
+      \item All elements have the same type.
+    \end{itemize}
+\begin{lstlisting}
+std::array vec{1,2,3};
+using basetype = std::tuple_element_t<0,decltype(vec)>;
+\end{lstlisting}
+\end{itemize}
+\end{frame}

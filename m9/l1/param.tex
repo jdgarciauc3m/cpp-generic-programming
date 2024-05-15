@@ -1,59 +1,95 @@
 \subsection{Passing arrays to functions}
 
-\begin{frame}[t,fragile]{Parameter passing}
-\mode<presentation>{\vspace{-1.5em}}
+\begin{frame}[t,fragile]{Old style parameter passing}
+\mode<presentation>{\vspace{-1em}}
 \begin{columns}[T]
+
 \column{.5\textwidth}
-\begin{block}{Old style}
+\begin{block}{Old style function}
 \begin{lstlisting}
-void print(int v[], int n) {
+template <typename T>
+void print(T const v[], int n) {
   for (int i=0; i!=n; ++i) {
-    cout << v[i] << "\n";
+    std::cout << v[i] << ' ';
   }
 }
 \end{lstlisting}
 \end{block}
 
-\pause
-
-\column{.5\textwidth}
-\begin{block}{New style}
-\begin{lstlisting}
-template <typename T, std::size_t N>
-void print(std::array<T,N> & a) {
-  for (auto x : a) {
-    cout << x << "\n";
-  }
-}
-\end{lstlisting}
-\end{block}
-\end{columns}
-
-\mode<presentation>{\vfill\pause}
-\begin{columns}[T]
-\column{.5\textwidth}
 \begin{block}{Old style usage}
 \begin{lstlisting}
 void f() {
   int v[] { 1, 2, 3, 4, 5 };
-
   print(v, 5); // OK
   print(v, 10); // Might be problematic
 }
 \end{lstlisting}
 \end{block}
 
-\pause
 \column{.5\textwidth}
+\begin{itemize}
+  \item The array is passed as a pointer.
+    \begin{itemize}
+      \item Information of array size is lost.
+    \end{itemize}
+
+  \mode<presentation>{\vspace{2em}}
+  \item Needs an extra function parameter for the size.
+
+  \mode<presentation>{\vspace{2em}}
+  \item \textbad{Problem}: Both parameters are disconnected.
+
+  \mode<presentation>{\vspace{2em}}
+  \item \textbad{Impact}: Very error prone.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{A better style for parameter passing}
+\mode<presentation>{\vspace{-1em}}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{New style}
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::array<T,N> const & a) {
+  for (auto x : a) {
+    cout << x << ' ';
+  }
+}
+\end{lstlisting}
+\end{block}
+
 \begin{block}{New safe style}
 \begin{lstlisting}
 void f() {
   std::array w { 1, 2, 3, 4, 5 };
-
   print(w); // OK. Always safe.
 }
 
 \end{lstlisting}
 \end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item The array object is passed as a reference to \cppid{std::array}.
+    \begin{itemize}
+      \item Efficient way of passing array and size tied together.
+    \end{itemize}
+
+  \mode<presentation>{\vspace{2em}}
+  \item Array size is a template parameter.
+    \begin{itemize}
+      \item No possibility of making a mistake.
+    \end{itemize}
+
+  \mode<presentation>{\vspace{2em}}
+  \item \textbad{Impact}: Different sizes lead to different function
+        instantiations.
+\end{itemize}
+
 \end{columns}
 \end{frame}
