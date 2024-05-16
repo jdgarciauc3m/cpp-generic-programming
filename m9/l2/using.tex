@@ -1,0 +1,102 @@
+\subsection{Using spans in practice}
+
+\begin{frame}[t,fragile]{Spans are just views}
+\begin{itemize}
+  \item A \cppid{std::span} is a view on memory owned by somebody else.
+    \begin{itemize}
+      \item \textbad{Problem}: Accessing later to that memory might not be correct.
+\begin{lstlisting}
+std::vector vec{1, 2, 3};
+std::span spn{vec};
+vec.reserve(1024);
+std::cout << spn[0]; // Undefined behaviour
+\end{lstlisting}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Solution}: Reset the \cppid{std::span}.
+\begin{lstlisting}[escapechar=@]
+std::vector vec{1, 2, 3};
+std::span spn{vec};
+vec.reserve(1024);
+@\color{red}spn = vec;@
+std::cout << spn[0]; // Undefined behaviour
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Spans from iterators}
+\begin{itemize}
+  \item A \cppid{std::span} can be derived from iterators 
+        to contiguous storage.
+    \begin{itemize}
+      \item From a pair of iterators.
+\begin{lstlisting}
+std::vector vec{ 1, 2, 3, 4, 5};
+std::span spn{vec.begin(), vec.end()}; // Dynamic extent
+\end{lstlisting}
+
+      \item From an iterator and a size
+\begin{lstlisting}
+std::vector vec{ 1, 2, 3, 4, 5};
+std::span spn{vec.begin(), vec.size()}; // Dynamic extent
+\end{lstlisting}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item If the \cppid{std::span} has a fixed extent
+        the view might dangle.
+\begin{lstlisting}
+std::vector vec{ 1, 2, 3, 4, 5};
+std::span<int,10> spn2{vec.begin(), vec.end()}; // Dangling
+std::span<int,10> spn2{vec.begin(), vec.size()}; // Dangling
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using dynamic extent spans correctly}
+\begin{itemize}
+  \item Functions taking views on data sequences should take
+        a \cppid{span} by value.
+\begin{block}{Taking a dynamic extent span}
+\begin{lstlisting}
+void print_names(std::span<std::string> names) {
+  for (int i=0; auto const & n : names) {
+    std::cout << std::format("name[{}] = {}\n", i++, n);
+  }
+}
+
+void test() {
+  std::vector<std::string> vec{"Daniel", "Carlos", "Maria"};
+  print_names(vec);
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Using fixed extent spans correctly}
+\begin{itemize}
+  \item Functions taking views on data sequences of knwon size should take
+        a sized \cppid{span} by value.
+\begin{block}{Taking a fixed extent span}
+\begin{lstlisting}
+template <std::size_t N>
+void print_names(std::span<std::string,N> names) {
+  for (int i=0; auto const & n : names) {
+    std::cout << std::format("name[{}] = {}\n", i++, n);
+  }
+}
+
+void test() {
+  std::vector<std::string> vec{"Daniel", "Carlos", "Maria"};
+  print_names(vec); // Error: Needs fixed span constructed
+  print_names(std::span<std::string,3>{vec}); // Smaller span size
+}
+\end{lstlisting}
+\end{block}
+
+\end{itemize}
+\end{frame}

@@ -1,0 +1,25 @@
+\subsection{std::span versus gsl::span}
+
+\begin{frame}[t,fragile]{A weakness from std::span}
+\begin{itemize}
+  \item \cppid{std::span} provides an \cppkey{operator[]}
+        that is not bounds checked.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void f(std::span<T,N> s, std::size_t i) {
+  s[i] = 42; // UB if i>=N
+  //...
+}
+\end{lstlisting}
+
+  \item \textgood{Solution}: Use \cppid{gsl::span} instead.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void f(std::span<T,N> s, std::size_t i) {
+  s[i] = 42; // Assertion if i>=N
+  //...
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}

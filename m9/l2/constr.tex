@@ -1,0 +1,118 @@
+\subsection{Details on span constructiion}
+
+\begin{frame}[t,fragile]{Constructing from primitive arrays}
+\begin{itemize}
+  \item A \textmark{dynamic extent} \cppid{span} for arrays
+        deduces its run-time \cppid{size} for its size.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::span<T, N> spn);
+
+void test() {
+  int v[]{1, 2, 3, 4, 5};
+  print(std::span{v}); // fixed size is 5
+  print(std::span<int>{v}); // dynamic run-time size is 5
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{fixed extent} \cppid{span} for arrays
+        can only be constructed with the right size.
+\begin{lstlisting}
+void test() {
+  int v[]{1, 2, 3, 4, 5};
+  print(std::span<int,3>{v}); // Error
+  print(std::span<int,7>{v}); // Error
+  print(std::span<int,5>{v}); // OK
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constructing from std::array}
+\begin{itemize}
+  \item A \textmark{dynamic extent} \cppid{span} for \cppid{std::array}
+        deduces its run-time \cppid{size} for its size.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::span<T, N> spn);
+
+void test() {
+  std::array v{1, 2, 3, 4, 5};
+  print(std::span{v}); // fixed size is 5
+  print(std::span<int>{v}); // dynamic run-time size is 5
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{fixed extent} \cppid{span} for \cppid{std::array}
+        can only be constructed with the right size.
+\begin{lstlisting}
+void test() {
+  std::array v{1, 2, 3, 4, 5};
+  print(std::span<int,3>{v}); // Error
+  print(std::span<int,7>{v}); // Error
+  print(std::span<int,5>{v}); // OK
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constructing from ranges}
+\begin{itemize}
+  \item A \textmark{dynamic extent} \cppid{span} for a range
+        deduces its run-time \cppid{size} for its size.
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::span<T, N> spn);
+
+void test() {
+  std::vector v{1, 2, 3, 4, 5};
+  print(std::span{v}); // dynamic run-time size is 5
+  print(std::span<int>{v}); // dynamic run-time size is 5
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{fixed extent} \cppid{span} for \cppid{std::array}
+        can only be constructed with the right size.
+\begin{lstlisting}
+void test() {
+  std::vector v{1, 2, 3, 4, 5};
+  print(std::span<int,3>{v}); // OK. Fixed size is 3
+  print(std::span<int,7>{v}); // Dangerous.
+  print(std::span<int,5>{v}); // OK
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constructing from iterators}
+\begin{itemize}
+  \item A \textmark{dynamic extent} \cppid{span} for iterators
+        deduces its run-time \cppid{size} from its arguments
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::span<T, N> spn);
+
+void test() {
+  std::vector vec{1, 2, 3, 4, 5};
+  print(std::span{vec.begin(), vec.end()});
+  print(std::span{vec.begin(), vec.size()});
+  //...
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{fixed extent} \cppid{span} for iterators
+        takes its size from its template argument.
+    \begin{itemize}
+      \item \textbad{Danger}: 
+    \end{itemize}
+\begin{lstlisting}
+  print(std::span<int,3>{vec.begin(), vec.end()});  // Surprising
+  print(std::span<int,7>{vec.begin(), vec.size()}); // Undefined behavior
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}

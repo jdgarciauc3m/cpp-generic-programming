@@ -1,0 +1,20 @@
+\subsection{Details of a span}
+
+\begin{frame}[t,fragile]
+\begin{block}{Printing the details of a span}
+\begin{lstlisting}
+template <typename T, std::size_t N>
+void print(std::span<T, N> spn) {
+  if constexpr (N == std::dynamic_extent) {
+    std::cout << "span<extent = dynamic> -> ";
+  } else {
+    std::cout << std::format("span<extent = {}> -> ", N);
+  };
+  std::cout << std::format(" bytes={} ", sizeof(spn));
+  std::cout << std::format("[ size() = {}] -> ", spn.size());
+  for (auto x : spn) { std::cout << x << ' '; }
+  std::cout << '\n';
+}
+\end{lstlisting}
+\end{block}
+\end{frame}

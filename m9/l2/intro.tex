@@ -1,0 +1,86 @@
+\subsection{Views over contiguous sequences}
+
+\begin{frame}[t,fragile]{What is a \textbf{std::span}}
+\begin{itemize}
+  \item A \cppid{span} is a view over a sequence of objects that
+        are contiguous in memory.
+    \begin{itemize}
+      \item As a view, it has reference semantics.
+      \item Memory is managed by the source.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Kinds:
+    \begin{itemize}
+      \item \textmark{Fixed extent}: The number of elements is fixed
+            and known at compile time.
+        \begin{itemize}
+          \item Internally representable with a pointer.
+        \end{itemize}
+      \item \textmark{Dynamic extent}: The numbe of elements 
+            might change during run-time.
+        \begin{itemize}
+          \item Internally representable with a pointer and a size
+                or with two pointers.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Note}: Fixed extent spans might have a smaller representation
+        in memory.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Fixed extent spans}
+\begin{itemize}
+  \item A \textgood{fixed extent span} is parametrized by
+        its \textmark{element type} and \textmark{compile-time size}.
+\begin{lstlisting}
+template <typename T, std::size_t Extent>
+class span;
+\end{lstlisting}
+
+    \mode<presentation>{\vfill\pause}
+    \item A \textgood{fixed extent span} can be constructed from
+          \textmark{primitive arrays}, \cppid{std::array}s 
+          or \textmark{contiguous containers} as \cppid{std::vector}s.
+\begin{lstlisting}
+  int arr[]{1, 2, 3, 4, 5};
+  std::span<int, 5> spn1{arr};
+
+  std::array sarr{1, 3, 5, 7};
+  std::span<int,4> spn2{sarr};
+
+  std::vector vec{1, 4, 9};
+  std::span<int,3> spn3{vec};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Fixed extent spans}
+\begin{itemize}
+  \item A \textgood{dynamic extent span} is parametrized by
+        its \textmark{element type}.
+    \begin{itemize}
+      \item Its size is set to \cppid{std::dynamic\_extent}.
+    \end{itemize}
+\begin{lstlisting}
+template <typename T, std::size_t Extent = std::dynamic_extent>
+class span;
+\end{lstlisting}
+
+    \mode<presentation>{\vfill\pause}
+    \item A \textgood{dynamic extent span} can be constructed by
+          omitting the extent template argument.
+\begin{lstlisting}
+  int arr[]{1, 2, 3, 4, 5};
+  std::span<int> spn1{arr};
+
+  std::array sarr{1, 3, 5, 7};
+  std::span<int> spn2{sarr};
+
+  std::vector vec{1, 4, 9};
+  std::span<int> spn3{vec};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
