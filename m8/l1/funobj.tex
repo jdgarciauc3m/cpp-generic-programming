@@ -26,7 +26,7 @@ struct positive_fobj {
 };
 void f() {
   std::vector v{1, -1, 2, 3, -2, 4};
-  auto cnt = std::ranges::count_if(v, positive);
+  auto cnt = std::ranges::count_if(v, positive_fobj{});
   std::cout << std::format("positives = {}\n", cnt);
 }
 \end{lstlisting}
