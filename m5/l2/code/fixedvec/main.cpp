@@ -15,7 +15,7 @@ void f2() { // NOLINT
   for (int i=0;i<10; ++i) { // NOLINT
     vec.push_back(double(i)+0.5); // NOLINT
   }
-  fixed_vector<double,15> vec2{vec}; // NOLINT
+  fixed_vector<double,32> vec2{vec}; // NOLINT
   vec2.print(std::cout);
   std::cout << '\n';
   fixed_vector vec3 = vec;
@@ -37,7 +37,7 @@ void f2() { // NOLINT
 
 template <typename T, int N>
 void print(fixed_vector<T,N> const & vec) {
-  vec.print<std::ostream>(std::cout);
+  vec.template print<std::ostream>(std::cout);
 }
 
 int main() {

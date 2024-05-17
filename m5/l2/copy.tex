@@ -35,9 +35,9 @@ class fixed_vector {
 public:
   fixed_vector() = default;
 
-  template <int M> requires(M>0 and N<M)
+  template <int M> requires(M>0)
   fixed_vector(fixed_vector<T,M> const & other) : size_{other.size_} {
-    Expects(@\color<1>{blue}\color<2>{red}other.size@_ < N); // Problem
+    Expects(@\color<1>{blue}\color<2>{red}other.size@_ <= N); // Problem
     std::ranges::copy_n(@\color<1>{blue}\color<2>{red}other.buffer@_.begin(), @\color<1>{blue}\color<2>{red}other.size@_, buffer_.begin()); // Problem
   }
   //...
@@ -102,9 +102,9 @@ public:
   fixed_vector() = default;
 
   template<std::semiregular U, int M>
-  requires(M > 0 and N < M and std::convertible_to<U,T>)
+  requires(M > 0 and std::convertible_to<U,T>)
   fixed_vector(fixed_vector<U, M> const &other) : size_{other.size_} {
-    Expects(other.size_ < N);
+    Expects(other.size_ <= N);
     std::ranges::copy_n(other.buffer_.begin(), other.size_, buffer_.begin());
   }
   //...
@@ -122,9 +122,9 @@ public:
   //...
 
   template<std::semiregular U, int M>
-  requires(M > 0 and N < M and std::convertible_to<U, T>)
+  requires(M > 0 and std::convertible_to<U, T>)
   fixed_vector<T, N> &operator=(fixed_vector<U, M> const &other) {
-    Expects(other.size_ < N);
+    Expects(other.size_ <= N);
     if constexpr (std::is_same_v<T, U> and M == N) {
       if (this == &other) { return *this; }
     }

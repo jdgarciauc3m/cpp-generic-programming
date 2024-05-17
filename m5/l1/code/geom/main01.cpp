@@ -13,8 +13,6 @@ auto min_value(std::vector<T> const & v) {
   return result;
 }
 
-
-
 void f() {
   std::vector v{1, 3, 5, 0, 2, 4};
   std::cout << std::format("min = {}\n", min_value(v));
