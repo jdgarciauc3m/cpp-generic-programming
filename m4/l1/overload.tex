@@ -46,17 +46,17 @@ void f() {
 \end{frame}
 
 \begin{frame}[t,fragile]{Call chain}
-\begin{itemize}
-  \item \cppid{print\_values(42, 3.5, 2.4f)}
-    \begin{itemize}
-      \item \pause \cppid{std::cout <{}< 42 <{}< }\cppstr{" , "}
-      \item \pause \cppid{print\_values(3.5, 2.4f)}
-      \item \pause \cppid{std::cout <{}< 3.5 <{}< }\cppstr{" , "}
-      \item \pause \cppid{print\_values(2.4f)}
-      \item \pause \cppid{std::cout <{}< 2.4f <{}< }\cppstr{'\textbackslash{}n'}
-    \end{itemize}
+\begin{lstlisting}[escapechar=@]
+print_values(42, 3.5, 2.4f);
+    std::cout << 42 << " , ";
+    print_values(3.5, 2.4f);@\pause@
+        std::cout << 3.5 << " , ";
+        print_values(2.4f);@\pause@
+            std::cout << 2.4f << '\n';
+\end{lstlisting}
 
-  \mode<presentation>{\vfill\pause}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
   \item \textgood{Advantage}: Simpler code.
 
   \mode<presentation>{\vfill}
@@ -74,12 +74,12 @@ void f() {
 \pause
 \column{.5\textwidth}
 \begin{block}{First try}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T, typename... Args>
 void print_values(T x, Args... args) {
   std::cout << x << " , ";
   if  (sizeof...(Args) > 0) { 
-    print_values(args...); // Error
+    @\color{red}print\_values@(args...); // Error
   }
 }
 \end{lstlisting}

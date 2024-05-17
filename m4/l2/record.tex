@@ -241,7 +241,7 @@ auto get(record<T...> const &rec) {
 template<int I, typename ... T>
 auto get(record<T...> const &rec) {
   if @\color{red}constexpr@ (I > 0) {
-    return get<I - 1>(rec.rest()); // Error
+    return get<I - 1>(rec.rest());
   } else {
     return rec.first();
   }

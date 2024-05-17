@@ -45,7 +45,7 @@ auto add(T ... x) {
 \begin{block}{Invoking folded addition}
 \begin{lstlisting}
 void f() {
-  auto x1 = add(1L, 1.5f, 2LL); // OK
+  auto x1 = add(1L, 1.5F, 2LL); // OK
   auto x2 = add(3); // OK
 }
 \end{lstlisting}
@@ -56,6 +56,7 @@ void f() {
 \end{frame}
 
 \begin{frame}[t,fragile]{Folding default value}
+\mode<presentation>{\vspace{-.75em}}
 \begin{itemize}
   \item A folding expression with an empty pack is \textbad{ill-formed}.
     \begin{itemize}
@@ -76,16 +77,15 @@ auto add(T ... x) { return (x + ... + 0); }
 \column{.5\textwidth}
 \begin{block}{Invoking folded addition}
 \begin{lstlisting}
-void f() {
-  auto x1 = add(); // OK
-}
+void f() { auto x1 = add(); } // OK
 \end{lstlisting}
 \end{block}
 
 \end{columns}
 
   \mode<presentation>{\vfill\pause}
-  \item Two operators have a default initial value: \cppkey{\&\&} (\cppkey{true}) and \cppkey{||} (\cppkey{false}).
+  \item Two operators have a default initial value: 
+        \cppkey{and} (\cppkey{true}) and \cppkey{or} (\cppkey{false}).
 \begin{columns}[T]
 
 \column{.5\textwidth}
@@ -99,9 +99,7 @@ auto combine(T ... x) { return (x and ... ); }
 \column{.5\textwidth}
 \begin{block}{Invoking folded addition}
 \begin{lstlisting}
-void f() {
-  auto x1 = combine(); // OK
-}
+void f() { auto x1 = combine(); } // OK
 \end{lstlisting}
 \end{block}
 
@@ -129,7 +127,7 @@ void f() {
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
-  \item \textbad{Note}: Some operations might make sens only for one folding.
+  \item \textbad{Note}: Some operations might make sense only for one folding.
 
 \begin{columns}[T]
 
@@ -145,7 +143,7 @@ void print(T ... x) {
 
 \pause
 \column{.5\textwidth}
-\begin{block}{Using left folding for printing}
+\begin{block}{Cannot use right left folding for printing}
 \begin{lstlisting}
 template <typename ... T>
 void print(T ... x) {

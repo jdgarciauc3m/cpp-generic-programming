@@ -43,8 +43,8 @@ void print_values(T X, Args ... args);
 
 void f() {
   print_values(42, "Daniel", "Bjarne"s, 9.5);@\pause@
-  // Parameter pack Args = int, char const *, std::string, double@\pause@
-  // Argument pack args = 42, "Daniel", "Bjarne"s, 9.542, "Daniel", "Bjarne"s, 9.5
+  // T = int. Parameter pack Args = char const *, std::string, double@\pause@
+  // x = 42. Argument pack args = "Daniel", "Bjarne"s, 9.5
 };
 \end{lstlisting}
 \end{block}
@@ -68,11 +68,11 @@ void f() {
       \begin{itemize}
         \item Can be applied to both paramter and argument packs.
         \item \cppkey{sizeof...(}\cppid{Args}\cppid{)}.
-        \item \cppkey{sizeof...(}\cppid{rgs}\cppid{)}.
+        \item \cppkey{sizeof...(}\cppid{args}\cppid{)}.
       \end{itemize}
  
   \mode<presentation>{\vfill\pause}
-  \item \textbad{Note}: Usally in combination with \textmark{compile-time recursion}.
+  \item \textbad{Note}: Usually in combination with \textmark{compile-time recursion}.
 \end{itemize}
 \end{frame}
 
@@ -121,20 +121,20 @@ void f() {
 \end{frame}
 
 \begin{frame}[t,fragile]{Call chain}
-\begin{itemize}
-  \item \cppid{print\_values(42, 3.5, 2.4f)}
-    \begin{itemize}
-      \item \pause \cppid{std::cout <{}< 42}
-      \item \pause \cppid{std::cout <{}< }\cppstr{" , "}
-      \item \pause \cppid{print\_values(3.5, 2.4f)}
-      \item \pause \cppid{std::cout <{}< 3.5}
-      \item \pause \cppid{std::cout <{}< }\cppstr{" , "}
-      \item \pause \cppid{print\_values(2.4f)}
-      \item \pause \cppid{std::cout <{}< 2.4f}
-      \item \pause \cppid{std::cout <{}< }\cppstr{'\textbackslash{}n'}
-    \end{itemize}
+\begin{lstlisting}[escapechar=@]
+  print_values(42, 3.5, 2.4f);
+      std::cout << 42;
+      std::cout << " , ";
+      print_values(3.5, 2.4f);@\pause@
+          std::cout << 3.5;
+          std::cout << " , ";
+          print_values(2.4f);@\pause@
+              std::cout << 2.4f;
+              std::cout << '\n';
+\end{lstlisting}
 
-  \mode<presentation>{\vfill\pause}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
   \item \textbad{Observation}: The non-template version is never invoked,
         but must be defined.
     \begin{itemize}
