@@ -2,10 +2,14 @@
 #include <iostream>
 #include <source_location>
 
+template <typename T>
+consteval std::string_view full_name_of() noexcept {
+  return std::source_location::current().function_name();
+}
 
 template <typename T>
 consteval std::string_view nameof() noexcept {
-  constexpr std::string_view str = __PRETTY_FUNCTION__ ;
+  constexpr std::string_view str = full_name_of<T>();
   constexpr std::string_view prefix = "[with T = ";
   constexpr std::size_t start = str.find(prefix) + prefix.length();
   constexpr std::size_t count = str.find(';') - start;
