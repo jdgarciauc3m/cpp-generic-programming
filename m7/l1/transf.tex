@@ -46,10 +46,51 @@
       \item \cppid{common\_type<T...>}.
       \item \cppid{common\_reference<T...>}
     \end{itemize}
-  \item Deduction transformations:
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Deduction transformations: \textbf{void\_t}}
+\begin{itemize}
+  \item \cppid{void\_t<T...>}: Its internal \cppid{type} is an alias for \cppkey{void}.
     \begin{itemize}
-      \item \cppid{void\_t<T...>}.
-      \item \cppid{type\_identity<T>}.
+      \item A way to detect a type property.
+\begin{lstlisting}
+template <typename T, typename = void> 
+constexpr bool is_range_v = false;
+
+template <typename T>
+constexpr bool is_range_v<T, std::void_t<decltype(std::declval<T>().begin()),
+                                       delctype(std::declval<T>().end()>> = true;
+
+void f() {
+  static_assert(is_range_v<std::vector<int>>);
+  static_assert(not is_range_v<int>); 
+}
+\end{lstlisting}
+
+      \item \textbad{Note}: Concepts are a much better solution.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Deduction transformations: \textbf{type\_identity\_t}}
+\begin{itemize}
+  \item \cppid{type\_identity<T>}: Its internal \cppid{type} is an alias for \cppid{T}.
+    \begin{itemize}
+      \item It can be used to establis a \textmark{non-deduced context} in argument deduction.
+\begin{lstlisting}
+template <typename T>
+void add1(T x, T y) { return x+y; }
+
+template <typename T>
+void add2(T x, std::type_identity_t<T> y) { return x+y; }
+
+void f() {
+  add1(1.0, 1.5); // OK. T = double
+  add1(1.0, 1); // Error T = double / T = int
+  add2(1.0, 1); // OK. add2<double>(1.0,1)
+}
+\end{lstlisting}
     \end{itemize}
 \end{itemize}
 \end{frame}
