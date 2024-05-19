@@ -36,6 +36,15 @@ Below you will find a list of topics that are not currently included int the mat
       \item Capture of structured bindings.
       \item Variadic captures and init capture.
     \end{itemize}
+  \item Standard library support for function objects:
+    \begin{itemize}
+      \item Operator function objects: \cppid{plus}, \cppid{minus}, \ldots
+      \item \cppid{is\_bind\_expression}, \cppid{is\_placeholder}.
+      \item \cppid{bind\_front()} and \cppid{bind\_back()}.
+      \item Function wrappers: \cppid{function}, \cppid{move\_only\_function}, 
+            \cppid{copyable\_function}, \cppid{function\_ref}, \cppid{mem\_fn}.
+      \item Identity function object: \cppid{identity}.
+    \end{itemize}
   \item Advanced techniques:
     \begin{itemize}
       \item Type erasure.
