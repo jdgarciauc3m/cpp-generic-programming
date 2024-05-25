@@ -44,7 +44,7 @@ class fixed_vector {
 
     [[nodiscard]] int capacity() const { return capacity_; }
 
-    // friend void serialize(std::ostream &os, fixed_vector<T> const &v);
+    //friend void serialize(std::ostream &os, fixed_vector const &v);
 
     void push_back(T x);
 
@@ -69,7 +69,7 @@ template <std::semiregular T>
 fixed_vector<T> & fixed_vector<T>::operator=(fixed_vector const & other) {
   if (this == &other) { return *this; }
   auto aux = std::make_unique<T[]>(other.capacity_);  // NOLINT
-  std::copy(other.get().other.size(), aux.get());
+  std::copy(other.buffer_.get(),other.size(), aux.get());
   capacity_ = other.capacity_;
   size_     = other.size_;
   buffer_   = std::move(other.buffer_);

@@ -110,7 +110,7 @@ class fixed_vector {
 \mode<presentation>{\vspace{-1em}}
 \begin{block}{A generic defaulted fixed vector}
 \begin{lstlisting}[basicstyle=\tiny,escapechar=@]
-template<std::semiregular T = double, typename S = local_storage<T,32>>
+template<@\color{red}std::semiregular T = double, typename S = local\_storage<T,32>@>
 class fixed_vector {
 public:
   explicit fixed_vector(int n) : storage_{n} {} // Will not work with local_storage

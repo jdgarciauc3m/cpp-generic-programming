@@ -9,7 +9,7 @@
 \begin{lstlisting}[escapechar=@]
 template <std::semiregular T, 
           typename S @\color{red}= local\_storage<T>@>
-class fixed_storage {
+class fixed_vector {
   //...
   // T and S used in definitions
   //...
@@ -23,9 +23,9 @@ class fixed_storage {
 \begin{lstlisting}
 void f() {
   // local_storage<std::string>
-  fixed_storage<std::string> names;
+  fixed_vector<std::string> names;
 
-  fixed_storage<double> marks; // local_storage<double>
+  fixed_vector<double> marks; // local_storage<double>
   //...
 }
 \end{lstlisting}
@@ -47,7 +47,7 @@ void f() {
 \begin{lstlisting}[escapechar=@]
 template <std::semiregular T @\color{red}= double@, 
           typename S @\color{red}= local\_storage<T>@>
-class fixed_storage {
+class fixed_vector {
   //...
   // T and S used in definitions
   //...
@@ -60,13 +60,13 @@ class fixed_storage {
 \begin{block}{Using the class}
 \begin{lstlisting}
 void f() {
-  fixed_storage<long, allocated_storage> v1;
+  fixed_vector<long, allocated_storage> v1;
 
-  fixed_storage<int> v2; // local_storage<int>
+  fixed_vector<int> v2; // local_storage<int>
 
-  fixed_storage<> v3; // double, local_storage<double>
+  fixed_vector<> v3; // double, local_storage<double>
 
-  fixed_storage v4;   // double, local_storage<double>
+  fixed_vector v4;   // double, local_storage<double>
   //...
 }
 \end{lstlisting}

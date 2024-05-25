@@ -101,7 +101,7 @@ void serialize(std::ostream & os, fixed_vector<T> const & v);
 template<std::semiregular T>
 class fixed_vector {
   //...
-  void serialize@\color{red}<T>@(std::ostream & os, fixed_vector<T> const & v);
+  friend void serialize@\color{red}<T>@(std::ostream & os, fixed_vector const & v);
   //...
 };
 \end{lstlisting}
