@@ -18,7 +18,7 @@ void print_squares_sum(T x, U y) {
 
 \begin{block}{Function with multiple template parameters}
 \begin{lstlisting}
-void print_squares_sum(arithmetic auto x, arithmetic auto y) {
+void print_squares_sum(arithmetic auto x, arithmetic auto y) { // Type of x and y may differ
   std::cout << std::format("|<{},{}>|^2 = {}\n", x, y, x * x + y * y);
 }
 \end{lstlisting}

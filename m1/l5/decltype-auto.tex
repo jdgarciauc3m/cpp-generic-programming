@@ -1,6 +1,6 @@
 \subsection{Return type deduction and references}
 
-\begin{frame}[fragile]{Deducing references}
+\begin{frame}[t,fragile]{Deducing references}
 \begin{lstlisting}
 struct X { static int n; }
 auto & f() { return X::n; } // int & f()
@@ -23,12 +23,4 @@ auto g() { return f(); } // int g()
 decltype(auto) h() { return f(); } // int & h()
 \end{lstlisting}
 
-\begin{itemize}
-  \pause
-  \item Deducing references with trailing return type in lambdas.
-\end{itemize}
-\begin{lstlisting}
-int f();
-[]()->auto & { return f(); } // int &
-\end{lstlisting}
 \end{frame}

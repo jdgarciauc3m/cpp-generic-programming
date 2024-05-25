@@ -2,7 +2,7 @@
 
 \begin{frame}[t,fragile]{Explicitly specifying template arguments}
 \begin{itemize}
-  \item When a generic function is invoked its template arguments are deduced.
+  \item When a generic function is invoked its template arguments are \textmark{deduced}.
     \begin{itemize}
       \item However they can be explicitly specified.
     \end{itemize}
@@ -15,10 +15,10 @@ void print_squares_sum(T x, T y) {
 }
 
 void f() {
-  print_squares_sum(2,3); // T = int
+  print_squares_sum(2,3); // OK. Deduced. T = int
   print_squares_sum(2.0,3);  // Error. T = double / T = int
-  print_squares_sum<double>(2.0,3); // OK. T = double. 3 -> double
-  print_squares_sum<int>(2.0,3); // OK. T = int. 2.0 -> int
+  print_squares_sum<double>(2.0,3); // OK. Explicit. T = double. 3 -> double
+  print_squares_sum<int>(2.0,3); // OK. Explicit. T = int. 2.0 -> int
 }
 
 \end{lstlisting}
@@ -54,19 +54,19 @@ void f() {
 
 \mode<presentation>{\vspace{-1em}}
 \begin{itemize}
-  \item An extra function template parameter may be used for the return type.
+  \item An \textmark{extra} function template parameter \textgood{may be used} for the return type.
 
 \begin{block}{A return type template parameter}
-\begin{lstlisting}
-template<arithmetic T, arithmetic U, arithmetic R>
-R squares_sum(T x, U y) {
+\begin{lstlisting}[escapechar=@]
+template<arithmetic T, arithmetic U, @\color{red}arithmetic R@>
+@\color{red}R@ squares_sum(T x, U y) {
   return x * x + y * y;
 }
 \end{lstlisting}
 \end{block}
 
   \mode<presentation>{\vfill\pause}
-  \item Function template argument deduction does not apply to return type.
+  \item Function template argument deduction \textbad{does not apply} to return type.
 
 \begin{block}{Invocation}
 \begin{lstlisting}
@@ -85,12 +85,12 @@ void f() {
 \begin{itemize}
   \item \textgood{Idea}: Make the return type the first parameter.
     \begin{itemize}
-      \item We can still deduce other arguments.
+      \item We can still deduce other parameters.
     \end{itemize}
 \begin{block}{A return type template parameter}
-\begin{lstlisting}
-template<arithmetic R, arithmetic T, arithmetic U>
-R squares_sum(T x, U y) {
+\begin{lstlisting}[escapechar=@]
+template<@\color{red}arithmetic R@, arithmetic T, arithmetic U>
+@\color{red}R@ squares_sum(T x, U y) {
   return x * x + y * y;
 }
 

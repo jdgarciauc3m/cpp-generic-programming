@@ -31,19 +31,19 @@ auto i = c.begin();
 \begin{frame}[t,fragile]{\texttt{auto} definitions}
 \begin{itemize}
 \item Specially useful in generic code.
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T>
 void print1(const std::vector<T> & v) {
-  for (typename std::vector<T>::const_iterator i=v.begin();i!=v.end();++i){
+  for (@\color{red}typename std::vector<T>::const\_iterator@ i=v.begin();i!=v.end();++i){
     std::cout << *i << "\n";
   }
 }
 \end{lstlisting}
 \mode<presentation>{\vfill\pause}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T>
 void print2(const std::vector<T> & v) {
-  for (auto i=v.begin();i!=v.end();++i){
+  for (@\color{red}auto@ i=v.begin();i!=v.end();++i){
     std::cout << *i << "\n";
   }
 }
@@ -96,7 +96,7 @@ void print_add(std::vector<T> const & vec1, std::vector<U> const & vec2) {
   auto i = vec1.begin();
   auto j = vec2.begin();
   for (; i != vec1.end(); ++i, ++j) {
-    @\color{red}std::integral auto@ sum = *i + *j;
+    @\color{red}auto@ sum = *i + *j;
     if (sum > 0) { std::cout << std::format("{} + {} = {}\n", *i, *j, sum); }
   }
 }

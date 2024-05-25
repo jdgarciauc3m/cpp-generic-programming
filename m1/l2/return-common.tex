@@ -11,29 +11,27 @@
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
-  \item \textemph{Resulting type}
+  \item \textemph{Resulting type}:
+        A type to which all types \cppid{T1}, \cppid{T2}, \cppid{\ldots} are 
+        \textmark{implicitly convertible}.
     \begin{itemize}
-      \item A type to which all types \cppid{T1}, \cppid{T2}, \cppid{\ldots} are 
-            \textmark{implicitly convertible}.
-         \begin{itemize}
-           \item It may not exist.
-           \item Users may specialize the \cppid{std::common\_type} for their own types.
-         \end{itemize}
+      \item It may not exist.
+      \item Users may specialize the \cppid{std::common\_type} for their own types.
     \end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}[t,fragile]{Using a common return type}
 \begin{itemize}
-  \item A return type may be the common type of template parameters.
+  \item A return type may be the \textmark{common type} of template parameters.
     \begin{itemize}
-      \item Template notation is needed to name template parameters.
+      \item Template notation \textbad{is needed} to name template parameters.
     \end{itemize}
 
 \begin{block}{Return type with a common type}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <arithmetic T, arithmetic U>
-std::common_type_t<T,U> squares_sum(T x, U y) {
+@\color{red}std::common\_type\_t<T,U>@ squares_sum(T x, U y) {
   return x * x + y * y;
 }
 \end{lstlisting}

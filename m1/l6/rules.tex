@@ -43,8 +43,8 @@ void print_value(T x) {
 \begin{block}{Printing values}
 \begin{lstlisting}
 void f() {
-  print<true>(42);  // uses format
-  print<false>(42); // does not use format
+  print_value<true>(42);  // uses format
+  print_value<false>(42); // does not use format
   //...
 }
 \end{lstlisting}
@@ -120,7 +120,8 @@ void f() {
 
   std::vector<double> values{1, 3, 5, 7, 9, 2, 4, 6, 8};
   std::vector<double> results{};
-  std::ranges::copy_if(values, std::back_inserter(results), 
+  std::ranges::copy_if(values, 
+      std::back_inserter(results), 
       is_greater_fp<4.0, double>);
   //...
 }

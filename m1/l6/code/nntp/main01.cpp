@@ -13,6 +13,17 @@ bool is_greater_than(T x) {
   return x > value;
 }
 
+template <std::regular T, T value>
+bool is_less_than_regular(T x) {
+  return x < value;
+}
+
+template <int value, std::regular T>
+bool is_greater_than_regular(T x) {
+  return x > value;
+}
+
+
 template <std::regular auto value>
 bool is_greater_auto_than(decltype(value) x) {
   return x > value;

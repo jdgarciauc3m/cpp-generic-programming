@@ -48,9 +48,14 @@ void print_square(T x) {
 \end{itemize}
 
 \begin{block}{Constrained generic \textbf{square} function with template notation}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T>
   requires std::integral<T>
+void print_square(T x) {
+  std::cout << std::format("{}^2 = {}\n", x, x*x);
+}
+@\pause@
+template <std::integral T>
 void print_square(T x) {
   std::cout << std::format("{}^2 = {}\n", x, x*x);
 }

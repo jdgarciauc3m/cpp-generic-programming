@@ -29,8 +29,7 @@ b = x+y;
 \begin{block}{Simple case: Homogeneous}
 \begin{lstlisting}
 template <class T>
-void add(const std::vector<T> & v1, const std::vector<T> & v2,
-         std::vector<T> & w) 
+std::vector<T> add(const std::vector<T> & v1, const std::vector<T> & v2) 
 {
   //...
 }
@@ -41,8 +40,7 @@ void add(const std::vector<T> & v1, const std::vector<T> & v2,
 \begin{block}{Heterogeneous case}
 \begin{lstlisting}
 template <class T, class U>
-void add(const std::vector<T> & v1, const std::vector<U> & v2,
-         std::vector<decltype(T{}+U{})> & w) 
+std::vector<decltype(T{}+U{})> add(const std::vector<T> & v1, const std::vector<U> & v2) 
 {
   //...
 }
@@ -64,7 +62,7 @@ void add(const std::vector<T> & v1, const std::vector<U> & v2,
 \begin{lstlisting}
 template <class T, class U>
 auto add(const std::vector<T> & v1, const std::vector<U> & v2) 
-    -> std::vector<decltype(T{}+U{})>
+    -> std::vector<decltype(v1[0]+v2[0])>
 {
   std::vector<decltype(v1[0]+v2[0])> r;
   auto i=v1.begin();

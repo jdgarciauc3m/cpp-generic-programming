@@ -2,10 +2,10 @@
 
 \begin{frame}[t,fragile]{Argument deduction rules}
 \begin{itemize}
-  \item Decay conversions are not applied for type deduction of reference parameters.
+  \item Decay conversions are \textbad{not applied} for type deduction of reference parameters.
     \begin{itemize}
-      \item The referenced type is used for deduction.
-      \item Top level \cppkey{const}/\cppkey{volatile} are ignored in function parameters.
+      \item The \textgood{referenced type} is used for deduction.
+      \item Top level \cppkey{const}/\cppkey{volatile} are \textbad{ignored} in function parameters.
     \end{itemize}
 \end{itemize}
 
@@ -43,7 +43,7 @@ void f() {
 \begin{frame}[t,fragile,allowframebreaks]{Deducing template parameters}
 
 \begin{itemize}
-  \item \cppkey{const}/\cppkey{volatile} arguments do not \textmark{decay}
+  \item \cppkey{const}/\cppkey{volatile} arguments do \textbad{not} \textmark{decay}
         by removing such qualification.
 \end{itemize}
 
@@ -61,7 +61,7 @@ void f() {
 \framebreak
 
 \begin{itemize}
-  \item Reference arguments do not \textmark{decay}.
+  \item Reference arguments do \textbad{not} \textmark{decay}.
     \begin{itemize}
       \item Applies both to l-value and r-value references.
     \end{itemize}
@@ -86,7 +86,7 @@ void f() {
 \framebreak
 
 \begin{itemize}
-  \item An array of \cppid{T} does not \textmark{decay} to a pointer.
+  \item An array of \cppid{T} does \textbad{not} \textmark{decay} to a pointer.
     \begin{itemize}
       \item A reference to the array is deduced.
     \end{itemize}
@@ -110,7 +110,7 @@ void f() {
 \framebreak
 
 \begin{itemize}
-  \item Array of \cppkey{const}/\cppkey{volatile} elements do not \textmark{decay}
+  \item Array of \cppkey{const}/\cppkey{volatile} elements do \textbad{not} \textmark{decay}
         by removing such qualification from the element type.
 \end{itemize}
 
@@ -128,7 +128,7 @@ void f() {
 \framebreak
 
 \begin{itemize}
-  \item A \textemph{function} does not \textmark{decay} into a \textemph{function pointer}.
+  \item A \textemph{function} does \textbad{not} \textmark{decay} into a \textemph{function pointer}.
 \end{itemize}
 
 \begin{block}{Deducing for functions}

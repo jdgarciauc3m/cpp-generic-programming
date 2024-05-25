@@ -121,7 +121,7 @@ void f() {
 \begin{itemize}
   \item But an array of \cppid{T const} \textmark{decays} to \cppid{T const *}.
     \begin{itemize}
-      \item \cppid{T *} and \cppid{T const *} are different types.
+      \item \cppid{T *} and \cppid{T const *} are \textbad{different types}.
     \end{itemize}
 \end{itemize}
 
@@ -140,7 +140,7 @@ void f() {
 \begin{itemize}
   \item However, a \cppid{T * const} \textmark{decays} to \cppid{T *}.
     \begin{itemize}
-      \item Top level \cppkey{const} and \cppkey{volatile} are removed during \textmark{decay}.
+      \item Top level \cppkey{const} and \cppkey{volatile} are \textbad{removed} during \textmark{decay}.
     \end{itemize}
 \end{itemize}
 

@@ -85,27 +85,25 @@ void f() {
 
 \column{.5\textwidth}
 \begin{block}{Generic function}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <std::regular T, T value>
 bool is_less_than(T x) {
   return x < value;
-}
-
-template <int value, std::regular T> // Error
-bool is_greater_than(T x) {
-  return x > value;
 }
 \end{lstlisting}
 \end{block}
 
 \column{.5\textwidth}
-\begin{block}{Using a generic function}
-\begin{lstlisting}
-void f() {
-  int x = 5;
-  bool less = is_less_than<int,2>(x);
-  bool greater = is_greater_than<2>(x); // Error
-  //...
+\begin{block}{Generic function}
+\begin{lstlisting}[escapechar=@]
+template <@\color{red}T value@, std::regular T> // Error
+bool is_greater_than(T x) {
+  return x > value;
+}
+
+template <int value, std::regular T> // OK
+bool is_greater_than(T x) {
+  return x > value;
 }
 \end{lstlisting}
 \end{block}

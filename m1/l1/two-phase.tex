@@ -2,7 +2,7 @@
 
 \begin{frame}[t,fragile]{Translation model}
 \begin{itemize}
-  \item A generic function is translated in two stages or phases.
+  \item A generic function is translated in two \textmark{stages} or \textmark{phases}.
 
   \begin{enumerate}
 
@@ -62,15 +62,15 @@ void print_square(std::integral auto x) {
 void print_value(int x) { std::cout << x << '\n'; }
 void print_value(long) = delete;
 
-void print_square2(std::integral auto x) {
+void print_square(std::integral auto x) {
   print_value(x); // OK if instantiated with x of type int
   std::integral auto r = x * x;
   static_assert(sizeof(x) == sizeof(int));
 }
 
 int main() {
-  print_square2(2); // OK
-  print_square2(2L); // Error: cannot instantiate for long
+  print_square(2); // OK
+  print_square(2L); // Error: cannot instantiate for long
 }
 \end{lstlisting}
 \end{block}

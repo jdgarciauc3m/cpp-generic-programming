@@ -85,6 +85,9 @@ void f() {
 \begin{itemize}
   \item A multi-value print can be defined in terms of simpler functions.
 
+\begin{columns}[T]
+
+\column{.5\textwidth}
 \begin{block}{A multi-value print}
 \begin{lstlisting}
 void print(auto x) {
@@ -92,7 +95,7 @@ void print(auto x) {
 }
 
 void print(auto * p) {
-  std::cout << "address: " << static_cast<void*>(p);
+  std::cout << "address: " << static_cast<void const*>(p);
   std::cout << ". value = " << *p << '\n';
 }
 
@@ -102,10 +105,21 @@ void print(auto x, auto y) {
 }
 
 void f() {
-  print(42, "Daniel"); // prints 42 and "Daniel"
+  print(42, "Daniel");
 }
 \end{lstlisting}
 \end{block}
+
+\column{.5\textwidth}
+
+\begin{block}{Output}
+\begin{lstlisting}[style=terminal]
+value = 42
+address = 0x618b9af16008. value = D
+\end{lstlisting}
+\end{block}
+
+\end{columns}
 
 \end{itemize}
 \end{frame}
@@ -115,6 +129,9 @@ void f() {
 
   \item Order of definition is important.
 
+\begin{columns}[T]
+
+\column{.5\textwidth}
 \begin{block}{A multi-value print}
 \begin{lstlisting}
 void print(auto x) {
@@ -131,10 +148,19 @@ void print(auto * p) {
 }
 
 void f() {
-  print(42, "Daniel"); // prints 42 and 'D'
+  print(42, "Daniel");
 }
 \end{lstlisting}
 \end{block}
 
+\column{.5\textwidth}
+\begin{block}{Output}
+\begin{lstlisting}[style=terminal]
+value = 42
+value = Daniel
+\end{lstlisting}
+\end{block}
+
+\end{columns}
 \end{itemize}
 \end{frame}
