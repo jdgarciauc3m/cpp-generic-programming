@@ -22,7 +22,7 @@ enum class log_level : std::uint8_t {
 class level_file_logger {
 public:
   //...
-  void log(std::string_view message) {
+  void log(log_level level, std::string_view message) {
   //...
 };
 \end{lstlisting}

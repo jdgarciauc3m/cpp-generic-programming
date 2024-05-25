@@ -1,4 +1,4 @@
-\subsection{Constraing templates with concepts}
+\subsection{Constraining templates with concepts}
 
 \begin{frame}[t,fragile]{Implicit requirements}
 \begin{itemize}
@@ -69,7 +69,7 @@ T square(T x) {
 \begin{block}{Constraints as requirements}
 \begin{lstlisting}
 template <typename T>
-requires std::integral<T>
+    requires std::integral<T>
 T square(T x) { 
   return x*x; 
 }
@@ -123,13 +123,13 @@ arithmetic auto square(arithmetic auto x) {
 \begin{block}{Printing values and pointers}
 \begin{lstlisting}
 template <typename T>
-requires (not std::is_pointer_v<T>)
+    requires (not std::is_pointer_v<T>)
 void print(T value) {
   std::cout << "Value: " << value << '\n';
 }
 
 template <typename T>
-requires std::is_pointer_v<T>
+    requires std::is_pointer_v<T>
 void print(T ptr) {
   std::cout << "Pointer: " << static_cast<void*>(ptr) << ". Value: " << *ptr << '\n';
 }
@@ -142,14 +142,14 @@ void print(T ptr) {
 \begin{itemize}
   \item A requirement may be stated between function specification and function body.
     \begin{itemize}
-      \item Useful if function parameters are used.
+      \item Useful when function parameters are used in requirement.
     \end{itemize}
 \end{itemize}
 
 \begin{block}{Using trailing requirements}
 \begin{lstlisting}
 void print(auto ptr)
-requires std::is_pointer_v<decltype(ptr)>
+    requires std::is_pointer_v<decltype(ptr)>
 {
   std::cout << "Pointer: " << static_cast<void*>(ptr) << ". Value: " << *ptr << '\n';
 }
