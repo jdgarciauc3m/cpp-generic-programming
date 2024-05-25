@@ -9,7 +9,7 @@ enum class log_level : std::uint8_t {
 };
 
 template <log_level level>
-constexpr std::string_view to_string() {
+consteval std::string_view to_string() {
   switch (level) {
     case log_level::info: return "info";
     case log_level::warn: return "warning!";
