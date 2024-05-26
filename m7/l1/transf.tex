@@ -60,7 +60,7 @@ constexpr bool is_range_v = false;
 
 template <typename T>
 constexpr bool is_range_v<T, std::void_t<decltype(std::declval<T>().begin()),
-                                       delctype(std::declval<T>().end()>> = true;
+                                         decltype(std::declval<T>().end()>> = true;
 
 void f() {
   static_assert(is_range_v<std::vector<int>>);
@@ -77,7 +77,7 @@ void f() {
 \begin{itemize}
   \item \cppid{type\_identity<T>}: Its internal \cppid{type} is an alias for \cppid{T}.
     \begin{itemize}
-      \item It can be used to establis a \textmark{non-deduced context} in argument deduction.
+      \item It can be used to establish a \textmark{non-deduced context} in argument deduction.
 \begin{lstlisting}
 template <typename T>
 void add1(T x, T y) { return x+y; }

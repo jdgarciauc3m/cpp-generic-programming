@@ -21,18 +21,18 @@
 
 \begin{frame}[t,fragile]
 \begin{block}{Printing sizes of arrays}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T, std::size_t ... I>
 void print_dimension(T & , std::index_sequence<I...>) { 
-  ((std::cout << std::format("  Dimension {}: {}\n",I, std::extent_v<T,I>)), ...);
+  ((std::cout << std::format("  Dimension {}: {}\n",I, @\color{red}std::extent\_v<T,I>@)), ...);
 }
 
 template <typename T>
 void print_info(std::string_view name, T & arr) {
   std::cout << std::format("name {}\n", name);
-  if constexpr (std::is_array_v<T>) {
-    std::cout << std::format("  is an array of {} dimensions\n", std::rank_v<T>);
-    print_dimension(arr, std::make_index_sequence<std::rank_v<T>>{});
+  if constexpr @\color{red}(std::is\_array\_v<T>)@ {
+    std::cout << std::format("  is an array of {} dimensions\n", @\color{red}std::rank\_v<T>@);
+    print_dimension(arr, std::make_index_sequence<@\color{red}std::rank\_v<T>@>{});
   } else {
     std::cout << "  is not an array\n";
   }
