@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <format>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
 template <typename T>
@@ -70,10 +71,19 @@ void f2() {
 
 
 void f3() {
+  std::cout << __PRETTY_FUNCTION__ << '\n';
   std::array vec{1, 2, 3, 4, 5};
+  auto sz1 = vec.size();
+  std::cout << std::format("sz1 = {}\n", sz1);
+  constexpr auto sz2 = vec.size();
+  std::cout << std::format("sz2 = {}\n", sz2);
   auto & vec2 = vec;
+  auto sz3 = vec2.size();
+  //constexpr auto sz4 = vec2.size();
   constexpr auto sz = std::tuple_size_v<std::decay_t<decltype(vec2)>>;
   using basetype = std::tuple_element_t<0,decltype(vec)>;
+  basetype value = vec[0];
+  std::cout << std::format("vec[0] = {}\n",value);
   std::array<std::string, sz> names;
   for(std::size_t i=0; auto x : vec) {
     names[i++] = std::to_string(x); // NOLINT

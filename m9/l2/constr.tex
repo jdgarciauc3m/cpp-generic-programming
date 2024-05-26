@@ -74,8 +74,8 @@ void test() {
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
-  \item A \textmark{fixed extent} \cppid{span} for \cppid{std::array}
-        can only be constructed with the right size.
+  \item A \textmark{fixed extent} \cppid{span} for \cppid{std::vector}
+        can be constructed with the \textbad{wrong size}.
 \begin{lstlisting}
 void test() {
   std::vector v{1, 2, 3, 4, 5};

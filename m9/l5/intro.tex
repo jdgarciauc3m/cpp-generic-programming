@@ -18,12 +18,8 @@ if (a.type() == typeid(int)) {
   std::cout << std::any_cast<int>(a) << "\n";
 }
 @\pause@
-try {
-  std::any_cast<std::string&>(a) = "bye"s;
-}
-catch (std::bad_any_cast & e) {
-  std::cerr << e.what() << "\n";
-}
+try { std::any_cast<std::string&>(a) = "bye"s; }
+catch (std::bad_any_cast & e) { std::cerr << e.what() << "\n"; }
 \end{lstlisting}
 \end{block}
 \end{frame}
