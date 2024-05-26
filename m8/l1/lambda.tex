@@ -26,15 +26,15 @@ void f() {
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
-  \item \textmark{Lambda body}: Equivalent to function body
+  \item \textmark{Return type}: Usually deduced (can be omitted).
 \begin{lstlisting}[escapechar=@]
-[limit](auto x) -> bool @\color{red}\{ return x>limit; \}@
+[limit](auto x) @\color{red}-> bool@ { return x>limit; }
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
-  \item \textmark{Return type}: Usually deduced.
+  \item \textmark{Lambda body}: Equivalent to function body
 \begin{lstlisting}[escapechar=@]
-[limit](auto x) @\color{red}-> bool@ { return x>limit; }
+[limit](auto x) -> bool @\color{red}\{ return x>limit; \}@
 \end{lstlisting}
 
 \end{itemize}
@@ -46,7 +46,7 @@ void f() {
         \textgood{compiler generated type}.
     \begin{itemize}
       \item You \textbad{cannot} know the value of such type.
-      \item However, its value can be stored in one object by using \cppkey{autor}.
+      \item However, its value can be stored in one object by using \cppkey{auto}.
 \begin{lstlisting}
 auto positive = [](std::integral auto x) { return x>0; };
 auto cnt = std::find_if(v, positive);
@@ -155,7 +155,7 @@ std::sort(v.begin(), v.end(), [](auto const & x, auto const & y) {
 
 \mode<presentation>{\vfill\pause}
 \begin{itemize}
-  \item Generates a class with a \textmark{templated} \textgood{call operator}.
+  \item Generates a \textbad{non templated class} with a \textmark{templated} \textgood{call operator}.
 \end{itemize}
 \begin{lstlisting}
 class compiler_generated {

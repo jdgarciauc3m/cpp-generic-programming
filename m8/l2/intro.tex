@@ -1,16 +1,16 @@
 \begin{frame}[t,fragile]{Invoking function objects}
 \begin{itemize}
-  \item A function object type may be passed as template parameter.
+  \item A \textgood{function object} type may be passed as \textemph{template parameter}.
 \begin{columns}[T]
 
 \column{.5\textwidth}
-\begin{block}{Measuring execution type}
+\begin{block}{Measuring execution time}
 \begin{lstlisting}
 template <typename F, typename... A>
 auto measure(F fun, A... args) {
   using namespace std::chrono;
   auto start = high_resolution_clock::now();
-  double result = fun(args...);
+  auto result = fun(args...);
   auto end = high_resolution_clock::now();
   return std::tuple{
     duration_cast<microseconds>(end - start), 
@@ -71,7 +71,7 @@ template <typename F, typename... A>
 auto measure(F && fun, A && ... args) {
   using namespace std::chrono;
   auto start    = high_resolution_clock::now();
-  double result = std::forward<F>(fun)(std::forward<A>(args)...);
+  auto result = std::forward<F>(fun)(std::forward<A>(args)...);
   auto end      = high_resolution_clock::now();
   return std::tuple{duration_cast<microseconds>(end - start), result};
 }
@@ -79,10 +79,10 @@ auto measure(F && fun, A && ... args) {
 \end{block}
 
 \begin{itemize}
-  \item Taking the \cppid{fun} parameter as universal reference allows
-        for l-value and r-value references.
+  \item Taking the \cppid{fun} parameter as \textemph{universal reference} allows
+        for \textmark{l-value} and \textmark{r-value} references.
     \begin{itemize}
-      \item Name must be forwarded.
+      \item Name must be \textmark{forwarded}.
     \end{itemize}
   \item \textbad{Danger}: A name can be forwarded only once.
 \end{itemize}

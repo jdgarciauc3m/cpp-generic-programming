@@ -2,17 +2,20 @@
 
 \begin{frame}[t,fragile]{What is a callable entity}
 \begin{itemize}
-  \item A callable is an entity that can be passed as an argument and invoked:
+  \item A \textgood{callable} is an entity that can be passed as an argument and invoked:
     \begin{itemize}
       \item \textmark{Function objects}: any type 
         for which the function call operator is defined.
+         \begin{itemize}
+           \item A \textemph{lambda expression} is a kind of \textmark{function object}.
+         \end{itemize}
 
       \item \textmark{Pointer to member}: includes member functions and 
             member objects.
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
-  \item A number of entities in the standard library take callable objects
+  \item A number of entities in the standard library take \textgood{callable} objects
         to invoke (and possibly store them):
     \begin{itemize}
       \item \cppid{std::function} / 

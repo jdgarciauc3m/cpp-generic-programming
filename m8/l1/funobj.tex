@@ -2,7 +2,7 @@
 
 \begin{frame}[t,fragile]{Function pointers}
 \begin{itemize}
-   \item A pointer to function type is a function object.
+   \item A \textemph{pointer} to \textmark{function type} is a \textgood{function object}.
 \begin{lstlisting}
 bool positive(int x) { 
   return x > 0; 
@@ -19,7 +19,8 @@ void f() {
 
 \begin{frame}[t,fragile]{Function objects}
 \begin{itemize}
-  \item A class type with an \cppkey{operator()} oveload is a function object.
+  \item An object of \textmark{class type} with an \cppkey{operator()} oveload 
+        is a \textgood{function object}.
 \begin{lstlisting}
 struct positive_fobj {
     bool operator()(int x) const { return x>0; }
@@ -31,7 +32,8 @@ void f() {
 }
 \end{lstlisting}
 
-  \item A lambda is syntactic sugar for a function object.
+  \pause
+  \item A \textmark{lambda expression} is syntactic sugar for a \textgood{function object}.
 \begin{lstlisting}
 void f() {
   std::vector v{1, -1, 2, 3, -2, 4};
@@ -45,8 +47,10 @@ void f() {
 
 \begin{frame}[t,fragile]{Function objects}
 \begin{itemize}
-  \item A class type with a conversion operator returning a pointer or reference
-        to a function is a function object.
+  \item An object of a \textmark{class type} with a 
+        \textemph{conversion operator} returning a \textemph{pointer or reference}
+        to a function 
+        is a \textgood{function object}.
 \begin{lstlisting}
 struct positive_objptr {
     using fun_ptr = bool (*)(int x);

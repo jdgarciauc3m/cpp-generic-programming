@@ -6,7 +6,7 @@
         Determines if a callable of type \cppid{F} can be invoked with arguments of type \cppid{A\ldots}.
 
   \mode<presentation>{\vfill\pause}
-  \item \cppid{std::is\_invocable<R,F,A\ldots>}:
+  \item \cppid{std::is\_invocable\_r<R,F,A\ldots>}:
         Determines if a callable of type \cppid{F} can be invoked with arguments of type \cppid{A\ldots}
         and its result is convertible to type \cppid{R}.
         
@@ -15,7 +15,7 @@
   \item There are \cppid{nothrow} versions:
     \begin{itemize}
       \item \cppid{std::is\_nothrow\_invocable<F,A\ldots>}.
-      \item \cppid{std::is\_nothrow\_invocable<R,F,A\ldots>}.
+      \item \cppid{std::is\_nothrow\_invocable\_r<R,F,A\ldots>}.
     \end{itemize}
 \end{itemize}
 \end{frame}
