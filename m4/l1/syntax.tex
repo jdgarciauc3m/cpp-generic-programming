@@ -39,12 +39,12 @@ void print_values(T x, Args ... args);   // args is variadic function parameter
 \begin{block}{Packs in practice}
 \begin{lstlisting}[escapechar=@]
 template <typename T, typename ... Args>
-void print_values(T X, Args ... args);
+void print_values(T x, Args ... args);
 
 void f() {
   print_values(42, "Daniel", "Bjarne"s, 9.5);@\pause@
-  // T = int. Parameter pack Args = char const *, std::string, double@\pause@
-  // x = 42. Argument pack args = "Daniel", "Bjarne"s, 9.5
+  // x = 42. Argument pack args = "Daniel", "Bjarne"s, 9.5@\pause@
+  // T = int. Parameter pack Args = char const *, std::string, double
 };
 \end{lstlisting}
 \end{block}
@@ -138,7 +138,7 @@ void f() {
   \item \textbad{Observation}: The non-template version is never invoked,
         but must be defined.
     \begin{itemize}
-      \item Both branches of the \cppkey{if} \textmark{must compile}.
+      \item Both branches of \cppkey{if} statement \textmark{must compile}.
     \end{itemize}
 \end{itemize}
 \end{frame}

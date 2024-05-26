@@ -46,20 +46,35 @@ void f() {
 
 \begin{frame}[t,fragile]{Helpers for integer sequences}
 \begin{itemize}
-  \item \cppid{std::index\_sequence<std::size\_t ... Is>}: 
-        Integer sequence for values of type \cppid{std::size\_t}.
-
-  \mode<presentation>{\vfill\pause}
   \item \cppid{std::make\_integer\_sequence<typename T, T N>}:
         An integer sequence of type \cppid{T} for values \cppid{0},...,\cppid{N-1}.
+    \begin{itemize}
+      \item \cppid{std::make\_integer\_sequence<}\cppkey{int}\cppid{,3>} $\rightarrow$ 
+            \cppid{std::integer\_sequence<}\cppkey{int}\cppid{,1,2,3>}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{std::index\_sequence<std::size\_t ... Is>}: 
+        Integer sequence for values of type \cppid{std::size\_t}.
+    \begin{itemize}
+      \item \cppid{std::index\_sequence<1,2,3>} $\rightarrow$ \cppid{std::integer\_sequence<std::size\_t,1,2,3>}.
+    \end{itemize}
 
   \mode<presentation>{\vfill\pause}
   \item \cppid{std::make\_index\_sequence<std::size\_t N>}:
         An integer sequence of type \cppid{std::size\_t} for values \cppid{0},...,\cppid{N-1}.
+    \begin{itemize}
+      \item \cppid{std::make\_index\_sequence<3>} $\rightarrow$ 
+            \cppid{std::index\_sequence<0,1,2>}.
+    \end{itemize}
 
   \mode<presentation>{\vfill\pause}
   \item \cppid{std::index\_sequence\_for<typename ... T>}:
-        Equivalente a \cppid{std::make\_index\_sequence<}\cppkey{sizeof}\cppid{...(T)>}
+        Equivalent to \cppid{std::make\_index\_sequence<}\cppkey{sizeof}\cppid{...(T)>}
+    \begin{itemize}
+      \item \cppid{std::index\_sequence\_for<}\cppkey{int, char, long}\cppid{>} $\rightarrow$ 
+            \cppid{std::index\_sequence<3>}.
+    \end{itemize}
   
 \end{itemize}
 \end{frame}

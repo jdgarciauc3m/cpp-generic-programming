@@ -158,7 +158,7 @@ auto get(record<T...> const & rec) {
 
 \pause
 \column{.5\textwidth}
-\begin{block}{Trying to partial specialize}
+\begin{block}{Trying to partially specialize}
 \begin{lstlisting}[escapechar=@]
 template <typename T, typename ... U>
 auto @\color{red}get<0>@(record<T,U...> const & rec) { // Error
