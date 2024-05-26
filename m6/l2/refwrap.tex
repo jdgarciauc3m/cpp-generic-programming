@@ -73,7 +73,7 @@ void call(F fun, T & arg) {
 \pause
 \column{.5\textwidth}
 \begin{block}{Calling the function}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void f() {
   int val = 42;
   call(update, val);
@@ -87,7 +87,7 @@ void f() {
 \end{block}
 \mode<presentation>{\vspace{-.1em}}
 \pause
-\begin{lstlisting}[style=terminal,basicstyle=\tiny]
+\begin{lstlisting}[style=terminal,basicstyle=\mode<presentation>{\tiny}]
 log: Calling function
 log: Function executed
 val = 43

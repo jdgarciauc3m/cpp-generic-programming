@@ -27,7 +27,7 @@ void f() {
 \pause
 \column{.3\textwidth}
 \begin{block}{Defining the printer}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void print_values() {}
 
 template <typename T>
@@ -45,7 +45,7 @@ void print_values(T1 x1, T2 x2) {
 
 \column{.35\textwidth}
 \begin{block}{Defining the printer}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename T1, typename T2, 
           typename T3>
 void print_values(T1 x1, T2 x2, T3 x3) {

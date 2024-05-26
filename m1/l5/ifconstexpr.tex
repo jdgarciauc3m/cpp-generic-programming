@@ -11,7 +11,7 @@
     \end{itemize}
 
 \begin{block}{A print function}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename T>
 void print(T const & value) {
   if  (std::is_array_v<T>) {
@@ -39,7 +39,7 @@ void print(T const & value) {
     \end{itemize}
 
 \begin{block}{A print function}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename T>
 void print(T const & value) {
   if  constexpr (std::is_array_v<T>) {

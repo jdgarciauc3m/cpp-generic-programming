@@ -71,7 +71,7 @@ void print_add(std::vector<T> const & vec1, std::vector<T> const & vec2) {
 \mode<presentation>{\vspace{-1em}}
 \begin{columns}[T]
 \column{.5\textwidth}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void test1() {
   std::vector<int> v1{1, -1, 2, - 2};
   std::vector<int> v2{1, 1, 1, 1};
@@ -79,7 +79,7 @@ void test1() {
 \end{lstlisting}
 
 \column{.5\textwidth}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
   std::vector<long> v3{1, 1, 1, 1};
   print_add(v1,v3); // Error: Conflicting deduction
 }

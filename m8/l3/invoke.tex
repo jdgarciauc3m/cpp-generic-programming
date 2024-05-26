@@ -76,7 +76,7 @@ void f() {
     \end{itemize}
 \end{itemize}
 \begin{block}{Function invocation}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 struct max_value {
     auto operator()(double x, double y) const { return x>y?x:y; }
 };
@@ -130,7 +130,7 @@ void f() {
     \end{itemize}
 \end{itemize}
 \begin{block}{Function invocation}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 struct max_value {
     auto operator()(double x, double y) const { return x>y?x:y; }
 };
@@ -170,7 +170,7 @@ void f() {
 \begin{columns}[T]
 
 \column{.45\textwidth}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 struct value {
     [[nodiscard]] bool greater_than(float k) const { return x>k; }
     float x;
@@ -178,7 +178,7 @@ struct value {
 \end{lstlisting}
 
 \column{.5\textwidth}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void f() {
   using ret5 = std::invoke_result_t<decltype(&value::greater_than),value,double>;
   static_assert(std::is_same_v<ret5, bool>);
@@ -215,7 +215,7 @@ void f() {
 \begin{columns}[T]
 
 \column{.45\textwidth}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 struct value {
     [[nodiscard]] bool greater_than(float k) const { return x>k; }
     float x;
@@ -223,7 +223,7 @@ struct value {
 \end{lstlisting}
 
 \column{.5\textwidth}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void f() {
   using ret6 = std::invoke_result_t<decltype(&value::x), value>;
   static_assert(std::is_same_v<ret6,float&&>);

@@ -39,7 +39,7 @@ void f(fixed_vector<int> const & vec) {
 
 \column{.32\textwidth}
 \begin{block}{Header for implementers}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #ifndef FIXED_VECTOR_IMP_HPP
 #define FIXED_VECTOR_IMP_HPP
 
@@ -62,7 +62,7 @@ fixed_vector<T>::push_back(T const &x) {
 
 \column{.28\textwidth}
 \begin{block}{Library implementation}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #include "fixed_vector_imp.hpp"
 
 // Generate instantiation in library
@@ -72,7 +72,7 @@ template class fixed_vector<int>;
 
 \column{.3\textwidth}
 \begin{block}{Header for users}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #ifndef FIXEDVEC_LIBRARY_H
 #define FIXEDVEC_LIBRARY_H
 

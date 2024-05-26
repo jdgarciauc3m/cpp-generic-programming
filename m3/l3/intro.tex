@@ -8,7 +8,7 @@
 
 \column{.5\textwidth}
 \begin{block}{A logging library}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 class file_logger {
 public:
   //...
@@ -30,7 +30,7 @@ public:
 
 \column{.5\textwidth}
 \begin{block}{Printing a warning}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void print_warning(auto & l, std::string_view message)
   requires(requires{
     l.log("");
@@ -115,7 +115,7 @@ void print_warning(extended_logger auto & l,
 
 \column{.4\textwidth}
 \begin{block}{Logging concepts}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename L>
 concept logger = requires(L l) {
   l.log(std::string_view{});
@@ -130,7 +130,7 @@ concept extended_logger = logger<L> and requires(L l) {
 
 \column{.6\textwidth}
 \begin{block}{Overload resolution}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void print_warning(logger auto & l, std::string_view message) {
   l.log(message);
 }

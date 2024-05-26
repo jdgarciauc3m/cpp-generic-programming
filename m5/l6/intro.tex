@@ -13,7 +13,7 @@
 
 \column{.3\textwidth}
 \begin{block}{fixed\_vector.hpp}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #ifndef FIXEDVEC_LIBRARY_H
 #define FIXEDVEC_LIBRARY_H
 
@@ -29,7 +29,7 @@ class fixed_vector {
 \column{.4\textwidth}
 
 \begin{block}{numbers.hpp}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #ifndef NUMBERS_LIBRARY_HPP
 #define NUMBERS_LIBRARY_HPP
 
@@ -49,7 +49,7 @@ T compute(fixed_vector<T> const & vec) {
 
 \column{.3\textwidth}
 \begin{block}{main.cpp}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #include <iostream>
 #include <format>
 
@@ -75,7 +75,7 @@ int main() {
 
 \column{.5\textwidth}
 \begin{block}{fixed\_vector.cpp}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #include "fixed_vector.hpp"
 template class fixed_vector<int>;
 \end{lstlisting}
@@ -83,7 +83,7 @@ template class fixed_vector<int>;
 
 \column{.5\textwidth}
 \begin{block}{numbers.cpp}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 #include "numbers.hpp"
 template int compute(fixed_vector<int> const &);
 \end{lstlisting}
@@ -106,7 +106,7 @@ template int compute(fixed_vector<int> const &);
 \begin{columns}[T]
 
 \column{.5\textwidth}
-\begin{lstlisting}[style=terminal=escapechar=@,basicstyle=\tiny]
+\begin{lstlisting}[style=terminal=escapechar=@,basicstyle=\mode<presentation>{\tiny}]
 nm -CD --defined-only libfixedvec.so | grep fix
 000000000000253c W fixed_vector<int>::push_back(int const&)
 00000000000024d6 W fixed_vector<int>::fixed_vector(unsigned long)
@@ -117,7 +117,7 @@ nm -CD --defined-only libfixedvec.so | grep fix
 \end{lstlisting}
 
 \column{.5\textwidth}
-\begin{lstlisting}[style=terminal=escapechar=@,basicstyle=\tiny]
+\begin{lstlisting}[style=terminal=escapechar=@,basicstyle=\mode<presentation>{\tiny}]
 nm -CD --defined-only libnumbers.so | grep fix
 0000000000001295 W int compute<int>(fixed_vector<int> const&)
 00000000000012ee W fixed_vector<int>::size() const

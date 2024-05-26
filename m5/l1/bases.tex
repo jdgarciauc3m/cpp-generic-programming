@@ -16,7 +16,7 @@
 
 \column{.5\textwidth}
 \begin{block}{Non dependent base}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 struct shape {
   void print_origin();
   //...
@@ -34,7 +34,7 @@ struct circle : public shape {
 
 \column{.5\textwidth}
 \begin{block}{Dependent base}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename T> struct shape {
   void print_origin();
   //...

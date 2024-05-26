@@ -99,7 +99,7 @@ using buffer_type_t = typename buffer_type<T>::type;
 
 \column{.5\textwidth}
 \begin{block}{Without alias template}
-\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny},escapechar=@]
 template <typename T>
 void print_as_buffer(T value) {
   @\color{red}typename buffer\_type<T>::type@ buffer;
@@ -114,7 +114,7 @@ void print_as_buffer(T value) {
 
 \column{.5\textwidth}
 \begin{block}{With alias template}
-\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny},escapechar=@]
 template <typename T>
 void print_as_buffer(T value) {
   @\color{red}buffer\_type\_t<T>@ buffer;
@@ -162,7 +162,7 @@ void print_as_buffer(T value) {
 
 \column{.5\textwidth}
 \begin{block}{Implementation: Basic definition}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename T>
 struct elements {
     static constexpr int value = 1;
@@ -181,7 +181,7 @@ static constexpr inline int elements_v = elements<T>::value;
 \pause
 \column{.5\textwidth}
 \begin{block}{Implementation: Improved definition}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 template <typename T>
 struct elements2 : public std::integral_constant<int, 1> {};
 
@@ -198,7 +198,7 @@ static constexpr inline int elements2_v = elements2<T>::value;
 
 \pause
 \begin{block}{Usage}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 void f() {
   std::cout << elements<int>::value;
   std::cout << elements<int[4]>::value;
@@ -227,7 +227,7 @@ void f() {
 
 \mode<presentation>{\vfill\pause}
 \begin{block}{A predicate for large size types}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 static constexpr inline int size_limit = 128;
 
 template <typename T>

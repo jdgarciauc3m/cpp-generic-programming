@@ -88,7 +88,7 @@ public:
 
 \begin{frame}[t,fragile]{Dynamic polymorphism}
 \begin{block}{A polymorphic collection}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}]
 int main() {
   using figure = std::variant<rectangle, circle>;
   using diagram = std::vector<figure>;

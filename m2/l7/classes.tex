@@ -109,7 +109,7 @@ class fixed_vector {
 \begin{frame}[t,fragile]{Default template parameters and composition}
 \mode<presentation>{\vspace{-1em}}
 \begin{block}{A generic defaulted fixed vector}
-\begin{lstlisting}[basicstyle=\tiny,escapechar=@]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny},escapechar=@]
 template<@\color{red}std::semiregular T = double, typename S = local\_storage<T,32>@>
 class fixed_vector {
 public:
@@ -139,7 +139,7 @@ private:
 \begin{frame}[t,fragile]
 \mode<presentation>{\vspace{-1em}}
 \begin{block}{A specialized generic defaulted fixed vector}
-\begin{lstlisting}[basicstyle=\tiny, escapechar=@]
+\begin{lstlisting}[basicstyle=\mode<presentation>{\tiny}, escapechar=@]
 template<std::semiregular T, std::size_t max_size> // No defaults
 class fixed_vector<T, local_storage<T,max_size>> {
 public:
