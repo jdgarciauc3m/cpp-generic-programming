@@ -37,8 +37,8 @@ public:
 
   template <int M> requires(M>0)
   fixed_vector(fixed_vector<T,M> const & other) : size_{other.size_} {
-    Expects(@\color<1>{blue}\color<2>{red}other.size@_ <= N); // Problem
-    std::ranges::copy_n(@\color<1>{blue}\color<2>{red}other.buffer@_.begin(), @\color<1>{blue}\color<2>{red}other.size@_, buffer_.begin()); // Problem
+    Expects(@\color<1>{blue}\color<2>{red}other.size@_ <= N); @\onslide<2->{// Problem}@
+    std::ranges::copy_n(@\color<1>{blue}\color<2>{red}other.buffer@_.begin(), @\color<1>{blue}\color<2>{red}other.size@_, buffer_.begin()); @\onslide<2->{// Problem}@
   }
   //...
 };
@@ -55,14 +55,14 @@ public:
 \end{itemize}
 
 \begin{block}{Templated friend classes}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template<std::semiregular T, int N> requires(N > 0)
 class fixed_vector {
 public:
 
   template<std::semiregular,int M> 
       requires (M>0)
-  friend class fixed_vector;
+  @\color{red}friend@ class fixed_vector;
   //...
 };
 \end{lstlisting}

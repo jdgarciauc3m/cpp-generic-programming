@@ -14,10 +14,10 @@ public:
 \end{lstlisting}
 
   \item When used in generic contexts those nested types become \textmark{dependent names}.
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T, int N>
 void f(fixed_vector<T,N> & v) {
-  fixed_vector<T,N>::element_reference r = v[0]; // fixed_vector<T,N>::element_reference is type?
+  @\color{red}fixed\_vector<T,N>::element\_reference@ r = v[0]; // fixed_vector<T,N>::element_reference is type?
   // ...
 }
 \end{lstlisting}
@@ -31,14 +31,13 @@ void f(fixed_vector<T,N> & v) {
     \begin{itemize}
       \item When used before a dependent name, it specifies that such name is a type.
     \end{itemize}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template <typename T, int N>
 void f(fixed_vector<T,N> & v) {
-  typename fixed_vector<T,N>::element_reference r = v[0]; 
+  @\color{red}typename@ fixed_vector<T,N>::element_reference r = v[0]; 
   // ...
 }
 \end{lstlisting}
-
 
 \end{itemize}
 \end{frame}

@@ -6,7 +6,7 @@
 #include <memory>
 
 template <typename T, typename OS>
-concept streamable = requires(OS & os, T const & x) {
+concept streamable_to = requires( T const & x, OS & os) {
   { os << x } -> std::same_as<OS &>;
 };
 
@@ -52,7 +52,7 @@ class fixed_vector {
     }
 
     template <typename OS>
-      requires streamable<T, OS>
+      requires streamable_to<T, OS>
     void print(OS & os) const;
 
   private:
@@ -63,7 +63,7 @@ class fixed_vector {
 template <std::semiregular T, int N>
   requires(N > 0)
 template <typename OS>
-  requires streamable<T, OS>
+  requires streamable_to<T, OS>
 void fixed_vector<T, N>::print(OS & os) const {
   if (size_ <= 0) { return; }
   os << buffer_[0];

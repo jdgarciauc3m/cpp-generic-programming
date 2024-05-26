@@ -16,7 +16,7 @@ int use_count = 0;
 template <typename T>
 void log(T x) {
   // Note: This is not thread-safe
-  std::cout << std::format("log: {}, uses = {}\n", x, use_count<T>++);
+  std::cout << std::format("log: {}, uses = {}\n", x, ++use_count<T>);
 }
 \end{lstlisting}
 \end{block}

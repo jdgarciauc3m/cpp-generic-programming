@@ -64,23 +64,24 @@ void f(fixed_vector<double,100> const & vec) {
 
 \begin{frame}[t,fragile]{A concept for streamables}
 \begin{itemize}
-  \item A \cppkey{concept} to express that values of type \cppid{T} can be streamed.
+  \item A \cppkey{concept} to express that values of type \cppid{T} can be streamed
+        to an output stream.
 \begin{lstlisting}
 template <typename T, typename OS>
-concept streamable = requires(OS & os, T const & x) {
+concept streamable_to = requires(T const & x, OS & os) {
   { os << x } -> std::same_as<OS&>;
 };
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
-  \item Now print can be generalized to any output stream where a value of type \cppid{T} can be 
+  \item Now \cppid{print()} can be generalized to any output stream where a value of type \cppid{T} can be 
         streamed to.
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template<std::semiregular T, int capacity> requires(capacity > 0)
 class fixed_vector {
 public:
   //...
-  template <typename OS> requires streamable<T,OS>
+  template <typename OS> requires @\color{red}streamable\_to<T,OS>@
   void print(OS & os) const;
   //...
 }
@@ -90,17 +91,18 @@ public:
 
 \begin{frame}[t,fragile]{Implementing inside the class}
 \begin{block}{Printing a fixed vector}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template<std::semiregular T, int capacity> requires(capacity > 0)
 class fixed_vector {
 public:
   //...
-  template <typename OS> requires streamable<T,OS>
+  template <typename OS> requires @\color{red}streamable\_to<T,OS>@
   void print(OS & os) const {
-  if (size_ <= 0) { return; }
-  os << buffer_[0];
-  for (int i = 1; i < size_; ++i) {
-    os << " , " << buffer_[gsl::narrow<std::size_t>(i)];
+    if (size_ <= 0) { return; }
+    os << buffer_[0];
+    for (int i = 1; i < size_; ++i) {
+      os << " , " << buffer_[gsl::narrow<std::size_t>(i)];
+    }
   }
   //...
 };
@@ -110,17 +112,17 @@ public:
 
 \begin{frame}[t,fragile]
 \begin{block}{Printing a fixed vector out of class}
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=@]
 template<std::semiregular T, int capacity> requires(capacity > 0)
 class fixed_vector {
 public:
   //...
-  template <typename OS> requires streamable<T,OS>
+  template <typename OS> requires @\color{red}streamable\_to<T,OS>@
   void print(OS & os) const;
 };
 
 template <std::semiregular T, int N> requires (N>0) // Class template params
-template <typename OS> requires streamable<T,OS>    // Function template params
+template <typename OS> requires @\color{red}streamable\_to<T,OS>@    // Function template params
 void fixed_vector<T,N>::print(OS & os) const {
   if (size_ <= 0) { return; }
   os << buffer_[0];

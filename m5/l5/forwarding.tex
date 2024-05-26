@@ -34,10 +34,10 @@ void log_val(T && x) {
 void f() {
   constexpr int init = 42;
   value val{init};
-  log_val(val); // By l-value ref
+  log_val(val); // print() by l-value ref
   value const cval{init};
-  log_val(cval); // By const l-value ref
-  log_val(value{init}); // By ref
+  log_val(cval); // print() by const l-value ref
+  log_val(value{init}); // Ouch! print() l-value ref
 }
 \end{lstlisting}
 \end{block}
@@ -84,10 +84,10 @@ void log_val(T && x) {
 void f() {
   constexpr int init = 42;
   value val{init};
-  log_val(val); // By l-value ref
+  log_val(val); // print() by l-value ref
   value const cval{init};
-  log_val(cval); // By const ref
-  log_val(value{init}); // By r-value ref
+  log_val(cval); // print() by const ref
+  log_val(value{init}); // print() by r-value ref
 }
 \end{lstlisting}
 \end{block}

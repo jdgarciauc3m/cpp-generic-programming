@@ -6,7 +6,7 @@ int use_count = 0; // NOLINT
 
 template <typename T>
 void log(T x) {
-  std::cout << std::format("log: {}, uses = {}\n", x, use_count<T> ++);
+  std::cout << std::format("log: {}, uses = {}\n", x, ++use_count<T>);
 }
 
 void f() {

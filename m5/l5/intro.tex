@@ -53,8 +53,8 @@ void print(value && x) {
 \begin{lstlisting}
 void f() {
   constexpr int init = 42;
-  value val{init};        // By ref
-  print(val);
+  value val{init};
+  print(val);             // By ref
   value const cval{init}; 
   print(cval);            // By const ref
   print(value{init});     // By r-value ref

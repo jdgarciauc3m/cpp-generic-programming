@@ -39,7 +39,7 @@ void f() {
 template <typename S> void f() {
   S s{1.0, 2.0};
   s.print(); // OK
-  s.print<'[',']'>(); // Error
+  s.print<'[',']'>(); // Error. Is print() a template?
 }
 \end{lstlisting}
 \end{block}

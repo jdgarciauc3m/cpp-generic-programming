@@ -82,11 +82,12 @@ void test2() {
 template <typename T>
 void log_val(T && x) { // NOLINT
   std::cout << "log: ";
-  print(std::forward<T>(x));
+  //print(std::forward<T>(x));
+  print(x);
 }
 
 void test3() {
-  std::cout << "*** test2() ***\n";
+  std::cout << "*** test3() ***\n";
   constexpr int init = 42;
   value val{init};
   log_val(val);
