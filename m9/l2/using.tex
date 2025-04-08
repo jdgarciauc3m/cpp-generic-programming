@@ -19,7 +19,7 @@ std::vector vec{1, 2, 3};
 std::span spn{vec};
 vec.reserve(1024);
 @\color{red}spn = vec;@
-std::cout << spn[0]; // Undefined behaviour
+std::cout << spn[0];
 \end{lstlisting}
     \end{itemize}
 \end{itemize}

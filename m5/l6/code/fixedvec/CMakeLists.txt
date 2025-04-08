@@ -17,10 +17,10 @@ FetchContent_MakeAvailable(GSL)
 
 set(CMAKE_CXX_CLANG_TIDY clang-tidy -header-filter=.*)
 
-add_library(fixedvec SHARED fixed_vector.cpp)
+add_library(fixedvec STATIC fixed_vector.cpp)
 target_link_libraries(fixedvec Microsoft.GSL::GSL)
 
-add_library(numbers SHARED numbers.cpp)
+add_library(numbers STATIC numbers.cpp)
 target_link_libraries(numbers Microsoft.GSL::GSL fixedvec)
 
 #add_executable(main01 main.cpp)
