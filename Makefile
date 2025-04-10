@@ -23,6 +23,7 @@ include m6/Makefile.def
 include m7/Makefile.def
 include m8/Makefile.def
 include m9/Makefile.def
+include ranges/Makefile.def
 include m11/Makefile.def
 include guide/Makefile.def
 
@@ -52,5 +53,6 @@ include $(M6_DIR)/Makefile.mk
 include $(M7_DIR)/Makefile.mk
 include $(M8_DIR)/Makefile.mk
 include $(M9_DIR)/Makefile.mk
+include $(RANGES_DIR)/Makefile.mk
 include $(M11_DIR)/Makefile.mk
 include $(GUIDE_DIR)/Makefile.mk
