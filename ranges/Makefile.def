@@ -1,7 +1,7 @@
 RANGES_DIR=ranges
 RANGES_PARTS=$(RANGES_DIR)/*.tex
 
-#include $(RANGES_DIR)/l1/Makefile.def
+include $(RANGES_DIR)/intro/Makefile.def
 
 RANGES_BASE=ranges
 RANGES_PDF=$(RANGES_DIR).pdf

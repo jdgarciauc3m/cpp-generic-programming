@@ -1,0 +1,2 @@
+$(FINAL_RANGES_INTRO_PDF): $(RANGES_INTRO_PARTS) $(CONFIG_SLIDES)
+	$(LATEXMK) -jobname=$(subst /,-,$(<D)) $(RANGES_INTRO_DIR)/slides
