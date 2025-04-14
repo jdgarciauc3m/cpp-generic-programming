@@ -1,0 +1,185 @@
+\subsection{Kinds of ranges}
+
+\begin{frame}[t,fragile]{Other ranges}
+\begin{itemize}
+  \item A \textmark{range} can be:
+    \begin{itemize}
+      \item Any container with a \cppid{begin()} and an \cppid{end()}.
+      \item A \textmark{primitive array}.
+      \item A \textmark{subrange} defined by:
+        \begin{itemize} 
+          \item A start iterator and one past the end iterator.
+          \item A start iterator and a sentinel.
+          \item A start iterator and number of elements (\textmark{sized range}).
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using primitive arrays}
+\begin{itemize}
+  \item A \textmark{primitive array} satisfies the \textemph{std::ranges::range}
+        concept.
+    \begin{itemize}
+      \item For primitive array \cppid{a} both 
+            \cppid{std::ranges::begin()} and \cppid{std::ranges::end()}
+            are defined.
+    \end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{lstlisting}
+void f() {
+  double v[] = {1, 10, 4, 2, 5};
+  std::ranges::sort(v);
+  for (auto x : v) {
+    std::print("{} ", x);
+  }
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{A view for subranges}
+\begin{itemize}
+  \item Type \cppid{std::ranges::subrange} parametrized by:
+    \begin{itemize}
+      \item \cppid{I}: Iterator type.
+      \item \cppid{S}: Sentinel type
+      \item \cppid{K}: Kind of subrange.
+        \begin{itemize}
+          \item \cppid{std::ranges::subrange\_kind::sized}.
+          \item \cppid{std::ranges::subrange\_kind::unsized}.
+        \end{itemize}    
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Two iterators $\rightarrow$ Unsized range.
+  \item An iterator and a sentinel $\rightarrow$ Unsized range.
+  \item An iterator and a count $\rightarrow$ Sized range.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Add all elements until a negative is found with
+iterators}
+\begin{itemize}
+  \item Get an iterator to the first negative.
+  \item Form a \cppid{subrange} from \cppid{begin()} to the found iterator.
+  \item Use \cppid{left\_fold()} to compute the sum.
+
+\mode<presentation>{\vfill\pause}
+\begin{lstlisting}
+void print(std::vector<double> const & vec) {
+  auto it = std::find(v.begin(), vec.end(), [](auto x) { return x<0; });
+  auto sr = std::ranges::subrange{vec.begin(), it};
+  auto sum = std::ranges::left_fold(sr, 0.0, std::plus<double>{});
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Defining sentinel types}
+\begin{itemize}
+  \item A sentinel is a type that can be compared with an iterator.
+\begin{lstlisting}
+struct negative_end {
+  bool operator==(auto it) {
+    return *it < 0;
+  }
+};
+\end{lstlisting}
+  \item A sentinel can be used as end iterator:
+\begin{lstlisting}
+void print(std::vector<double> const & vec) {
+  double sum = 0.0;
+  for (auto it=vec.begin(); i!=negative_end{}; ++i) {
+    sum += *i;
+  }
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Add all elements until a negative is found with
+sentinels}
+\begin{itemize}
+  \item Subranges can be used in range-based for loops:
+\begin{lstlisting}
+void print(std::vector<double> const & vec) {
+  double sum = 0.0;
+  for (auto x : std::ranges::subrange{vec.begin(),negtive_end{}}) {
+    sum += x;
+  }
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A subrange with a sentinel may be used with any range version of an
+        algorithm.
+
+\begin{lstlisting}
+void print(std::vector<double> const & vec) {
+  auto sum = std::ranges::left_fold(
+      std::ranges::subrange{vec.begin(),negtive_end{}},
+      0.0, std::plus<double>{});
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Add the first n elements with a subrange}
+\begin{itemize}
+  \item A counted subrange can be used in a range-based for loop:
+\begin{lstlisting}
+void print(std::vector<double> const & vec, int nelem) {
+  double sum = 0.0;
+  for (auto x : std::ranges::subrange{vec.begin(), nelem) {
+    sum += x;
+  }
+  std::println("sum = {}", sum);
+}
+
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item It can also be used with any range version of an algorithm.
+\begin{lstlisting}
+void print(std::vector<double> const & vec, int nelem) {
+  auto sum = std::ranges::left_fold(
+      std::ranges::subrange{vec.begin(),nelem},
+      0.0, std::plus<double>{});
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Add the first n elements with a counted view}
+\begin{itemize}
+  \item A \cppid{counted} view presents elements in the counted range
+        \textmark{[i, i+n)}.
+\begin{lstlisting}
+void print(std::vector<double> const & vec, int nelem) {
+  double sum = 0.0;
+  for (auto x : std::views::counted(vec,n)) {
+    sum += x;
+  }
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item As any view it can be used with any algorithm range version.
+\begin{lstlisting}
+void print(std::vector<double> const & vec, int nelem) {
+  auto sum = std::ranges::left_fold(
+      std::views::counted{vec,nelem},
+      0.0, std::plus<double>{});
+  std::println("sum = {}", sum);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
