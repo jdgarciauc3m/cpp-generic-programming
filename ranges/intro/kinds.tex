@@ -8,9 +8,13 @@
       \item A \textmark{primitive array}.
       \item A \textmark{subrange} defined by:
         \begin{itemize} 
-          \item A start iterator and one past the end iterator.
+          \item A start iterator and a one past the end iterator.
+          \item A start iterator, a one past the end iterator, and a number of
+                elements.
           \item A start iterator and a sentinel.
-          \item A start iterator and number of elements (\textmark{sized range}).
+          \item A start iterator, a sentinel, and a number of elements.
+          \item A range.
+          \item A range and a number of elements.
         \end{itemize}
     \end{itemize}
 \end{itemize}
@@ -22,7 +26,7 @@
         concept.
     \begin{itemize}
       \item For primitive array \cppid{a} both 
-            \cppid{std::ranges::begin()} and \cppid{std::ranges::end()}
+            \cppid{std::ranges::begin(a)} and \cppid{std::ranges::end(a)}
             are defined.
     \end{itemize}
 
@@ -30,7 +34,11 @@
 \begin{lstlisting}
 void f() {
   double v[] = {1, 10, 4, 2, 5};
+
+  // Sort range [begin(v), end(v))
   std::ranges::sort(v);
+
+  // Iterator over range [begin(v), end(v))
   for (auto x : v) {
     std::print("{} ", x);
   }
@@ -53,9 +61,13 @@ void f() {
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
-  \item Two iterators $\rightarrow$ Unsized range.
-  \item An iterator and a sentinel $\rightarrow$ Unsized range.
-  \item An iterator and a count $\rightarrow$ Sized range.
+  \item Constructed from:
+    \begin{itemize}
+      \item Two iterators.
+      \item An iterator and a sentinel.
+      \item Another range.
+      \item May take an extra argument with a hint for the size.
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -64,15 +76,15 @@ iterators}
 \begin{itemize}
   \item Get an iterator to the first negative.
   \item Form a \cppid{subrange} from \cppid{begin()} to the found iterator.
-  \item Use \cppid{left\_fold()} to compute the sum.
+  \item Use \cppid{fold\_left()} to compute the sum.
 
 \mode<presentation>{\vfill\pause}
 \begin{lstlisting}
 void print(std::vector<double> const & vec) {
-  auto it = std::find(v.begin(), vec.end(), [](auto x) { return x<0; });
-  auto sr = std::ranges::subrange{vec.begin(), it};
-  auto sum = std::ranges::left_fold(sr, 0.0, std::plus<double>{});
-  std::println("sum = {}", sum);
+  auto it = std::ranges::find_if(vec, [](auto x) { return x < 0; });
+  auto sr = std::ranges::subrange(vec.begin(), it);
+  auto sum = std::ranges::fold_left(sr, 0.0, std::plus{});
+  std::println("{}", sum);
 }
 \end{lstlisting}
 \end{itemize}
@@ -82,20 +94,23 @@ void print(std::vector<double> const & vec) {
 \begin{itemize}
   \item A sentinel is a type that can be compared with an iterator.
 \begin{lstlisting}
+template <typename I>
 struct negative_end {
-  bool operator==(auto it) {
-    return *it < 0;
-  }
+  I it_end;
+  bool operator==(I it) const { return it == it_end or *it<0;; }
 };
 \end{lstlisting}
+
+  \mode<presentatin>{\vfill\pause}
   \item A sentinel can be used as end iterator:
 \begin{lstlisting}
 void print(std::vector<double> const & vec) {
   double sum = 0.0;
-  for (auto it=vec.begin(); i!=negative_end{}; ++i) {
-    sum += *i;
+  negative_end const end_sentinnel{vec.end()};
+  for (auto it =  vec.begin(); it != end_sentinnel; ++it) {
+    sum += *it;
   }
-  std::println("sum = {}", sum);
+  std::println("{}", sum);
 }
 \end{lstlisting}
 \end{itemize}
@@ -108,7 +123,7 @@ sentinels}
 \begin{lstlisting}
 void print(std::vector<double> const & vec) {
   double sum = 0.0;
-  for (auto x : std::ranges::subrange{vec.begin(),negtive_end{}}) {
+  for (auto x : std::ranges::subrange{vec.begin(), negative_end{vec.end()}}) {
     sum += x;
   }
   std::println("sum = {}", sum);
@@ -121,39 +136,63 @@ void print(std::vector<double> const & vec) {
 
 \begin{lstlisting}
 void print(std::vector<double> const & vec) {
-  auto sum = std::ranges::left_fold(
-      std::ranges::subrange{vec.begin(),negtive_end{}},
-      0.0, std::plus<double>{});
-  std::println("sum = {}", sum);
+  double sum = std::ranges::fold_left(
+    std::ranges::subrange {vec.begin(), negative_end{vec.end()}},
+    0.0, std::plus{});
+  std::println("{}", sum);
 }
 \end{lstlisting}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t,fragile]{Add the first n elements with a subrange}
+\begin{frame}[t,fragile]{Counted subranges}
 \begin{itemize}
-  \item A counted subrange can be used in a range-based for loop:
+  \item A counted subrange takes an extra argument for the size.
+    \begin{itemize}
+      \item \textbad{Care}: Does not affect begin or end of subrange.
+    \end{itemize}
 \begin{lstlisting}
 void print(std::vector<double> const & vec, int nelem) {
   double sum = 0.0;
-  for (auto x : std::ranges::subrange{vec.begin(), nelem) {
+  for (auto x : std::ranges::subrange{vec.begin(), negative_end{vec.end()}, nelem}) {
     sum += x;
   }
   std::println("sum = {}", sum);
 }
-
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
+  \item It only affects the \cppid{size()} of the subrange.
+\begin{lstlisting}
+void print(std::vector<double> const & vec, int nelem) {
+  std::ranges::subrange rng{vec.begin(), negative_end{vec.end()}, nelem};
+  std::println("size = {}", rng.size()); // nelem
+  std::println("distance(rng) = {}", std::ranges::distance(rng)); // nelem
+  std::println("distance(it1,it2) = {}", std::ranges::distance(rng.begin(), rng.end())); // end-begin
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Counted subranges and algorithms}
+\begin{itemize}
   \item It can also be used with any range version of an algorithm.
 \begin{lstlisting}
 void print(std::vector<double> const & vec, int nelem) {
   auto sum = std::ranges::left_fold(
-      std::ranges::subrange{vec.begin(),nelem},
+      std::ranges::subrange{vec.begin(), negative_end{vec.end()}, nelem},
       0.0, std::plus<double>{});
   std::println("sum = {}", sum);
 }
 \end{lstlisting}
+
+  \mode<presentation>{\vfill}
+  \item \textbad{Note}: The size is not used for iteration over the subrange.
+    \begin{itemize}
+      \item In most cases does not add value.
+    \end{itemize}
+
 \end{itemize}
 \end{frame}
 
@@ -164,7 +203,7 @@ void print(std::vector<double> const & vec, int nelem) {
 \begin{lstlisting}
 void print(std::vector<double> const & vec, int nelem) {
   double sum = 0.0;
-  for (auto x : std::views::counted(vec,n)) {
+  for (auto x : std::views::counted(vec.begin(), nelem)) {
     sum += x;
   }
   std::println("sum = {}", sum);
@@ -176,10 +215,35 @@ void print(std::vector<double> const & vec, int nelem) {
 \begin{lstlisting}
 void print(std::vector<double> const & vec, int nelem) {
   auto sum = std::ranges::left_fold(
-      std::views::counted{vec,nelem},
+      std::views::counted{vec.begin(), nelem},
       0.0, std::plus<double>{});
   std::println("sum = {}", sum);
 }
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Problems with counted views}
+\begin{itemize}
+  \item A counted view takes an iterator and an integer counter.
+    \begin{itemize}
+      \item Does not perform \textbad{bounds checking}.
+    \end{itemize}
+\begin{lstlisting}
+std::vector<double> vec{1.5, 2.5, 3.5};
+print(vec, 100); // Undefined behavior
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item The \cppid{take} view is safer:
+    \begin{itemize}
+      \item First argument can be any range.
+      \item Second argument expresses maximum size.
+    \end{itemize}
+\begin{lstlisting}
+std::vector<double> vec{1.5, 2.5, 3.5};
+auto sum = std::ranges::fold_left(std::views::take(vec,100), 0.0, std::plus{}); // OK
+auto sum = std::ranges::fold_left(vec | std::views::take(100), 0.0, std::plus{}); // OK
 \end{lstlisting}
 \end{itemize}
 \end{frame}
